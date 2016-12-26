@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AntlrDT Core
+Bundle-SymbolicName: net.certiv.antlrdt.core;singleton:=true
+Bundle-Version: 4.3.1.qualifier
+Bundle-Activator: net.certiv.antlrdt.core.AntlrDTCore
+Require-Bundle: net.certiv.dsl.core;bundle-version="0.5.6",
+ net.certiv.dsl.lib;bundle-version="0.5.6",
+ net.certiv.dsl.ui;bundle-version="0.5.6",
+ org.eclipse.ui;bundle-version="3.106.0",
+ org.eclipse.ui.console;bundle-version="3.5.300",
+ org.eclipse.ui.editors;bundle-version="3.8.200",
+ org.eclipse.ui.ide;bundle-version="3.10.1",
+ org.eclipse.core.resources;bundle-version="3.9.0",
+ org.eclipse.core.runtime;bundle-version="3.10.0",
+ org.eclipse.jdt.core;bundle-version="3.10.0",
+ org.eclipse.jdt.core.manipulation;bundle-version="1.5.0",
+ org.eclipse.jdt.ui;bundle-version="3.10.1",
+ org.eclipse.text;bundle-version="3.5.300"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath: .
+Eclipse-RegisterBuddy: net.certiv.dsl.lib
+Bundle-Vendor: Certiv Analytics
+Export-Package: net.certiv.antlrdt.core,
+ net.certiv.antlrdt.core.builder,
+ net.certiv.antlrdt.core.formatter,
+ net.certiv.antlrdt.core.parser,
+ net.certiv.antlrdt.core.parser.gen,
+ net.certiv.antlrdt.core.preferences,
+ net.certiv.antlrdt.core.util
+Import-Package: org.apache.commons.io;version="2.2.0"

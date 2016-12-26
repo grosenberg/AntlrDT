@@ -1,0 +1,71 @@
+xvisitor grammar Outline;
+
+options {
+	superClass = OutlineAdaptor ;
+	parserClass = AntlrDT4Parser ;
+}
+
+@header {
+	package net.certiv.antlrdt.core.parser.gen;
+
+	import net.certiv.antlrdt.core.parser.OutlineAdaptor;
+
+}
+
+outline
+	: grammarSpec
+	| optionsBlock
+	| optionStatement
+	| tokensBlock
+	| tokenStatement
+	| atAction
+	| parserRuleBlock
+	| lexerRuleBlock
+	| ruleDecl
+	| ruleRef
+	| terminalDecl
+	| terminalRef
+	| labelId
+	;
+
+grammarSpec			: /grammarSpec
+							{ grammarModule(); }
+					;
+
+optionsBlock		: //prequelConstruct/optionsSpec			
+							{ onEntry: begOptionsBlock(); } 	
+							{ onExit:  endBlock(); }	
+					;
+
+optionStatement		: //prequelConstruct/optionsSpec/option
+							{ processOptionStatement(); }	
+					;
+
+tokensBlock			: //tokensSpec 
+							{ onEntry: begTokensBlock(); }
+							{ onExit:  endBlock(); }
+					;
+
+tokenStatement		: //tokensSpec//id
+							{ processTokenStatement(); }
+					;
+
+atAction			: /grammarSpec/prequelConstruct/action
+							{ processAction(); }
+					;
+
+parserRuleBlock		: //ruleSpec/parserRuleSpec
+							{ onEntry: begParserRule(); }
+							{ onExit:  endBlock(); }	
+					;
+
+lexerRuleBlock		: //lexerRuleSpec
+							{ onEntry: begLexerRule(); }
+							{ onExit:  endBlock(); }	
+					;
+
+ruleDecl			: //parserRuleSpec	{ addRuleDecl(); } ;
+ruleRef				: //ruleref			{ addRuleRef(); } ;
+terminalDecl		: //lexerRuleSpec	{ addTerminalDecl(); } ;
+terminalRef			: //terminal		{ addTerminalRef(); } ;
+labelId				: //id				{ addLabelId(); } ;

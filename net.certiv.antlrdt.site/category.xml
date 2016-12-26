@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/net.certiv.antlrdt.feature_4.3.1.qualifier.jar" id="net.certiv.antlrdt.feature" version="4.3.1.qualifier">
+      <category name="certiv.tools"/>
+   </feature>
+   <category-def name="certiv.tools" label="Certiv Tools"/>
+</site>

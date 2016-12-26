@@ -1,0 +1,40 @@
+package net.certiv.antlrdt.ui.editor.folding;
+
+import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.editor.Partitions;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.text.folding.AbstractDslFoldingStructureProvider;
+
+public class AntlrDTFoldingStructureProvider extends AbstractDslFoldingStructureProvider {
+
+	public AntlrDTFoldingStructureProvider() {
+		super();
+	}
+
+	@Override
+	public DslUI getDslUI() {
+		return AntlrDTUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrDTCore.getDefault();
+	}
+
+	@Override
+	protected String getPartitioning() {
+		return Partitions.ANTLRDT_PARTITIONING;
+	}
+
+	@Override
+	protected String getMultiLineCommentPartition() {
+		return Partitions.COMMENT_ML;
+	}
+
+	@Override
+	protected String getSingleLineCommentPartition() {
+		return Partitions.COMMENT_SL;
+	}
+}

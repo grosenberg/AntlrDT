@@ -1,0 +1,72 @@
+/**
+ * Version 1.0 - 2010.07.29
+ * Version 4.0 - 2013.12.22 - Updated to AntlrV4 & AntlrXTree
+ * Version 4.1 - 2014.01.05 
+ */
+xvisitor grammar Indent;
+
+options {
+	superClass = IndentAdaptor  ;
+	parserClass = AntlrDT4Parser ;
+}
+
+@header {
+	
+	package net.certiv.antlrdt.core.parser.gen;
+
+	import static net.certiv.antlrdt.core.preferences.PrefsKey.*;
+	import net.certiv.antlrdt.core.formatter.IndentAdaptor;
+}
+
+indent
+	: optionsBlock
+	| tokensBlock
+	| channelsBlock
+	| ruleBeg
+	| ruleEnd
+	| actionBlock
+	| ruleBlock
+	| execptionBlock
+	;
+
+optionsBlock	: //prequelConstruct/optionsSpec
+						{ onEntry: helper.locate($LBRACE).inc();  }
+						{ onExit:  helper.locate($RBRACE).dec(); }
+				;
+
+tokensBlock		: //prequelConstruct/tokensSpec
+						{ onEntry: helper.locate($LBRACE).inc();  }
+						{ onExit:  helper.locate($RBRACE).dec(); }
+				;
+
+channelsBlock	: //prequelConstruct/channelsSpec
+						{ onEntry: helper.locate($LBRACE).inc();  }
+						{ onExit:  helper.locate($RBRACE).dec(); }
+				;
+
+ruleBeg			: //ruleSpec/*/COLON
+						{ helper.locate($COLON).inc(BEFORE); }
+				;
+
+ruleEnd			: //ruleSpec/*/SEMI
+						{ helper.locate($SEMI).dec(AFTER); }
+				;
+
+actionBlock		: //action/actionBlock
+						{ onEntry: helper.locate($BEGIN_ACTION).inc(); }
+						{ onExit:  helper.locate($END_ACTION).dec(); }
+				;
+
+ruleBlock		: //ruleAction/actionBlock
+						{ onEntry: helper.locate($BEGIN_ACTION).inc(); }
+						{ onExit:  helper.locate($END_ACTION).dec(); }
+				;
+
+execptionBlock	: //exceptionGroup//actionBlock
+						{ onEntry: helper.locate($BEGIN_ACTION).inc(); }
+						{ onExit:  helper.locate($END_ACTION).dec(); }
+				;
+
+# modeBlock		: //modeSpec
+# 						{ onEntry: helper.locate($MODE).endBlock().begBlock; }
+# 				;

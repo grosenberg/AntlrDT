@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="net.certiv.antlrdt.ui.editor.AntlrDTDocumentSetupParticipant"
+         name="AntlrDT Document"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="net.certiv.antlrdt.ui.editor.AntlrDTDocumentSetupParticipant"
+            contentTypeId="net.certiv.antlrdt.core.contentType"
+            extensions="g4">
+      </participant>
+   </extension>
+   <extension
+         id="nature"
+         name="AntlrDT Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="net.certiv.antlrdt.core.AntlrDTNature">
+         </run>
+      </runtime>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="net.certiv.dsl.ui.DslElementAdapterFactory"
+            adaptableType="net.certiv.dsl.core.model.IDslElement">
+         <adapter
+               type="org.eclipse.core.resources.IResource">
+         </adapter>
+         <adapter
+               type="org.eclipse.core.resources.IProject">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+         <adapter type="org.eclipse.ui.progress.IDeferredWorkbenchAdapter"/>
+         <adapter type="org.eclipse.ui.IActionFilter"/>
+         <adapter type="org.eclipse.core.resources.IWorkspaceRoot"/>
+      </factory>
+   </extension>
+   
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="net.certiv.antlrdt.activeContexts.definition">
+			<with variable="activePartId">
+				<equals value="net.certiv.antlrdt.ui.editor.AntlrDTEditor"/>
+			</with>
+		</definition>
+	</extension>
+	
+<!--
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            canSearchEnclosingProjects="true"
+            class="net.certiv.antlrdt.ui.search.AntlrSearchPage"
+            enabled="true"
+            extensions="g:90"
+            icon="icons/obj16/search_obj.gif"
+            id="net.certiv.antlrdt.ui.AntlrSearchPage"
+            label="AntlrSearchPage"
+            showScopeSection="true"
+            sizeHint="460,160">
+      </page>
+   </extension>
+-->
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="AntlrDT Editor"
+            default="true"
+            extensions="g4"
+            icon="icons/obj16/antlrFile.png"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="net.certiv.antlrdt.ui.editor.AntlrDTEditor"
+            id="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
+         <contentTypeBinding
+               contentTypeId="net.certiv.antlrdt.core.contentType">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="net.certiv.antlrdt.ui.graph.cst.CstEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            icon="icons/obj16/call_hierarchy.gif"
+            id="net.certiv.antlrdt.ui.graph.cst.CstEditor"
+            name="ParseTree">
+      </editor>
+      <editor
+            class="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            icon="icons/obj16/hierarchy_co.gif"
+            id="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
+            name="Paths">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            markerSeverity="2"
+            markerType="net.certiv.antlrdt.core.problem"
+            name="net.certiv.antlrdt.ui.error"
+            super="org.eclipse.ui.workbench.texteditor.error">
+      </type>
+      <type
+            markerSeverity="1"
+            markerType="net.certiv.antlrdt.core.problem"
+            name="net.certiv.antlrdt.ui.warning"
+            super="org.eclipse.ui.workbench.texteditor.warning">
+      </type>
+      <type
+            markerSeverity="0"
+            markerType="net.certiv.antlrdt.core.problem"
+            name="net.certiv.antlrdt.ui.info"
+            super="org.eclipse.ui.workbench.texteditor.info">
+      </type>
+      <type
+            name="net.certiv.antlrdt.ui.occurrences">
+      </type>
+   </extension>
+  <extension
+        point="org.eclipse.ui.editors.templates">
+     <include
+           file="src/main/resources/templates/templatesAntlrDT.xml"
+           translations="src/main/resources/templates/templates.properties">
+     </include>
+     <contextType
+           class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
+           id="net.certiv.antlrdt.ui.DefaultContext"
+           name="Default">
+     </contextType>
+      <contextType
+            class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
+            id="antlrGrammar"
+            name="Grammar">
+      </contextType>
+      <contextType
+            class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
+            id="antlrOptions"
+            name="Options">
+      </contextType>
+      <contextType
+            class="org.eclipse.jdt.internal.corext.template.java.JavaContextType"
+            id="java"
+            name="Actions">
+      </contextType>
+      <contextType
+            class="org.eclipse.jdt.internal.corext.template.java.JavaDocContextType"
+            id="javadoc"
+            name="Javadoc">
+      </contextType>
+      <resolver
+            class="net.certiv.antlrdt.ui.templates.VocabName"
+            contextTypeId="antlrOptions"
+            description="Proper name of the Tokens Vocabulary file"
+            icon="icons/elcl16/templateprop_co.gif"
+            name="Tokens Vocab Name"
+            type="vocabName">
+      </resolver>
+  </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="net.certiv.certivtools.wizards"
+            class="net.certiv.antlrdt.ui.wizards.AntlrDTNewWizard"
+            icon="icons/obj16/antlrFile.png"
+            id="net.certiv.antlrdt.ui.wizards.AntlrDTNewWizard"
+            name="New ANTLR grammar ">
+         <description>
+            Creates a new ANTLR grammar source file.
+         </description>
+      </wizard>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlrdt.ui.view.TokensView"
+            icon="icons/obj16/grammarAst.gif"
+            id="net.certiv.antlrdt.ui.view.tokens"
+            name="Tokens View"
+            restorable="true">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="net.certiv.certivtools.prefs.TopLevelPage"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            name="AntlrDT ">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageMarkOccurrences"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageMarkOccurrences"
+            name="Mark Occurrences">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageEditor"
+            id="net.certiv.antlrdt.preferences.page.PrefPageEditor"
+            name="Editor">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageFolding"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageFolding"
+            name="Folding">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColoring"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColoring"
+            name="Syntax Coloring">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageCodeTemplates"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageCodeTemplates"
+            name="Templates">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageFormatter"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageFormatter"
+            name="Formatter">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageBuilder"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefPageBuilder"
+            name="Builder">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
+            name="ParseTree Display">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphColoring"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphColoring"
+            name="Graph Coloring">
+      </page>
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
+            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
+            name="Tool Tips">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="AntlrDTEditor Context"
+            id="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            name="AntlrDTEditor Content"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="AntlrDTDsl Source"
+            description="AntlrDTDsl Source Actions"
+            id="net.certiv.antlrdt.ui.category.source">
+      </category>
+      <category
+            name="AntlrDTDsl Refactoring"
+            description="AntlrDTDsl Refactoring Actions"
+            id="net.certiv.antlrdt.ui.category.refactor">
+      </category>
+
+      <command
+            name="Format"
+            description="Format Source"
+            categoryId="net.certiv.antlrdt.ui.category.source"
+            id="net.certiv.antlrdt.ui.edit.text.format">
+      </command>
+      <command
+            name="Comment/Uncomment"
+            description="Comment/Uncomment the selected lines"
+            categoryId="net.certiv.antlrdt.ui.category.source"
+            id="net.certiv.antlrdt.ui.edit.text.toggle.comment">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.category.source"
+            description="Toggles mark occurrences in Dsl editors"
+            id="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
+            name="Mark Occurrences">
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.category.source"
+            description="Manual build of Dsl files in project"
+            id="net.certiv.antlrdt.ui.build"
+            name="Manual Build">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%ActionDefinition.openEditor.description"
+            id="net.certiv.dsl.ui.edit.text.open.editor"
+            name="%ActionDefinition.openEditor.name">
+      </command>
+      <command
+            name="Rename"
+            description="Rename element"
+            categoryId="net.certiv.antlrdt.ui.category.refactor"
+            id="net.certiv.antlrdt.ui.edit.text.rename.element">
+      </command>
+   </extension>
+
+<!--
+  <extension
+        point="org.eclipse.ui.commands">
+     <command
+           categoryId="org.eclipse.ui.category.edit"
+           defaultHandler="net.certiv.dsl.internal.ui.text.completion.ContentAssistHandler"
+           description="Invokes content assist command"
+           id="net.certiv.dsl.ui.content_assist.command"
+           name="Content Assist">
+        <commandParameter
+              id="net.certiv.dsl.ui.content_assist.command.id"
+              name="Content Assist Parameter"
+              optional="true"
+              values="net.certiv.dsl.ui.text.completion.ContentAssistComputerParameter">
+        </commandParameter>
+     </command>
+  </extension>
+-->
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="net.certiv.dsl.ui.handlers.ToggleCommentHandler"
+            commandId="net.certiv.antlrdt.ui.edit.text.toggle.comment">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.antlrdt.ui.handlers.ToggleMarkingHandler"
+            commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.dsl.ui.handlers.FormatHandler"
+            commandId="net.certiv.antlrdt.ui.edit.text.format">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.dsl.ui.handlers.BuildHandler"
+            commandId="net.certiv.antlrdt.ui.build">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.antlrdt.ui.handlers.OpenTokensViewHandler"
+            commandId="net.certiv.antlrdt.ui.openTokensViewCommand">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.antlrdt.ui.handlers.OpenPathsEditorHandler"
+            commandId="net.certiv.antlrdt.ui.openPathsEditorCommand">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+
+      <handler
+            class="net.certiv.dsl.ui.handlers.RenameHandler"
+            commandId="net.certiv.antlrdt.ui.edit.text.rename.element">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+
+
+   </extension>
+
+   <extension point="org.eclipse.ui.bindings">
+ 
+      <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
+            carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
+   	 <key
+            sequence="M1+M2+F"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            commandId="net.certiv.antlrdt.ui.edit.text.format"/>      
+     <key
+            sequence="M1+/"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            commandId="net.certiv.antlrdt.ui.edit.text.toggle.comment"/>
+	 <key
+	        sequence="M2+M3+O"
+	        contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+	        commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	 <key
+	        platform="carbon"
+	        sequence="M2+M3+O"
+	        contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+	        commandId=""
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	 <key
+	        platform="carbon"
+	        sequence="M1+M3+O"
+	        contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+	        commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	        
+	  <!-- Rename refactoring  -->
+      <key
+            sequence="M2+M3+R"
+            commandId="net.certiv.antlrdt.ui.edit.text.rename.element"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M2+M3+R"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="COMMAND+ALT+R"
+            commandId="net.certiv.antlrdt.ui.edit.text.rename.element"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	        
+	</extension>
+
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.error">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.warning">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.info">
+      </specification>
+      <specification
+            annotationType="net.certiv.antlrdt.ui.occurrences"
+            colorPreferenceKey="occurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            contributesToHeader="false"
+            highlightPreferenceKey="occurrenceHighlighting"
+            highlightPreferenceValue="true"
+            icon="$nl$/icons/full/obj16/searchm_obj.gif"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
+            label="Occurrences"
+            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
+            textPreferenceKey="occurrenceIndication"
+            textPreferenceValue="false"
+            textStylePreferenceKey="occurrenceTextStyle"
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
+  <!--
+  <extension
+        id="defaultProposalCategory"
+        name="Dsl Proposals"
+        point="net.certiv.dsl.ui.completionProposalComputer">
+     <proposalCategory></proposalCategory>
+  </extension>
+  <extension
+        id="templateProposalCategory"
+        name="Template Proposals"
+        point="net.certiv.dsl.ui.completionProposalComputer">
+     <proposalCategory
+           icon="icons/elcl16/templateprop_co.gif"></proposalCategory>
+  </extension>
+  <extension
+        id="TemplateCompletionProposalComputer"
+        point="net.certiv.dsl.ui.completionProposalComputer">
+     <completionProposalComputer
+           activate="true"
+           categoryId="net.certiv.antlrdt.ui.templateProposalCategory"
+           class="net.certiv.antlrdt.ui.editor.completion.AntlrDTCodeCompletionComputer">
+        <partition
+              type="__dftl_partition_content_type">
+        </partition>
+        <partition
+              type="__comment_multi_line">
+        </partition>
+         <partition
+               type="__comment_java_doc">
+         </partition>
+         <partition
+               type="__action">
+         </partition>
+         <partition
+               type="__options">
+         </partition>
+         <partition
+               type="__members">
+         </partition>
+     </completionProposalComputer>
+  </extension>
+  -->
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="net.certiv.antlrdt.ui.toolbars.dslToolbar">
+            <command
+                  commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
+                  icon="icons/etool16/mark_occurrences.gif"
+                  style="toggle"
+                  tooltip="Toggle Mark Occcurrences">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlrdt.ui.build"
+                  icon="icons/etool16/build_exec.gif"
+                  style="push"
+                  tooltip="Build Antlr grammars">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlrdt.ui.openTokensViewCommand"
+                  icon="icons/obj16/view.gif"
+                  style="push"
+                  tooltip="Open Tokens View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlrdt.ui.openPathsEditorCommand"
+                  icon="icons/obj16/hierarchy_co.gif"
+                  style="push"
+                  tooltip="Open Paths View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+		  </toolbar>
+      </menuContribution>
+   </extension>
+   
+<!--
+  <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%OpenActionSet.label"
+            description="%OpenActionSet.description"
+            visible="false"
+            id="net.certiv.dsl.ui.A_OpenActionSet">
+         <action
+               definitionId="net.certiv.dsl.ui.edit.text.open.call.hierarchy"
+               label="%OpenCallHierarchyAction.label"
+               retarget="true"
+               menubarPath="navigate/open.ext"
+               id="net.certiv.dsl.ui.actions.OpenCallHierarchy">
+         </action>
+         <action
+               definitionId="net.certiv.dsl.ui.edit.text.open.type.hierarchy"
+               label="%OpenTypeHierarchyAction.label"
+               retarget="true"
+               menubarPath="navigate/open.ext"
+               id="net.certiv.dsl.ui.actions.OpenTypeHierarchy">
+         </action> 
+         <action
+               definitionId="net.certiv.dsl.ui.edit.text.open.editor"
+               label="%OpenAction.label"
+               tooltip="%OpenAction.tooltip"
+               retarget="true"
+               menubarPath="navigate/open.ext"
+               allowLabelUpdate="true"
+               id="net.certiv.dsl.ui.actions.Open">
+         </action>
+      </actionSet>
+   </extension>
+-->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="AntlrDT Category"
+            id="net.certiv.antlrdt.ui.commands.category">
+      </category>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.removeNatureCommand"
+            name="Remove AntlrDT Nature">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.cleanGrammarCommand"
+            name="Clean Grammar Problems">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.openTokensViewCommand"
+            name="Open Tokens View">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.openPathsEditorCommand"
+            name="Open Paths View">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="net.certiv.antlrdt.ui.removeNatureCommand"
+            class="net.certiv.antlrdt.ui.handlers.RemoveNatureHandler">
+      </handler>
+      <handler
+            class="net.certiv.antlrdt.ui.handlers.CleanGrammarHandler"
+            commandId="net.certiv.antlrdt.ui.cleanGrammarCommand">
+      </handler>
+   </extension>
+   
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution
+      	    locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
+         <menu
+               id="net.certiv.antlrdt.ui.popups.menu"
+               label="AntlrDT">
+            <command
+                  commandId="net.certiv.antlrdt.ui.cleanGrammarCommand"
+                  id="net.certiv.antlrdt.ui.popups.cleanGrammarCommand">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IFile">
+                        <and>
+                           <test
+                                 property="org.eclipse.core.resources.name"
+                                 value="*.g4">
+                           </test>
+                        </and>
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+            <!--
+            <command
+                  commandId="net.certiv.antlrdt.ui.removeNatureCommand"
+                  id="net.certiv.antlrdt.ui.popups.removeNatureCommand">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <and>
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="net.certiv.antlrdt.core.nature">
+                           </test>
+                        </and>
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+             -->
+         </menu>
+         
+         <menu
+              id="org.eclipse.ui.projectConfigure"
+              label="Configure">
+            <command
+                  commandId="net.certiv.antlrdt.ui.removeNatureCommand"
+                  id="net.certiv.antlrdt.ui.popups.removeNatureCommand">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <and>
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="net.certiv.antlrdt.core.nature">
+                           </test>
+                        </and>
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+    </extension>
+    
+</plugin>
