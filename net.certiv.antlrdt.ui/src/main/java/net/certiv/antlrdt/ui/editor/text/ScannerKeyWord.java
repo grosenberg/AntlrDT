@@ -15,7 +15,7 @@ import net.certiv.dsl.ui.text.rules.DslWordRule;
 public class ScannerKeyWord extends AbstractBufferedRuleBasedScanner {
 
 	public static final String[] KEYWORDS = { "grammar", "parser", "lexer", "options", "tokens", "import", "channels",
-			"->", "EOF", "channel", "mode", "skip", "more", "pushMode", "popMode", "@header", "@members",
+			"->", "EOF", "channel", "mode", "skip", "more", "pushMode", "popMode", "type", "@header", "@members",
 			"@parser::header", "@parser::members", "@lexer::header", "@lexer::members", "@init", "@after", "fragment",
 			"public", "private", "protected", "locals", "throws", "catch", "returns", "finally" };
 

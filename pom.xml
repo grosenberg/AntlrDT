@@ -8,7 +8,7 @@
 
 	<groupId>net.certiv</groupId>
 	<artifactId>net.certiv.antlrdt</artifactId>
-	<version>4.3.1-SNAPSHOT</version>
+	<version>4.5.0-SNAPSHOT</version>
 
 	<name>net.certiv.antlrdt :: parent</name>
 	<description>net.certiv.antlrdt parent</description>
@@ -30,7 +30,7 @@
 		<repository>
 			<id>neon</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/neon</url>
+			<url>http://download.eclipse.org/releases/oxygen</url>
 		</repository>
 		<repository>
 			<id>dsl</id>

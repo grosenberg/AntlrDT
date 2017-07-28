@@ -407,6 +407,7 @@
 			</enabledWhen>
       </handler>
 
+<!-- 
       <handler
             class="net.certiv.dsl.ui.handlers.RenameHandler"
             commandId="net.certiv.antlrdt.ui.edit.text.rename.element">
@@ -417,7 +418,7 @@
 				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
 			</enabledWhen>
       </handler>
-
+-->
 
    </extension>
 

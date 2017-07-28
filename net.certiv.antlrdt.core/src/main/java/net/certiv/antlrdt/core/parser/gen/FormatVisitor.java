@@ -4,13 +4,35 @@
 //
 package net.certiv.antlrdt.core.parser.gen;
 
-	import static net.certiv.antlrdt.core.preferences.PrefsKey.*;
-	import net.certiv.antlrdt.core.formatter.FormatAdaptor;
+	import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_ALT_OR;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_COLON_RULE;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_COMMA_CHAN;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_COMMA_TOK;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_EQ_OPT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_LBRACE_AT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_LBRACE_CHAN;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_LBRACE_TOK;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_RBRACE_AT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_RBRACE_CHAN;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_RBRACE_TOK;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_SEMI_HDR;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_SEMI_OPT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.SPACE_SEMI_RULE;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_ALT_OR;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_COLON_RULE;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_ID_CHAN;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_ID_TOK;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_LBRACE_AT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_NAME_RULE;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_RBRACE_AT;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_RBRACE_CHAN;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_RBRACE_TOK;
+import static net.certiv.antlrdt.core.preferences.PrefsKey.WRAP_SEMI_RULE;
 
-import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
-import net.certiv.antlr.runtime.xvisitor.Processor;
+
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
+import net.certiv.antlrdt.core.formatter.FormatAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class FormatVisitor extends FormatAdaptor {

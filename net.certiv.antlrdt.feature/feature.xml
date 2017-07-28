@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.antlrdt.feature"
       label="AntlrDT"
-      version="4.3.1.qualifier"
+      version="4.5.0.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">

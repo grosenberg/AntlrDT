@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
@@ -27,6 +28,7 @@ import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
 import net.certiv.dsl.core.util.ClassUtil;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.util.loader.ClassLoaderFactory;
 
 class TargetUnit {
 
@@ -46,35 +48,35 @@ class TargetUnit {
 	private CstModel model;
 	private ParseTree tree;
 	private List<Token> tokens;
-	private ANTLRInputStream input;
+	private CodePointCharStream input;
 	private ArrayList<ErrorRecord> errors;
 	private String[] ruleNames;
 	private String[] tokenNames;
 	private String mainRuleName;
 
-	public TargetUnit(GrammarRecord record, IFile srcGrammar, String sourceText) {
+	public TargetUnit(GrammarRecord record, IFile srcGrammar, String content) {
 		Log.setLevel(this, Log.LogLevel.Debug);
 		this.record = record;
 		evalGrammar(srcGrammar);
 
 		Thread thread = Thread.currentThread();
-		ClassLoader threadLoader = thread.getContextClassLoader();
+		ClassLoader parent = thread.getContextClassLoader();
 		IProject project = record.getProject();
 
 		try {
-			ClassLoader projectLoader = ClassUtil.buildClassLoader(project);
+			ClassLoader projectLoader = ClassLoaderFactory.build(parent, project);
 			thread.setContextClassLoader(projectLoader);
 		} catch (MalformedURLException e) {
 			Log.info(this, "Restoring classloader after failure");
-			thread.setContextClassLoader(threadLoader);
+			thread.setContextClassLoader(parent);
 			return;
 		}
 
 		try {
-			if (built()) generate(sourceText);
+			if (built()) generate(content);
 		} finally {
 			Log.info(this, "Restoring classloader after generate attempt");
-			thread.setContextClassLoader(threadLoader);
+			thread.setContextClassLoader(parent);
 		}
 	}
 
@@ -88,10 +90,6 @@ class TargetUnit {
 
 	public List<Token> getTokens() {
 		return tokens;
-	}
-
-	public ANTLRInputStream getInput() {
-		return input;
 	}
 
 	public List<ErrorRecord> getErrors() {
@@ -155,7 +153,7 @@ class TargetUnit {
 	@SuppressWarnings("deprecation")
 	private void generate(String sourceText) {
 		if (sourceText.length() == 0) return;
-		input = new ANTLRInputStream(sourceText);
+		input = CharStreams.fromString(sourceText);
 		Object[] lexInput = new Object[] { input };
 
 		// lexer

@@ -14,7 +14,6 @@ import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.ui.DslImages;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
-import net.certiv.dsl.ui.refactoring.wizards.IWizardsFactory;
 import net.certiv.dsl.ui.text.DslTextTools;
 
 /**
@@ -37,7 +36,7 @@ public class AntlrDTUI extends DslUI {
 	private CstEditor cstEditor;
 	private PathsEditor pathsEditor;
 
-	private WizardsFactory wizardFactory;
+	// private WizardsFactory wizardFactory;
 
 	public AntlrDTUI() {
 		super();
@@ -111,14 +110,14 @@ public class AntlrDTUI extends DslUI {
 		}
 		return factory;
 	}
-
-	@Override
-	public IWizardsFactory getWizardsFactory() {
-		if (wizardFactory == null) {
-			wizardFactory = new WizardsFactory();
-		}
-		return wizardFactory;
-	}
+	//
+	// @Override
+	// public IWizardsFactory getWizardsFactory() {
+	// if (wizardFactory == null) {
+	// wizardFactory = new WizardsFactory();
+	// }
+	// return wizardFactory;
+	// }
 
 	public CstEditor getCstEditor() {
 		return cstEditor;

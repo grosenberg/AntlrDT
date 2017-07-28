@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.eclipse.core.resources.IFile;
@@ -57,9 +56,9 @@ public class TargetBuilder {
 		return target != null ? target.getErrors() : null;
 	}
 
-	public ANTLRInputStream getInput() {
-		return target != null ? target.getInput() : null;
-	}
+	// public CharStreams getInput() {
+	// return target != null ? target.getInput() : null;
+	// }
 
 	public String getMainRuleName() {
 		return target != null ? target.getMainRuleName() : "";
@@ -116,7 +115,8 @@ public class TargetBuilder {
 					monitor.setCanceled(true);
 					monitor.done();
 				}
-				if (thread != null) thread.interrupt();
+				if (thread != null)
+					thread.interrupt();
 			}
 		}, 2000);
 		return timer;

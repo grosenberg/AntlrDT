@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.Tool;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.tool.ANTLRMessage;
 import org.antlr.v4.tool.Grammar;
 import org.eclipse.core.resources.IContainer;
@@ -45,7 +44,7 @@ import net.certiv.dsl.core.model.util.ErrorListener;
 import net.certiv.dsl.core.parser.util.ParserUtil;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.v4.runtime.dsl.ToolMessage;
+import net.certiv.v4.runtime.dsl.MsgUtil;
 
 @SuppressWarnings("restriction")
 public class AntlrDTBuilder extends DslBuilder {
@@ -169,15 +168,13 @@ public class AntlrDTBuilder extends DslBuilder {
 	private void publishErrors(IResource resource, ErrorListener toolErrs) {
 		if (toolErrs.hasErrors()) {
 			for (ANTLRMessage err : toolErrs.getErrList()) {
-				Token token = new ToolMessage(err).getOffendingToken();
-				createProblemMarker(resource, token, err.toString(), IMarker.SEVERITY_ERROR);
+				createProblemMarker(resource, MsgUtil.offendingToken(err), err.toString(), IMarker.SEVERITY_ERROR);
 				Log.error(this, err.toString());
 			}
 		}
 		if (toolErrs.hasWarnings()) {
 			for (ANTLRMessage err : toolErrs.getWarnList()) {
-				Token token = new ToolMessage(err).getOffendingToken();
-				createProblemMarker(resource, token, err.toString(), IMarker.SEVERITY_WARNING);
+				createProblemMarker(resource, MsgUtil.offendingToken(err), err.toString(), IMarker.SEVERITY_WARNING);
 				Log.warn(this, err.toString());
 			}
 		}

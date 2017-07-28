@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/Eclipse/Dsl/antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
+// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
 
 	package net.certiv.antlrdt.core.parser.gen;
 

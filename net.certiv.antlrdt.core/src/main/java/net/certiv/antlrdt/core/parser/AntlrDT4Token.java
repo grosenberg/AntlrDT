@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.misc.Pair;
 
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 
-@SuppressWarnings("serial")
 public class AntlrDT4Token extends CommonToken {
 
 	private int _mode;

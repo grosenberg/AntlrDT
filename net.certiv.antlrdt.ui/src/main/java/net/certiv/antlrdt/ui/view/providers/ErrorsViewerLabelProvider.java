@@ -41,7 +41,7 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		String[] rec = (String[]) element;
-		if (rec[4].equals(ErrorSrc.PARSER)) return blue; // parser
+		if (rec[4].equals(ErrorSrc.PARSER.toString())) return blue; // parser
 		return null;
 	}
 }

@@ -4,13 +4,13 @@
 //
 package net.certiv.antlrdt.core.parser.gen;
 
-	import static net.certiv.antlrdt.core.preferences.PrefsKey.*;
-	import net.certiv.antlrdt.core.formatter.IndentAdaptor;
+	import static net.certiv.dsl.core.preferences.consts.Formatter.AFTER;
+import static net.certiv.dsl.core.preferences.consts.Formatter.BEFORE;
 
-import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
-import net.certiv.antlr.runtime.xvisitor.Processor;
+
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
+import net.certiv.antlrdt.core.formatter.IndentAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class IndentVisitor extends IndentAdaptor {

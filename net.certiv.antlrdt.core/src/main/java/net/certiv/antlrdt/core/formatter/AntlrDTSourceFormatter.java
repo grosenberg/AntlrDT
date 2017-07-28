@@ -1,6 +1,6 @@
 package net.certiv.antlrdt.core.formatter;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -9,9 +9,9 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.parser.AntlrDT4TokenFactory;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarSpecContext;
 import net.certiv.antlrdt.core.parser.gen.FormatVisitor;
 import net.certiv.antlrdt.core.parser.gen.IndentVisitor;
-import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarSpecContext;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.formatter.DslCodeFormatter;
 import net.certiv.dsl.core.parser.DslParseErrorListener;
@@ -36,10 +36,10 @@ public class AntlrDTSourceFormatter extends DslCodeFormatter {
 	}
 
 	@Override
-	public ParseTree parse(String name, char[] content, DslParseErrorListener errListener) throws RecognitionException {
+	public ParseTree parse(String name, String content, DslParseErrorListener errListener) throws RecognitionException {
 		// Log.debug(this, "Parse [name=" + name + "]");
 
-		input = new ANTLRInputStream(content, content.length);
+		input = CharStreams.fromString(content, name);
 		AntlrDT4Lexer lexer = new AntlrDT4Lexer(input);
 
 		// lexer.setLexerHelper(new LexerHelper());

@@ -14,12 +14,11 @@ public class ListProcessor {
 	public static ArrayList<String[]> extract(List<Token> tokensList, String[] tokenNames, boolean nodesOnly) {
 		ArrayList<String[]> tokens = new ArrayList<String[]>();
 		for (Token token : tokensList) {
-			if (token.getType() == Token.EOF) break;
 			if (nodesOnly && token.getChannel() == Lexer.HIDDEN) continue;
 
 			String idx = String.valueOf(token.getTokenIndex());
-			String ttype = tokenNames[token.getType()];
-			String line = String.valueOf(token.getLine());
+			String ttype = token.getType() == Token.EOF ? "EOF" : tokenNames[token.getType()];
+			String line = String.valueOf(token.getLine() - 1);
 			String col = String.valueOf(token.getCharPositionInLine() + 1);
 			String text = Strings.escape(token.getText());
 			String chan = String.valueOf(token.getChannel());

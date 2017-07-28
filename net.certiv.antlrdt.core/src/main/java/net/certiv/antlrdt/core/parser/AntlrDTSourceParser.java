@@ -2,7 +2,7 @@ package net.certiv.antlrdt.core.parser;
 
 import java.util.Collection;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -11,10 +11,10 @@ import org.antlr.v4.runtime.tree.xpath.XPath;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
-import net.certiv.antlrdt.core.parser.gen.OutlineVisitor;
-import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ActionContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarSpecContext;
+import net.certiv.antlrdt.core.parser.gen.OutlineVisitor;
+import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.parser.DslParseErrorListener;
 import net.certiv.dsl.core.parser.DslSourceParser;
@@ -38,15 +38,15 @@ public class AntlrDTSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Builds a ParseTree for the given content representing the source of a corresponding module
-	 * (file).
+	 * Builds a ParseTree for the given content representing the source of a
+	 * corresponding module (file).
 	 */
 	@Override
-	public ParseTree parse(String name, char[] content, DslParseErrorListener errListener)
+	public ParseTree parse(String name, String content, DslParseErrorListener errListener)
 			throws RecognitionException, Exception {
 		Log.info(this, "Parse [name=" + name + "]");
 
-		input = new ANTLRInputStream(content, content.length);
+		input = CharStreams.fromString(content, name);
 		lexer = new AntlrDT4Lexer(input);
 
 		AntlrDT4TokenFactory factory = new AntlrDT4TokenFactory(input);
@@ -63,7 +63,8 @@ public class AntlrDTSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Build the internal minimal model used as the structure basis for the outline view, etc.
+	 * Build the internal minimal model used as the structure basis for the outline
+	 * view, etc.
 	 */
 	@Override
 	public void buildModel() {
@@ -96,8 +97,8 @@ public class AntlrDTSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Tree pattern matcher used to identify the code elements that may be signficant in CodeAssist
-	 * operations
+	 * Tree pattern matcher used to identify the code elements that may be
+	 * signficant in CodeAssist operations
 	 */
 	@Override
 	public void buildCodeAssist() {
@@ -115,13 +116,14 @@ public class AntlrDTSourceParser extends DslSourceParser {
 	// /////////////////////////////////////////////////////////////////////////////////
 
 	public String resolvePackageName() {
-		if (packageName == null) extractPackage();
+		if (packageName == null)
+			extractPackage();
 		return packageName;
 	}
 
 	/**
-	 * Tree pattern matcher used to identify package defining statements NOTE: compare to
-	 * implementation in core builder
+	 * Tree pattern matcher used to identify package defining statements NOTE:
+	 * compare to implementation in core builder
 	 */
 	private void extractPackage() {
 		Log.debug(this, "ExtractPackage [root=" + (parseTree != null ? "not null" : "null") + "]");
