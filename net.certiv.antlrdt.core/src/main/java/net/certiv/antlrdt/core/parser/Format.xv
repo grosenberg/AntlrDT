@@ -166,7 +166,7 @@ parserRule
 lexerRule
 	: //lexerRuleSpec
 			{
-				helper.locate($FRAGMENT).newLine().spaceAfter();
+				// helper.locate($FRAGMENT).newLine().spaceAfter(); 
 				helper.locate($TOKEN_REF).wrap(WRAP_NAME_RULE);
 				helper.locate($COLON).wrap(WRAP_COLON_RULE).space(SPACE_COLON_RULE);
 				helper.locate($SEMI).wrap(WRAP_SEMI_RULE).space(SPACE_SEMI_RULE).terminal();

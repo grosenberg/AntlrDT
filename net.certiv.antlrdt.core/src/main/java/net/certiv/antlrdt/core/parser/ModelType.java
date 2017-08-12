@@ -5,7 +5,7 @@ public enum ModelType {
 	DocComment,
 	BlockComment,
 	LineComment,
-	GrammarType,
+	GrammarDef,
 	Options,
 	Option,
 	Tokens,
@@ -17,7 +17,6 @@ public enum ModelType {
 	ActionBlock,
 	Block,
 	BlockEnd,
-	RuleRef,
-	Terminal,
-	LableId;
+	LableId,
+	Mode;
 }

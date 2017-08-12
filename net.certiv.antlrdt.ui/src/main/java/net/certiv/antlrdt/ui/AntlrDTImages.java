@@ -11,12 +11,12 @@ public class AntlrDTImages extends DslImages {
 	private static final Bundle locBundle = AntlrDTUI.getDefault().getBundle();
 	private static final String locPrefix = locBundle.getSymbolicName() + '.';
 
-	public final ImageDescriptor DESC_OBJ_MODULE = create(locBundle, OBJ, locPrefix + "module_blue.gif");
+	public final ImageDescriptor DESC_OBJ_MODULE = create(locBundle, OBJ, locPrefix + "grammar_obj.png");
 	public final ImageDescriptor DESC_OBJ_STATEMENT = create(locBundle, OBJ, locPrefix + "statement.gif");
 	public final ImageDescriptor DESC_OBJ_BLOCK = create(locBundle, OBJ, locPrefix + "block.gif");
 
 	public final ImageDescriptor DESC_OBJ_BUFFER = create(locBundle, OBJ, locPrefix + "buffer.png");
-	public final ImageDescriptor DESC_OBJ_MESSAGE = create(locBundle, OBJ, locPrefix + "message_obj.gif");
+	public final ImageDescriptor DESC_OBJ_MESSAGE = create(locBundle, OBJ, locPrefix + "message_obj.png");
 	public final ImageDescriptor DESC_OBJ_REQUIRED = create(locBundle, OBJ, locPrefix + "required_obj.gif");
 	public final ImageDescriptor DESC_OBJ_OPTION = create(locBundle, OBJ, locPrefix + "option_obj.gif");
 
@@ -39,6 +39,9 @@ public class AntlrDTImages extends DslImages {
 	public final ImageDescriptor DESC_OBJ_LEXER = create(locBundle, OBJ, locPrefix + "lexer_obj.png");
 	public final ImageDescriptor DESC_OBJ_ACTION = create(locBundle, OBJ, locPrefix + "action_obj.png");
 	public final ImageDescriptor DESC_OBJ_OPTIONS = create(locBundle, OBJ, locPrefix + "options_obj.png");
+	public final ImageDescriptor DESC_OBJ_MODE = create(locBundle, OBJ, locPrefix + "mode_obj.png");
+	public final ImageDescriptor DESC_OBJ_LABEL = create(locBundle, OBJ, locPrefix + "label_obj.gif");
+
 	public final ImageDescriptor DESC_OVR_COMBINED = create(locBundle, OVR, locPrefix + "combined_ovr.png");
 	public final ImageDescriptor DESC_OVR_PARSER = create(locBundle, OVR, locPrefix + "parser_ovr.png");
 	public final ImageDescriptor DESC_OVR_LEXER = create(locBundle, OVR, locPrefix + "lexer_ovr.png");
@@ -96,7 +99,7 @@ public class AntlrDTImages extends DslImages {
 	public final ImageDescriptor RULE_NODE = create(locBundle, OBJ, locPrefix + "ruleNode.png");
 	public final ImageDescriptor TERMINAL_NODE = create(locBundle, OBJ, locPrefix + "terminalNode.png");
 	public final ImageDescriptor ERROR_NODE = create(locBundle, OBJ, locPrefix + "errorNode.png");
-	public final ImageDescriptor UNKNOWN_NODE = create(locBundle, OBJ, locPrefix + "unknownNode.png");
+	public final ImageDescriptor UNKNOWN_NODE = create(locBundle, OBJ, locPrefix + "unknown_obj.gif");
 
 	public AntlrDTImages() {
 		super();

@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
+// Generated from AntlrDT4Parser.g4 by ANTLR 4.7
 
 	package net.certiv.antlrdt.core.parser.gen;
 
@@ -116,12 +116,6 @@ public interface AntlrDT4ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArgActionBlock(AntlrDT4Parser.ArgActionBlockContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AntlrDT4Parser#modeSpec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitModeSpec(AntlrDT4Parser.ModeSpecContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AntlrDT4Parser#rules}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -218,11 +212,23 @@ public interface AntlrDT4ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLabeledAlt(AntlrDT4Parser.LabeledAltContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AntlrDT4Parser#modeRuleSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AntlrDT4Parser#lexerRuleSpec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLexerRuleSpec(AntlrDT4Parser.LexerRuleSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AntlrDT4Parser#fragmentRuleSpec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AntlrDT4Parser#lexerRuleBlock}.
 	 * @param ctx the parse tree

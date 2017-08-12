@@ -25,7 +25,6 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorListener;
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
-import net.certiv.dsl.core.util.ClassUtil;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.loader.ClassLoaderFactory;
@@ -63,8 +62,9 @@ class TargetUnit {
 		ClassLoader parent = thread.getContextClassLoader();
 		IProject project = record.getProject();
 
+		ClassLoader projectLoader;
 		try {
-			ClassLoader projectLoader = ClassLoaderFactory.build(parent, project);
+			projectLoader = ClassLoaderFactory.create(parent, project);
 			thread.setContextClassLoader(projectLoader);
 		} catch (MalformedURLException e) {
 			Log.info(this, "Restoring classloader after failure");
@@ -73,9 +73,9 @@ class TargetUnit {
 		}
 
 		try {
-			if (built()) generate(content);
+			if (buildClasses(projectLoader)) generate(content);
 		} finally {
-			Log.info(this, "Restoring classloader after generate attempt");
+			Log.info(this, "Restoring classloader after generate");
 			thread.setContextClassLoader(parent);
 		}
 	}
@@ -127,24 +127,24 @@ class TargetUnit {
 		}
 	}
 
-	private boolean built() {
+	private boolean buildClasses(ClassLoader projLoader) {
 		if (parserName != null && lexerName != null) {
-			parserClass = loadClass(parserName);
-			lexerClass = loadClass(lexerName);
-			factoryClass = loadClass(record.getTokenFactory().getName().replace(".java", ""));
-			errorClass = loadClass(record.getErrorStrategy().getName().replace(".java", ""));
+			parserClass = loadClass(projLoader, parserName);
+			lexerClass = loadClass(projLoader, lexerName);
+			factoryClass = loadClass(projLoader, record.getTokenFactory().getName().replace(".java", ""));
+			errorClass = loadClass(projLoader, record.getErrorStrategy().getName().replace(".java", ""));
 		}
 		return parserClass != null && lexerClass != null;
 	}
 
-	private Class<?> loadClass(String name) {
+	private Class<?> loadClass(ClassLoader projLoader, String name) {
 		if (name.equals("")) return null;
 		IProject project = record.getProject();
 		String fqname = CoreUtil.determineFQName(project, name);
 		Log.info(this, "Loading " + fqname);
 		try {
-			return ClassUtil.loadClass(project, fqname);
-		} catch (Exception e) {
+			return projLoader.loadClass(fqname);
+		} catch (ClassNotFoundException e) {
 			Log.error(this, "Failed to load class '" + fqname + "' (" + e.getMessage() + ")");
 		}
 		return null;

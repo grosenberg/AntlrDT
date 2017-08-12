@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.RGB;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsInit;
-import net.certiv.dsl.core.util.Log;
 
 /**
  * Initializer for the preferences unique to this plugin.
@@ -23,7 +22,6 @@ public class PrefsInitializer extends DslPrefsInit {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		Log.info(this, "Initializing AntlrDT preferences");
 		super.initializeDefaultPreferences();
 
 		setRGB(PrefsKey.EDITOR_ACTION_COLOR, new RGB(70, 150, 170));

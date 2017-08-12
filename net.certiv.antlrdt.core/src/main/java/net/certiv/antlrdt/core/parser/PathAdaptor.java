@@ -4,11 +4,14 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.FragmentRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ParserRuleSpecContext;
 
 /**
  * Implementing functions for grammar path walker.
+ * 
+ * TODO: handle modes
  */
 public abstract class PathAdaptor extends Processor {
 
@@ -32,7 +35,12 @@ public abstract class PathAdaptor extends Processor {
 	public void lexerRef(Token term) {
 		LexerRuleSpecContext ruleSpec = (LexerRuleSpecContext) pathNodes().get(1);
 		Token ref = ruleSpec.TOKEN_REF().getSymbol();
-		boolean fragment = ruleSpec.FRAGMENT() != null;
-		helper.addPathsElement(ref, term, false, fragment);
+		helper.addPathsElement(ref, term, false, false);
+	}
+
+	public void fragmentRef(Token term) {
+		FragmentRuleSpecContext ruleSpec = (FragmentRuleSpecContext) pathNodes().get(1);
+		Token ref = ruleSpec.TOKEN_REF().getSymbol();
+		helper.addPathsElement(ref, term, false, true);
 	}
 }

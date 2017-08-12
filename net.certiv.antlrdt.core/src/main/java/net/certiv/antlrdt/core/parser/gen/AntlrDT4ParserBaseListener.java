@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
+// Generated from AntlrDT4Parser.g4 by ANTLR 4.7
 
 	package net.certiv.antlrdt.core.parser.gen;
 
@@ -223,18 +223,6 @@ public class AntlrDT4ParserBaseListener implements AntlrDT4ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModeSpec(AntlrDT4Parser.ModeSpecContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitModeSpec(AntlrDT4Parser.ModeSpecContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterRules(AntlrDT4Parser.RulesContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -427,6 +415,18 @@ public class AntlrDT4ParserBaseListener implements AntlrDT4ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLexerRuleSpec(AntlrDT4Parser.LexerRuleSpecContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -434,6 +434,18 @@ public class AntlrDT4ParserBaseListener implements AntlrDT4ParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLexerRuleSpec(AntlrDT4Parser.LexerRuleSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

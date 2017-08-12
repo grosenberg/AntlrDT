@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.Tool;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.tool.ANTLRMessage;
 import org.antlr.v4.tool.Grammar;
 import org.eclipse.core.resources.IContainer;
@@ -41,9 +42,9 @@ import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.model.util.ErrorListener;
-import net.certiv.dsl.core.parser.util.ParserUtil;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.util.Parsers;
 import net.certiv.v4.runtime.dsl.MsgUtil;
 
 @SuppressWarnings("restriction")
@@ -54,8 +55,13 @@ public class AntlrDTBuilder extends DslBuilder {
 
 	private static final int WORK_BUILD = 100;
 
-	/* The current .g4 file being edited, or null */
-	private IFile file;
+	private IFile file; // the current .g4 file being edited, or null
+	private IPath filepath;
+	private IPath projpath;
+
+	public AntlrDTBuilder() {
+		super();
+	}
 
 	@Override
 	public DslCore getDslCore() {
@@ -71,43 +77,38 @@ public class AntlrDTBuilder extends DslBuilder {
 	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> srcModules)
 			throws CoreException {
 
-		Log.debug(this, "Builder invoked [name=" + this.getClass().getName() + "]");
-		if (!getDslCore().getPrefsManager().getBoolean(PrefsKey.BUILDER_ENABLE)) return null;
+		if (!builderEnabled()) return null;
 
-		monitor.beginTask(CoreUtil.EMPTY_STRING, WORK_BUILD);
+		try {
+			monitor.beginTask(CoreUtil.EMPTY_STRING, WORK_BUILD);
 
-		file = CoreUtil.getActiveDslFile(getDslCore().getDslFileExtensions());
-		if (!getDslCore().getPrefsManager().getBoolean(PrefsKey.BUILDER_ALLOW_FULL_BUILDS)) {
-			if (file == null) return Status.OK_STATUS;
-			Log.debug(this, "Builder limited to current file");
-			srcModules.clear();
-			srcModules.add(file);
-		}
+			Log.debug(this, String.format("%s invoked on $s", this.getClass().getName(), srcModules));
+			file = CoreUtil.getActiveDslFile(getDslCore().getDslFileExtensions());
+			filepath = file.getFullPath();
+			projpath = getProject().getFullPath();
 
-		Log.info(this, "Build start " + buildDescription(file));
-		for (IFile module : srcModules) {
-			if (!getDslCore().getPrefsManager().getBoolean(PrefsKey.BUILDER_ALLOW_FULL_BUILDS)) {
-				if (!module.getFullPath().equals(file.getFullPath())) {
-					continue;
+			for (IFile module : srcModules) {
+				IPath modpath = module.getFullPath();
+				if (restrictToActiveProject() && !projpath.isPrefixOf(modpath)) continue;
+				if (restrictToActiveProjectPath() && !modpath.equals(filepath)) continue;
+				if (excludeIgnoredPaths(module)) continue;
+
+				Log.info(this, "Building " + buildDescription(module));
+				clearMarkers(module);
+				try {
+					compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
+				} catch (Exception e) {
+					Log.error(this, "Failed to resolve build element", e);
 				}
 			}
-
-			if (excludeFromBuild(module)) continue;
-
-			Log.info(this, "Build Element " + buildDescription(module));
-			clearMarkers(module);
-			try {
-				compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
-			} catch (Exception e) {
-				Log.error(this, "Failed to resolve build element", e);
-			}
+			Log.debug(this, "Build done");
+			return Status.OK_STATUS;
+		} finally {
+			monitor.done();
 		}
-		monitor.done();
-		Log.debug(this, "Build done");
-		return Status.OK_STATUS;
 	}
 
-	private boolean excludeFromBuild(IFile module) {
+	private boolean excludeIgnoredPaths(IFile module) {
 		if (resolvePackageName(module) == null) return true;
 		IPath path = determineGeneratedSourcePath(module);
 		if (path == null) return true;
@@ -117,26 +118,9 @@ public class AntlrDTBuilder extends DslBuilder {
 		return false;
 	}
 
-	private void clearMarkers(IFile file) {
-		if (file == null) return;
-		try {
-			file.deleteMarkers(IMarker.PROBLEM, true, IFile.DEPTH_ONE);
-		} catch (CoreException e) {
-			Log.error(this, "Failed to clear markers for build", e);
-		}
-	}
-
 	private void compileGrammar(IResource resource, IProgressMonitor monitor) {
 		if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".g4"))) {
 			IFile file = (IFile) resource;
-
-			// either full builds are allowed or incremental builds limited to just the file in the
-			// active editor
-			// NOTE: FIX to allow non-active file builds?
-			// IFile fileActive = CoreUtil.getActiveEditorFile();
-			// if (!Prefs.getBoolean(PrefsKey.BUILDER_ALLOW_FULL_BUILDS)) {
-			// if (fileActive == null || !file.equals(fileActive)) return;
-			// }
 
 			try {
 				String srcFile = file.getLocation().toPortableString();
@@ -168,13 +152,17 @@ public class AntlrDTBuilder extends DslBuilder {
 	private void publishErrors(IResource resource, ErrorListener toolErrs) {
 		if (toolErrs.hasErrors()) {
 			for (ANTLRMessage err : toolErrs.getErrList()) {
-				createProblemMarker(resource, MsgUtil.offendingToken(err), err.toString(), IMarker.SEVERITY_ERROR);
+				Token token = MsgUtil.offendingToken(err);
+				String msg = MsgUtil.displayMessage(err, token);
+				createProblemMarker(resource, token, msg, IMarker.SEVERITY_ERROR);
 				Log.error(this, err.toString());
 			}
 		}
 		if (toolErrs.hasWarnings()) {
 			for (ANTLRMessage err : toolErrs.getWarnList()) {
-				createProblemMarker(resource, MsgUtil.offendingToken(err), err.toString(), IMarker.SEVERITY_WARNING);
+				Token token = MsgUtil.offendingToken(err);
+				String msg = MsgUtil.displayMessage(err, token);
+				createProblemMarker(resource, token, msg, IMarker.SEVERITY_WARNING);
 				Log.warn(this, err.toString());
 			}
 		}
@@ -188,16 +176,16 @@ public class AntlrDTBuilder extends DslBuilder {
 		IProject project = file.getProject();
 
 		// refresh directory
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_REFRESH)) {
-			boolean markDerived = getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_MARK_DERIVED);
+		if (getPrefs().getBoolean(project, PrefsKey.BUILDER_REFRESH)) {
+			boolean markDerived = getPrefs().getBoolean(project, PrefsKey.BUILDER_MARK_DERIVED);
 			doBuilderRefresh(file, markDerived, monitor);
 		}
 		// format all
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_FORMAT)) {
+		if (getPrefs().getBoolean(project, PrefsKey.BUILDER_FORMAT)) {
 			doBuilderFormat(file, monitor);
 		}
 		// organize imports
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_ORGANIZE)) {
+		if (getPrefs().getBoolean(project, PrefsKey.BUILDER_ORGANIZE)) {
 			doBuilderOrganizeImports(file, monitor);
 		}
 	}
@@ -316,9 +304,11 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	/**
-	 * Determine the build folder for a given a resource representing a grammar file.
+	 * Determine the build folder for a given a resource representing a grammar
+	 * file.
 	 * 
-	 * @param resource typically the grammar IFile
+	 * @param resource
+	 *            typically the grammar IFile
 	 * @return a filesystem absolute path to the build folder
 	 */
 	private IPath determineBuildFolder(IResource resource) {
@@ -338,7 +328,7 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	private String resolvePackageName(IResource resource) {
-		AntlrDTSourceParser parser = (AntlrDTSourceParser) ParserUtil.getSourceParser(getDslCore(), (IFile) resource);
+		AntlrDTSourceParser parser = (AntlrDTSourceParser) Parsers.getSourceParser(getDslCore(), (IFile) resource);
 		return parser.resolvePackageName();
 	}
 

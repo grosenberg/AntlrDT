@@ -82,8 +82,8 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.model.IModuleDeclaration;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
-import net.certiv.dsl.core.parser.util.ParserUtil;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
+import net.certiv.dsl.core.util.Parsers;
 
 public class PathsEditor extends EditorPart implements IZoomableEditor, ISelectionListener {
 
@@ -255,10 +255,6 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	/** React to selection in the outline view. */
-	/**
-	 * @param part
-	 * @param sel
-	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (part instanceof ContentOutline) {
@@ -279,10 +275,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	// called to trigger update with new input
 	public void setInput(IResource res, String ruleName) {
 		if (ruleName != null) {
-			AntlrDTSourceParser parser = (AntlrDTSourceParser) ParserUtil.getSourceParser(getDslCore(), (IFile) res);
+			AntlrDTSourceParser parser = (AntlrDTSourceParser) Parsers.getSourceParser(getDslCore(), (IFile) res);
 			PathsData data = parser.getPathsData();
 			helper.setModel(new PathsModel(data, ruleName));
-			// TODO: may need to do this async
 			PathsNode selected = helper.getPathsNode(ruleName);
 			nodeLabelProvider.setCurrentSelection(selected, selected);
 
@@ -388,8 +383,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	/**
-	 * Handle selection changes in the viewer. This will update the view whenever a selection
-	 * occurs. All selectable nodes in the graph should resolve to PathsNode.
+	 * Handle selection changes in the viewer. This will update the view whenever a
+	 * selection occurs. All selectable nodes in the graph should resolve to
+	 * PathsNode.
 	 */
 	@SuppressWarnings("unchecked")
 	private void handleSelectionChanged(Object selectedElement, IStructuredSelection selections) {
@@ -432,10 +428,11 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	/*
-	 * Graph#scrollTo(horz - hDelta, vert - vDelta) is the normal way to adjust the view port.
-	 * Performance is quite bad where the number of nodes exceeds about 500. Each call results in a
-	 * full traversal of the graph connections! Graph#scrollToX and Graph#scrollToY are optimized
-	 * for use by the scroll-bars - very big performance gain with no observable downside.
+	 * Graph#scrollTo(horz - hDelta, vert - vDelta) is the normal way to adjust the
+	 * view port. Performance is quite bad where the number of nodes exceeds about
+	 * 500. Each call results in a full traversal of the graph connections!
+	 * Graph#scrollToX and Graph#scrollToY are optimized for use by the scroll-bars
+	 * - very big performance gain with no observable downside.
 	 */
 	protected void dragSurface(MouseEvent e) {
 		if (surfaceDragging && lastLocation != null) {

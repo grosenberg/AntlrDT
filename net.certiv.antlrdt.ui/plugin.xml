@@ -317,12 +317,14 @@
             id="net.certiv.dsl.ui.edit.text.open.editor"
             name="%ActionDefinition.openEditor.name">
       </command>
+	  <!--
       <command
             name="Rename"
             description="Rename element"
             categoryId="net.certiv.antlrdt.ui.category.refactor"
             id="net.certiv.antlrdt.ui.edit.text.rename.element">
       </command>
+      -->
    </extension>
 
 <!--
@@ -455,6 +457,7 @@
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	        
 	  <!-- Rename refactoring  -->
+	  <!--
       <key
             sequence="M2+M3+R"
             commandId="net.certiv.antlrdt.ui.edit.text.rename.element"
@@ -469,6 +472,7 @@
             sequence="COMMAND+ALT+R"
             commandId="net.certiv.antlrdt.ui.edit.text.rename.element"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+		-->
 	        
 	</extension>
 

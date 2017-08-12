@@ -28,6 +28,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				}
 				return text;
 			case IDslElement.STATEMENT:
+			case IDslElement.FIELD:
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					switch (data.mType) {
@@ -48,7 +49,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 			case IDslElement.BLOCK:
 				return text;
 		}
-		return text;
+		return text + "[element kind=" + getElementKind() + "]";
 	}
 
 	public Image decorateImage(Image image) {
@@ -61,6 +62,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				type = 1;
 				break;
 			case IDslElement.STATEMENT:
+			case IDslElement.FIELD:
 				baseImage = getImageProvider().DESC_OBJ_STATEMENT;
 				type = 2;
 				if (hasData()) {
@@ -104,20 +106,28 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 								type = 12;
 							}
 							break;
-						case AtAction:
-							baseImage = getImageProvider().DESC_OBJ_ACTION;
+						case Mode:
+							baseImage = getImageProvider().DESC_OBJ_MODE;
 							type = 13;
 							break;
+						case AtAction:
+							baseImage = getImageProvider().DESC_OBJ_ACTION;
+							type = 14;
+							break;
+						case LableId:
+							baseImage = getImageProvider().DESC_OBJ_LABEL;
+							type = 15;
+							break;
 						default:
-							baseImage = getImageProvider().DESC_OBJ_REQUIRED;
-							type = 7;
+							baseImage = getImageProvider().UNKNOWN_NODE;
+							type = 50;
 							break;
 					}
 				}
 				break;
 			case IDslElement.BLOCK:
 				baseImage = getImageProvider().DESC_OBJ_BLOCK;
-				type = 14;
+				type = 20;
 				break;
 		}
 		Image img = fetchImage(type);

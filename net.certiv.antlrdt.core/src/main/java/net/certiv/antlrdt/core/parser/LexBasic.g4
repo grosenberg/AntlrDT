@@ -37,7 +37,7 @@
   
 lexer grammar LexBasic;
 
-import LexUnicode;	// Formal set of Unicode ranges
+// import LexUnicode;	// Formal set of Unicode ranges
 
 // ======================================================
 // Lexer fragments

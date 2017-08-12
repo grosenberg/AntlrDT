@@ -29,16 +29,7 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*	A grammar for ANTLR v4 suitable for use in an IDE 
- *
- *	Modified 2014.01.01 gbr
- *	-- corrected ebnfSuffix rule to allow for "*?" 
- *	Modified 2014.01.04 gbr
- *	-- updated to be largely consistent with the 'official' v4 grammar
- *	Modified 2015.06.14 gbr
- *	-- begin update for compatibility with Antlr v4.5
- *
- */
+/*	A grammar for ANTLR v4 suitable for use in an IDE */
 
 parser grammar AntlrDT4Parser;
 
@@ -57,7 +48,6 @@ grammarSpec
 		grammarType id SEMI
 		prequelConstruct*
 		rules
-		modeSpec*
 		EOF
 	;
 
@@ -155,10 +145,6 @@ argActionBlock
 	:	BEGIN_ARGUMENT ARGUMENT_CONTENT* END_ARGUMENT
 	;
 
-modeSpec
-	:	MODE id SEMI lexerRuleSpec*
-	;
-
 rules
 	:	ruleSpec*
 	;
@@ -166,11 +152,13 @@ rules
 ruleSpec
 	:	parserRuleSpec
 	|	lexerRuleSpec
+	|	modeRuleSpec
+	|	fragmentRuleSpec
 	;
 
 parserRuleSpec
 	:	DOC_COMMENT?
-		ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec? 
+		ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec?
 		localsSpec?
 		rulePrequel*
 		COLON
@@ -220,17 +208,13 @@ ruleModifiers
 	:	ruleModifier+
 	;
 
-// An individual access modifier for a rule. The 'fragment' modifier
-// is an internal indication for lexer rules that they do not match
-// from the input but are like subroutines for other lexer rules to
-// reuse for certain lexical patterns. The other modifiers are passed
+// An individual access modifier for a rule. These modifiers are passed
 // to the code generation templates and may be ignored by the template
 // if they are of no use in that language.
 ruleModifier
 	:	PUBLIC
 	|	PRIVATE
 	|	PROTECTED
-	|	FRAGMENT
 	;
 
 ruleBlock
@@ -248,8 +232,20 @@ labeledAlt
 // --------------------
 // Lexer rules
 
+modeRuleSpec
+	:	MODE id SEMI lexerRuleSpec*
+	;
+
 lexerRuleSpec
-	:	DOC_COMMENT? FRAGMENT?
+	:	DOC_COMMENT? 
+		TOKEN_REF COLON lexerRuleBlock SEMI
+	;
+
+// The 'fragment' rule is a lexer rule that functions like an 
+// inlined subroutine for other lexer rules to reuse for 
+// certain lexical patterns.
+fragmentRuleSpec
+	:	DOC_COMMENT? FRAGMENT
 		TOKEN_REF COLON lexerRuleBlock SEMI
 	;
 
@@ -280,7 +276,7 @@ lexerElement
 labeledLexerElement
 	:	id ( ASSIGN | PLUS_ASSIGN )
 		(	lexerAtom
-		|	block
+		|	lexerBlock
 		)
 	;
 
@@ -367,8 +363,7 @@ lexerAtom
 	;
 
 atom
-	:	range 				// Range x..y - only valid in lexers
-	|	terminal
+	:	terminal
 	|	ruleref
 	|	notSet
 	|	DOT elementOptions?

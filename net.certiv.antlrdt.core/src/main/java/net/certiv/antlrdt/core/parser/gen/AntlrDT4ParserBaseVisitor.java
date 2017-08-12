@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
+// Generated from AntlrDT4Parser.g4 by ANTLR 4.7
 
 	package net.certiv.antlrdt.core.parser.gen;
 
@@ -139,13 +139,6 @@ public class AntlrDT4ParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> im
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitModeSpec(AntlrDT4Parser.ModeSpecContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitRules(AntlrDT4Parser.RulesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -258,7 +251,21 @@ public class AntlrDT4ParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> im
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitLexerRuleSpec(AntlrDT4Parser.LexerRuleSpecContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

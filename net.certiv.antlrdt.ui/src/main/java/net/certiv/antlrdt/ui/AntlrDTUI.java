@@ -59,9 +59,9 @@ public class AntlrDTUI extends DslUI {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
+		assert (AntlrDTCore.getDefault().getNatureId() != null);
 		plugin = this;
 		super.start(context);
-		assert (AntlrDTCore.getDefault().getPluginId() != null);
 	}
 
 	@Override

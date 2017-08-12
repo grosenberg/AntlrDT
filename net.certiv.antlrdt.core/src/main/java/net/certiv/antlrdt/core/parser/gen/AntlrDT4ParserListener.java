@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.antlrdt/net.certiv.antlrdt.core/src/main/java/net/certiv/antlrdt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.5.3
+// Generated from AntlrDT4Parser.g4 by ANTLR 4.7
 
 	package net.certiv.antlrdt.core.parser.gen;
 
@@ -181,16 +181,6 @@ public interface AntlrDT4ParserListener extends ParseTreeListener {
 	 */
 	void exitArgActionBlock(AntlrDT4Parser.ArgActionBlockContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AntlrDT4Parser#modeSpec}.
-	 * @param ctx the parse tree
-	 */
-	void enterModeSpec(AntlrDT4Parser.ModeSpecContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AntlrDT4Parser#modeSpec}.
-	 * @param ctx the parse tree
-	 */
-	void exitModeSpec(AntlrDT4Parser.ModeSpecContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AntlrDT4Parser#rules}.
 	 * @param ctx the parse tree
 	 */
@@ -351,6 +341,16 @@ public interface AntlrDT4ParserListener extends ParseTreeListener {
 	 */
 	void exitLabeledAlt(AntlrDT4Parser.LabeledAltContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AntlrDT4Parser#modeRuleSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AntlrDT4Parser#modeRuleSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitModeRuleSpec(AntlrDT4Parser.ModeRuleSpecContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AntlrDT4Parser#lexerRuleSpec}.
 	 * @param ctx the parse tree
 	 */
@@ -360,6 +360,16 @@ public interface AntlrDT4ParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLexerRuleSpec(AntlrDT4Parser.LexerRuleSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AntlrDT4Parser#fragmentRuleSpec}.
+	 * @param ctx the parse tree
+	 */
+	void enterFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AntlrDT4Parser#fragmentRuleSpec}.
+	 * @param ctx the parse tree
+	 */
+	void exitFragmentRuleSpec(AntlrDT4Parser.FragmentRuleSpecContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AntlrDT4Parser#lexerRuleBlock}.
 	 * @param ctx the parse tree

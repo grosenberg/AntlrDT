@@ -26,16 +26,15 @@ import net.certiv.dsl.ui.preferences.page.AbstractFieldEditorPreferencePage;
 
 public class PrefPageBuilder extends AbstractFieldEditorPreferencePage {
 
-	private Combo projCombo;
-	private BooleanFieldEditor2 builderEn;
 	private Composite buf;
-	private BooleanFieldEditor2 builderFull;
-	private BooleanFieldEditor2 projectRestriction;
-
+	private Combo projCombo;
 	private boolean enabled;
+	private BooleanFieldEditor2 builderEn;
+	private BooleanFieldEditor2 projRestriction;
+	private BooleanFieldEditor2 curpathRestriction;
 
-	private LinkedHashMap<String, IProject> projects; 	// all open projects with antlrdt nature
-	private IProject active; 							// current has antlrdt nature or null
+	private LinkedHashMap<String, IProject> projects;	// all open projects with antlrdt nature
+	private IProject active;							// current has antlrdt nature or null
 
 	public PrefPageBuilder() {
 		super(GRID);
@@ -115,30 +114,40 @@ public class PrefPageBuilder extends AbstractFieldEditorPreferencePage {
 
 			public void widgetSelected(SelectionEvent e) {
 				enabled = ((Button) e.getSource()).getSelection();
-				builderFull.setEnabled(enabled, buf);
-				projectRestriction.setEnabled(enabled, buf);
+				projRestriction.setEnabled(enabled, buf);
+				curpathRestriction.setEnabled(enabled, buf);
 				buf.redraw();
 			}
 		});
 		addField(builderEn);
 
-		builderFull = new BooleanFieldEditor2(bind(PrefsKey.BUILDER_ALLOW_FULL_BUILDS), "Allow Full Builds", buf);
-		addField(builderFull);
+		projRestriction = new BooleanFieldEditor2(bind(PrefsKey.BUILDER_RESTRICT_TO_PROJECT),
+				"Restrict builds to current project", buf);
+		projRestriction.addSelectionListener(new SelectionAdapter() {
 
-		projectRestriction = new BooleanFieldEditor2(bind(PrefsKey.BUILDER_RESTRICT_TO_PROJECT),
-				"Restrict full builds to current project", buf);
-		projectRestriction.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = ((Button) e.getSource()).getSelection();
+				if (!selected) {
+					curpathRestriction.setBooleanValue(selected);
+				}
+			}
+		});
+		addField(projRestriction);
+
+		curpathRestriction = new BooleanFieldEditor2(bind(PrefsKey.BUILDER_RESTRICT_TO_PATH),
+				"Restrict builds to active path", buf);
+		curpathRestriction.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = ((Button) e.getSource()).getSelection();
 				if (selected) {
-					builderFull.setBooleanValue(selected);
+					projRestriction.setBooleanValue(selected);
 				}
 			}
-
 		});
-		addField(projectRestriction);
+		addField(curpathRestriction);
 
 		// ///////////////////////////////////////////////////////
 
@@ -169,7 +178,7 @@ public class PrefPageBuilder extends AbstractFieldEditorPreferencePage {
 
 	protected void updateEnables() {
 		enabled = getDeltaMgr().getBoolean(active, bind(PrefsKey.BUILDER_ENABLE));
-		builderFull.setEnabled(enabled, buf);
+		curpathRestriction.setEnabled(enabled, buf);
 		buf.redraw();
 	}
 

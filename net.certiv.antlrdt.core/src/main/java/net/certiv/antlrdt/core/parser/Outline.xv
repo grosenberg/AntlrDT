@@ -14,22 +14,26 @@ options {
 
 outline
 	: grammarSpec
+	| atAction
 	| optionsBlock
 	| optionStatement
 	| tokensBlock
 	| tokenStatement
-	| atAction
 	| parserRuleBlock
 	| lexerRuleBlock
-	| ruleDecl
+	| fragmentRuleBlock
+	| modeBlock
 	| ruleRef
-	| terminalDecl
 	| terminalRef
-	| labelId
+	| labelRef
 	;
 
 grammarSpec			: /grammarSpec
 							{ grammarModule(); }
+					;
+
+atAction			: /grammarSpec/prequelConstruct/action
+							{ processAction(); }
 					;
 
 optionsBlock		: //prequelConstruct/optionsSpec			
@@ -38,7 +42,7 @@ optionsBlock		: //prequelConstruct/optionsSpec
 					;
 
 optionStatement		: //prequelConstruct/optionsSpec/option
-							{ processOptionStatement(); }	
+							{ processOptionStatement(); }
 					;
 
 tokensBlock			: //tokensSpec 
@@ -50,22 +54,28 @@ tokenStatement		: //tokensSpec//id
 							{ processTokenStatement(); }
 					;
 
-atAction			: /grammarSpec/prequelConstruct/action
-							{ processAction(); }
-					;
-
-parserRuleBlock		: //ruleSpec/parserRuleSpec
+parserRuleBlock		: //parserRuleSpec
 							{ onEntry: begParserRule(); }
 							{ onExit:  endBlock(); }	
 					;
 
 lexerRuleBlock		: //lexerRuleSpec
 							{ onEntry: begLexerRule(); }
+							{ onExit:  endBlock(); }
+					;
+
+fragmentRuleBlock	: //fragmentRuleSpec
+							{ onEntry: begFragmentRule(); }
+							{ onExit:  endBlock(); }
+					;
+
+modeBlock			: //modeRuleSpec
+							{ onEntry: begModeBlock(); }
 							{ onExit:  endBlock(); }	
 					;
 
-ruleDecl			: //parserRuleSpec	{ addRuleDecl(); } ;
-ruleRef				: //ruleref			{ addRuleRef(); } ;
-terminalDecl		: //lexerRuleSpec	{ addTerminalDecl(); } ;
-terminalRef			: //terminal		{ addTerminalRef(); } ;
-labelId				: //id				{ addLabelId(); } ;
+ruleRef				: //ruleref				{ addRuleRef(); } ;
+
+terminalRef			: //terminal			{ addTerminalRef(); } ;
+
+labelRef			: //labeledElement/id	{ addLabelRef(); } ;

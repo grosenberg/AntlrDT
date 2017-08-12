@@ -11,7 +11,6 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.folding.AntlrDTFoldingStructureProvider;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.text.folding.IFoldingStructureProvider;
@@ -37,7 +36,6 @@ public class AntlrDTEditor extends DslEditor {
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
-		Log.debug(this, "AntlrDT editor started");
 		setEditorContextMenuId(EDITOR_CONTEXT);
 		setRulerContextMenuId(RULER_CONTEXT);
 	}

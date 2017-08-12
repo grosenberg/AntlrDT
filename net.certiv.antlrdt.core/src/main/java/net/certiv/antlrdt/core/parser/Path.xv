@@ -15,6 +15,7 @@ options {
 paths
 	: parserRuleRef
 	| parserTokenRef
+	| lexerTokenRef
 	;
 
 parserRuleRef	: //parserRuleSpec//ruleref
@@ -27,4 +28,8 @@ parserTokenRef	: //parserRuleSpec//terminal
 
 lexerTokenRef	: //lexerRuleSpec//terminal
 					{ lexerRef($TOKEN_REF); }
+				;
+
+fragmentTokenRef	: // fragmentRuleSpec//terminal
+					{ fragmentRef($TOKEN_REF); }
 				;
