@@ -9,13 +9,13 @@ options {
 	package net.certiv.antlrdt.core.parser.gen;
 
 	import net.certiv.antlrdt.core.parser.PathAdaptor;
-
 }
 
 paths
 	: parserRuleRef
 	| parserTokenRef
 	| lexerTokenRef
+	| fragTokenRef
 	;
 
 parserRuleRef	: //parserRuleSpec//ruleref
@@ -30,6 +30,6 @@ lexerTokenRef	: //lexerRuleSpec//terminal
 					{ lexerRef($TOKEN_REF); }
 				;
 
-fragmentTokenRef	: // fragmentRuleSpec//terminal
+fragTokenRef	: //fragmentRuleSpec//terminal
 					{ fragmentRef($TOKEN_REF); }
 				;

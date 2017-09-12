@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

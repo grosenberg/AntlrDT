@@ -64,4 +64,9 @@ public class PathsNode {
 	public boolean isFragment() {
 		return fragment;
 	}
+
+	@Override
+	public String toString() {
+		return "PathsNode: " + ref.getText();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2005-2010, Gerald B. Rosenberg, Certiv Analytics and others. All rights reserved. This
+ * Copyright 2005-2017, Gerald B. Rosenberg, Certiv Analytics and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of the Eclipse Public
  * License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html Contributors: Certiv Analytics The Chisel Group,
@@ -66,10 +66,13 @@ import net.certiv.antlrdt.core.parser.PathsNode;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.graph.DslGraphViewer;
+import net.certiv.antlrdt.ui.graph.EnhTipHelper;
 import net.certiv.antlrdt.ui.graph.IZoomableEditor;
 import net.certiv.antlrdt.ui.graph.ViewForm;
 import net.certiv.antlrdt.ui.graph.actions.Layout;
 import net.certiv.antlrdt.ui.graph.actions.LayoutToolbarGroup;
+import net.certiv.antlrdt.ui.graph.actions.PathsAddAction;
+import net.certiv.antlrdt.ui.graph.actions.PathsRemoveAction;
 import net.certiv.antlrdt.ui.graph.actions.Router;
 import net.certiv.antlrdt.ui.graph.actions.RouterToolbarGroup;
 import net.certiv.antlrdt.ui.graph.actions.ScreenshotAction;
@@ -78,12 +81,12 @@ import net.certiv.antlrdt.ui.graph.figures.ZoomContributionViewItemFix;
 import net.certiv.antlrdt.ui.graph.paths.model.PathsModel;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeContentProvider;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeLabelProvider;
-import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.model.IModuleDeclaration;
+import net.certiv.dsl.core.model.DslModelException;
+import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.model.IModuleStmt;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.core.util.Parsers;
 
 public class PathsEditor extends EditorPart implements IZoomableEditor, ISelectionListener {
 
@@ -95,25 +98,33 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	private static final String KEY_LAYOUT = "keyLayout";
 	private static final String KEY_ROUTER = "keyRouter";
 
+	public static final String ADD_PATHS = "addPaths";
+	public static final String REMOVE_PATHS = "removePaths";
+
+	private AntlrDTUI ui;
+	private AntlrDTCore core;
+
 	private DslGraphViewer viewer;
-	private PathsHelper helper;
+	private PathHelper helper;
 	private PreferenceListener prefListener;
 	private NodeContentProvider contentProvider;
 	private ViewForm viewForm;
 	private INodeLabelProvider nodeLabelProvider;
-	private FormToolkit toolKit = null;
-	private ScrolledForm form = null;
+	private FormToolkit toolKit;
+	private ScrolledForm form;
 
 	private PathsNode[] nodes = new PathsNode[] {};
-	private PathsNode selectedNode = null;
+	private PathsNode selectedNode;
 	private List<PathsNode> selectedNodes;
-	private PathsNode focusedNode = null;
+	private PathsNode focusedNode;
 
 	private LayoutToolbarGroup layoutToolbarGroup;
 	private RouterToolbarGroup routerToolbarGroup;
 	private Router router;
 
 	private Action screenshotAction;
+	private Action addPathsAction;
+	private Action removePathsAction;
 
 	private SurfaceDragAdapter dragAdapter;
 	private boolean surfaceDragging;
@@ -122,12 +133,14 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 	private IDialogSettings dialogSettings;
 
-	/** The constructor. */
 	public PathsEditor() {
 		super();
-		AntlrDTUI.getDefault().setPathsEditor(this);
-		helper = new PathsHelper(this);
+
+		ui = AntlrDTUI.getDefault();
+		core = AntlrDTCore.getDefault();
+		helper = new PathHelper(this);
 		prefListener = new PreferenceListener();
+		ui.setPathsEditor(this);
 	}
 
 	@Override
@@ -135,25 +148,18 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		setSite(site);
 		setInput(input);
 
-		IDialogSettings settings = AntlrDTUI.getDefault().getDialogSettings();
+		IDialogSettings settings = ui.getDialogSettings();
 		dialogSettings = settings.getSection(AntlrDTUI.PA_DIALOG_SEC);
 		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(AntlrDTUI.PA_DIALOG_SEC);
 		}
 	}
 
-	private DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
-	}
-
 	private DslPrefsManager getPrefs() {
-		return getDslCore().getPrefsManager();
+		return core.getPrefsManager();
 	}
 
 	/** Create the viewer and initialize it. */
-	/**
-	 * @param parent
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		toolKit = new FormToolkit(parent.getDisplay());
@@ -166,7 +172,6 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(nodeLabelProvider);
-		// viewer.setInput(null);
 		viewer.setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 
 		//////////////////////////////
@@ -189,7 +194,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 		//////////////////////////////
 
-		viewer.addSelectionChangedListener(new SelectionChangedListener());
+		viewer.addPostSelectionChangedListener(new SelectionChangedListener());
 		viewer.addDoubleClickListener(new DoubleClickListener());
 
 		getPrefs().addPropertyChangeListener(prefListener);
@@ -205,6 +210,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 			public void postShutdown(IWorkbench workbench) {}
 		});
 
+		// calls #selectionChanged in response to outline (and other) selections
 		getSelectionService().addSelectionListener(this);
 
 		makeActions();
@@ -249,45 +255,73 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		getPrefs().removePropertyChangeListener(prefListener);
 		form.dispose();
 		nodeLabelProvider.dispose();
-		helper.getModel().dispose();
-		AntlrDTUI.getDefault().setCstEditor(null);
+		helper.dispose();
+		ui.setPathsEditor(null);
 		super.dispose();
 	}
 
-	/** React to selection in the outline view. */
+	/**
+	 * React to selection in the outline view. This will generate a complete root to selected element
+	 * path graph.
+	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (part instanceof ContentOutline) {
 			if (sel instanceof IStructuredSelection) {
 				IStructuredSelection selection = (IStructuredSelection) sel;
 				for (Object elem : selection.toList()) {
-					if (elem instanceof Statement && !(elem instanceof IModuleDeclaration)) {
+					if (elem instanceof Statement && !(elem instanceof IModuleStmt)) {
 						IStatement statement = (IStatement) elem;
 						IResource res = statement.getUnderlyingResource();
 						String name = statement.getElementName();
-						setInput(res, name);
+						setInput(res, name, Kind.FULL);
 					}
 				}
 			}
 		}
 	}
 
-	// called to trigger update with new input
-	public void setInput(IResource res, String ruleName) {
+	/**
+	 * Trigger graph update with new input. The {@code kind} parameter specifies whether to (1) generate
+	 * and install a complete root to selected element model; or (2) add or remove the sub path segments
+	 * of the {@code ruleName} identified path node in the existing model.
+	 */
+	private void setInput(IResource res, String ruleName, Kind kind) {
 		if (ruleName != null) {
-			AntlrDTSourceParser parser = (AntlrDTSourceParser) Parsers.getSourceParser(getDslCore(), (IFile) res);
-			PathsData data = parser.getPathsData();
-			helper.setModel(new PathsModel(data, ruleName));
+			PathsModel model;
+			switch (kind) {
+				case ADD:
+					model = helper.addSubPaths(ruleName);
+					break;
+				case REMOVE:
+					model = helper.removeNode(ruleName);
+					break;
+
+				default: // FULL
+					ICodeUnit unit = core.getModelManager().create((IFile) res);
+					AntlrDTSourceParser parser;
+					try {
+						parser = (AntlrDTSourceParser) unit.getSourceParser();
+					} catch (DslModelException e) {
+						return;
+					}
+					PathsData data = parser.buildPathsData();
+					model = new PathsModel(data, ruleName);
+					break;
+			}
+
+			helper.setModel(model);
 			PathsNode selected = helper.getPathsNode(ruleName);
 			nodeLabelProvider.setCurrentSelection(selected, selected);
-
 			refresh();
 		}
 	}
 
 	public void refresh() {
-		viewer.setInput(helper.getModel());
-		setConnectionRouter(router);
+		if (helper.getModel() != null) {
+			viewer.setInput(helper.getModel());
+			setConnectionRouter(router);
+		}
 	}
 
 	public void setConnectionRouter(Router router) {
@@ -326,6 +360,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	private void makeActions() {
 		makeGroupActions();
 		makeScreenshotActions();
+		makePathsActions();
 	}
 
 	private void setupContextMenu() {
@@ -334,6 +369,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 			@Override
 			public void menuDetected(MenuDetectEvent e) {
+				EnhTipHelper tipHelper = viewer.getEventDispatcher().getEnhTipHelper();
+				if (tipHelper.isShowing()) tipHelper.hideTip();
+
 				Point clickAt = new Point(viewer.getControl().toControl(e.x, e.y));
 				IFigure fig = viewer.getGraphControl().getViewport().findFigureAt(clickAt.x, clickAt.y);
 				if (fig instanceof PolylineConnection) {
@@ -353,7 +391,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 	protected void fillContextMenu(MenuManager manager, boolean onFigure) {
 		if (onFigure) {
-			// manager.add(openAction);
+			manager.add(addPathsAction);
+			manager.add(new Separator());
+			manager.add(removePathsAction);
 		} else {
 			manager.add(new Separator(GROUP_LAYOUT_TOOLBAR));
 			layoutToolbarGroup.fillContextMenu(manager);
@@ -382,25 +422,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		routerToolbarGroup = new RouterToolbarGroup(this);
 	}
 
-	/**
-	 * Handle selection changes in the viewer. This will update the view whenever a
-	 * selection occurs. All selectable nodes in the graph should resolve to
-	 * PathsNode.
-	 */
-	@SuppressWarnings("unchecked")
-	private void handleSelectionChanged(Object selectedElement, IStructuredSelection selections) {
-		if (selectedElement instanceof PathsNode) {
-			selectedNode = (PathsNode) selectedElement;
-			selectedNodes = selections.toList();
-			nodeLabelProvider.setCurrentSelection(focusedNode, selectedNode);
-			// TODO: need to correctly initialize focusedNode
-			if (focusedNode != null) {
-				viewer.update(contentProvider.getElements(focusedNode), null);
-			}
-		} else {
-			selectedNode = null;
-			selectedNodes = null;
-		}
+	private void makePathsActions() {
+		addPathsAction = new PathsAddAction(this, helper);
+		removePathsAction = new PathsRemoveAction(this, helper);
 	}
 
 	private void addSurfaceDragger() {
@@ -411,13 +435,11 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 	protected void dragSurfacePrep(MouseEvent e) {
 		if (getPrefs().getBoolean(PrefsKey.PT_SURFACE_DRAG_ENABLED)) {
-			// adjust click location for viewport scroll
-			Point clickAt = new Point(e.x, e.y);
+			Point clickAt = new Point(e.x, e.y); // adjust for viewport scroll
 			Point vLoc = viewer.getGraphControl().getViewport().getViewLocation();
 			clickAt.translate(vLoc);
-			// only allow drag if if on empty surface
 			Object fig = viewer.getGraphControl().getFigureAt(clickAt.x, clickAt.y);
-			if (fig != null) return;
+			if (fig != null) return; 			// only allow drag if if on empty surface
 			surfaceDragging = true;
 			cursorStore = viewer.getGraphControl().getCursor();
 			viewer.getGraphControl().setCursor(Cursors.HAND);
@@ -428,11 +450,10 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	/*
-	 * Graph#scrollTo(horz - hDelta, vert - vDelta) is the normal way to adjust the
-	 * view port. Performance is quite bad where the number of nodes exceeds about
-	 * 500. Each call results in a full traversal of the graph connections!
-	 * Graph#scrollToX and Graph#scrollToY are optimized for use by the scroll-bars
-	 * - very big performance gain with no observable downside.
+	 * Graph#scrollTo(horz - hDelta, vert - vDelta) is the normal way to adjust the view port.
+	 * Performance is quite bad where the number of nodes exceeds about 500. Each call results in a full
+	 * traversal of the graph connections! Graph#scrollToX and Graph#scrollToY are optimized for use by
+	 * the scroll-bars - very big performance gain with no observable downside.
 	 */
 	protected void dragSurface(MouseEvent e) {
 		if (surfaceDragging && lastLocation != null) {
@@ -475,22 +496,38 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		}
 	}
 
+	/*
+	 * Handle selection changes in the viewer. This will update the view whenever a selection occurs.
+	 * All selectable nodes in the graph should resolve to PathsNode.
+	 */
+	@SuppressWarnings("unchecked")
+	private void handleSelectionChanged(Object selectedElement, IStructuredSelection selections) {
+		if (selectedElement instanceof PathsNode) {
+			selectedNode = (PathsNode) selectedElement;
+			selectedNodes = selections.toList();
+			nodeLabelProvider.setCurrentSelection(focusedNode, selectedNode);
+			if (focusedNode != null) {
+				viewer.update(contentProvider.getElements(focusedNode), null);
+			}
+		} else {
+			selectedNode = null;
+			selectedNodes = null;
+		}
+	}
+
 	private class DoubleClickListener implements IDoubleClickListener {
 
 		@Override
 		public void doubleClick(DoubleClickEvent event) {
-			// On double click focus on that node: note bug 172627
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			if (selection.size() < 1) { // on the canvas
 				refresh();
-				return;
+			} else {
+				// Object selectedElement = selection.getFirstElement();
+				// if (selectedElement instanceof IMember) {
+				// openAction.run();
+				// }
 			}
-
-			// Object selectedElement = selection.getFirstElement();
-			// if (selectedElement instanceof PathsNode) {
-			// PathsNode node = (PathsNode) selectedElement;
-			// AntlrDTUtil.openSourceFileAtToken(source, node.getRef());
-			// }
 		}
 	}
 
@@ -517,17 +554,14 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 	private class PreferenceListener implements IPropertyChangeListener {
 
-		public PreferenceListener() {}
-
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
-			String prop = event.getProperty();
-			if (prop.equals(PrefsKey.PT_HORZ_SPACING) || prop.equals(PrefsKey.PT_VERT_SPACING)) {
-				refresh();
-			} else if (prop.equals(PrefsKey.PT_TOOLTIP_TYPE)) {
-				refresh();
-			} else if (prop.startsWith(PrefsKey.PT_COLOR_PREFIX)) {
-				refresh();
+			switch (event.getProperty()) {
+				case PrefsKey.PT_HORZ_SPACING:
+				case PrefsKey.PT_VERT_SPACING:
+				case PrefsKey.PT_TOOLTIP_TYPE:
+				case PrefsKey.PT_COLOR_PREFIX:
+					refresh();
 			}
 		}
 	}

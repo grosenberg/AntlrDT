@@ -17,9 +17,6 @@ public class ZoomContributionViewItemFix extends ZoomContributionViewItem {
 		super(editor);
 
 		DslGraphViewer viewer = (DslGraphViewer) editor.getZoomableViewer();
-
-		// zoomLevels = zoomManager.getZoomLevelsAsText();
-
 		Object zMgr = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
 		String[] levels = (String[]) Reflect.invoke(zMgr, "getZoomLevelsAsText", null, null);
 		Reflect.setSuper(this, "zoomLevels", levels);
@@ -27,7 +24,6 @@ public class ZoomContributionViewItemFix extends ZoomContributionViewItem {
 
 	@Override
 	public void fill(ToolBar parent, int index) {
-
 		Class<?>[] params = new Class[] { Composite.class };
 		Object[] args = new Object[] { parent };
 		Object c = Reflect.invokeSuperDeclared(this, "createCombo", params, args);

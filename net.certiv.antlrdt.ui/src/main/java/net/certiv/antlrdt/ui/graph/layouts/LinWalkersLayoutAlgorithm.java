@@ -123,7 +123,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 
-		Log.info(this, "Starting layout ...");
+		Log.debug(this, "Starting layout ...");
 
 		m_bspace = getPrefs().getInt(PrefsKey.PT_SIBLING_SPACING); // between sibling nodes
 		m_tspace = getPrefs().getInt(PrefsKey.PT_SUBTREE_SPACING); // between subtrees
@@ -132,7 +132,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		int eCnt = entitiesToLayout.length;
 		int rCnt = relationshipsToConsider.length;
-		Log.info(this, "Content [entities=" + eCnt + ", relations=" + rCnt + "]");
+		Log.info(this, "Layout [entities=" + eCnt + ", relations=" + rCnt + "]");
 
 		ArrayList<InternalNode> entitiesList = convert(entitiesToLayout);
 		ArrayList<InternalRelationship> relationshipList = convert(relationshipsToConsider);
@@ -161,7 +161,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		Params npRoot = getParams(root);
 		secondWalk(root, null, -npRoot.prelim, 0);
 
-		Log.info(this, "Layout complete.");
+		Log.debug(this, "Layout complete.");
 	}
 
 	private InternalNode constructVirtualLayout(ArrayList<InternalNode> entitiesList,

@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,6 +57,7 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.ui.util.WorkbenchListener;
 
 public class TokensView extends ViewPart {
 
@@ -459,10 +460,10 @@ public class TokensView extends ViewPart {
 		target.schedule();
 	}
 
-	// ParseTree has been built - now need to construct a model displayable in the view
+	// ParseTree has been built - now need to construct a token list displayable in the view
 	protected void displayResults(final IJobChangeEvent event) {
 
-		UIJob displayJob = new UIJob("Display Parse Tree") {
+		UIJob displayJob = new UIJob("Display Tokens List") {
 
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -534,8 +535,8 @@ public class TokensView extends ViewPart {
 		}
 
 		/**
-		 * Tracks the visible state of the view. Adds a grammar editor listener so that on save
-		 * events, the view content is rebuilt.
+		 * Tracks the visible state of the view. Adds a grammar editor listener so that on save events, the
+		 * view content is rebuilt.
 		 */
 		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {

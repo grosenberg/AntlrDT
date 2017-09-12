@@ -1,6 +1,6 @@
 package net.certiv.antlrdt.ui.templates;
 
-import net.certiv.dsl.core.model.ITranslationUnit;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.ui.templates.DslTemplateContext;
 
 import org.eclipse.jface.text.templates.TemplateContext;
@@ -21,7 +21,7 @@ public class VocabName extends TemplateVariableResolver {
 
 	@Override
 	protected String resolve(TemplateContext context) {
-		ITranslationUnit unit = ((DslTemplateContext) context).getSourceModule();
+		ICodeUnit unit = ((DslTemplateContext) context).getSourceModule();
 		String vocabName = null;
 		if (unit != null) {
 			vocabName = unit.getElementName();

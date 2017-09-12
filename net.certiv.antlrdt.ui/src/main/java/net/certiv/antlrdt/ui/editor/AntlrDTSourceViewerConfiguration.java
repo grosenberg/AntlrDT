@@ -8,7 +8,6 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -17,7 +16,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.completion.AntlrDTCompletionProcessor;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
@@ -34,9 +32,9 @@ import net.certiv.antlrdt.ui.formatter.strategies.ActionCodeFormattingStrategy;
 import net.certiv.antlrdt.ui.formatter.strategies.GrammarCommentFormattingStrategy;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.IColorManager;
-import net.certiv.dsl.core.preferences.DslPrefsKey;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.TabStyle;
 import net.certiv.dsl.ui.DslUI;
@@ -82,28 +80,28 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 	}
 
 	/**
-	 * Loads content formatters into the SourceViewer for execution on receipt of a
-	 * ISourceViewer.FORMAT command.
+	 * Loads content formatters into the SourceViewer for execution on receipt of a ISourceViewer.FORMAT
+	 * command.
 	 * <p>
-	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the
-	 * default partition. The slave strategies are executed to format particular non-default
-	 * partitions.
+	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the default
+	 * partition. The slave strategies are executed to format particular non-default partitions.
 	 * </p>
 	 * <p>
 	 * Two built-in non-default partition strategies are provided:
-	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that use
-	 * the JDT formatter and global JDT formatting preferences. The comment strategy can format
-	 * stand-alone single-line, mutiple-line, and JavaDoc-style comments. The JavaCode strategy can
-	 * format discrete blocks of otherwise standard Java code, including embedded comments.
+	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that use the
+	 * JDT formatter and global JDT formatting preferences. The comment strategy can format stand-alone
+	 * single-line, mutiple-line, and JavaDoc-style comments. The JavaCode strategy can format discrete
+	 * blocks of otherwise standard Java code, including embedded comments.
 	 * </p>
-	 * 
-	 * @param sourceViewer the viewer that will contain the content to format
+	 *
+	 * @param sourceViewer
+	 *            the viewer that will contain the content to format
 	 * @return the content formatter
 	 */
 	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
-		if (getPrefsMgr().getBoolean(PrefsKey.FORMATTER_NATIVE_ENABLE)) {
+		if (getPrefsMgr().getBoolean(Formatter.FORMATTER_NATIVE_ENABLE)) {
 			formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
 			formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
 			formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
@@ -130,15 +128,8 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 	}
 
 	@Override
-	public int getTabWidth(ISourceViewer sourceViewer) {
-		if (store == null) {
-			return super.getTabWidth(sourceViewer);
-		}
-		return store.getInt(DslPrefsKey.FORMATTER_TAB_SIZE);
-	}
-
-	@Override
 	protected void initializeScanners() {
+		IDslPrefsManager store = getPrefStore();
 		commentJDScanner = new ScannerCommentJD(store);
 		commentMLScanner = new ScannerCommentML(store);
 		commentSLScanner = new ScannerCommentSL(store);
@@ -171,8 +162,9 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 
 	/**
 	 * Adapts the behavior of the contained components to the change encoded in the given event.
-	 * 
-	 * @param event the event to which to adapt
+	 *
+	 * @param event
+	 *            the event to which to adapt
 	 */
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
@@ -185,10 +177,11 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 	}
 
 	/**
-	 * Determines whether the preference change encoded by the given event changes the behavior of
-	 * one of its contained components.
-	 * 
-	 * @param event the event to be investigated
+	 * Determines whether the preference change encoded by the given event changes the behavior of one
+	 * of its contained components.
+	 *
+	 * @param event
+	 *            the event to be investigated
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
 	@Override
@@ -215,7 +208,6 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 				break;
 			case Partitions.ACTION:
 				strategy = new JavaAutoIndentStrategy(partitioning, null, viewer);
-				// strategy = new AntlrDTAutoEditActionStrategy(partitioning);
 				break;
 			default:
 				strategy = new AntlrDTAutoEditStrategy(partitioning);
@@ -230,10 +222,10 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
-	@Override
-	public IHyperlinkDetector getDslElementHyperlinkDetector(ITextEditor textEditor) {
-		return new AntlrDTHyperlinkDetector(textEditor);
-	}
+	// @Override
+	// public IHyperlinkDetector getDslElementHyperlinkDetector(ITextEditor textEditor) {
+	// return new AntlrDTHyperlinkDetector(textEditor);
+	// }
 
 	@Override
 	protected String getCommentPrefix() {

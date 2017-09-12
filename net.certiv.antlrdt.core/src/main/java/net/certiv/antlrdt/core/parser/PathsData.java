@@ -11,8 +11,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenSource;
 
-import net.certiv.dsl.core.util.Log;
-
 public class PathsData {
 
 	public static final NilToken NILTOKEN = new NilToken();
@@ -37,15 +35,7 @@ public class PathsData {
 	 */
 	public void addPathsElement(Token ref, Token term, boolean parserRule, boolean fragment) {
 		term = term != null ? term : NILTOKEN;
-		// dumpElement(ref, term, parserRule, fragment);
 		elements.add(ref, term, parserRule, fragment);
-	}
-
-	@SuppressWarnings("unused")
-	private void dumpElement(Token ref, Token term, boolean parserRule, boolean fragment) {
-		String parts = ref.getText() + "->" + term.getText();
-		String state = "[" + parserRule + ", " + fragment + "]";
-		Log.debug(this, "Element: " + parts + state);
 	}
 
 	public Collection<Entry> rules() {
@@ -53,27 +43,26 @@ public class PathsData {
 	}
 
 	public Entry namedEntry(String ruleName) {
-		// elements.dumpElements();
-
 		for (Entry item : rules()) {
 			if (item.getRefName().equals(ruleName)) return item;
 		}
 		return null;
 	}
 
-	public List<PathsNode> containedTerms(Entry rule) {
+	public List<PathsNode> getCalledRules(Entry rule) {
 		Entry entry = elements.fwd.get(rule.getRefName());
 		if (entry != null) return entry.relations;
 		return Collections.emptyList();
 	}
 
-	public List<PathsNode> containingRules(Entry term) {
+	public List<PathsNode> getCallingRules(Entry term) {
 		Entry entry = elements.rev.get(term.getRefName());
 		if (entry != null) return entry.relations;
 		return Collections.emptyList();
 	}
 
 	public class Elements {
+
 		Map<String, Entry> fwd; // fwd: rule -> terms contained
 		Map<String, Entry> rev; // rev: term -> rules that contain them
 
@@ -109,35 +98,36 @@ public class PathsData {
 			}
 		}
 
-		void dumpElements() {
-			Log.debug(this, "Entries dump");
-			for (Entry entry : entries.values()) {
-				Log.debug(this, "  " + entry.getRefName());
-			}
-			Log.debug(this, "");
-			Log.debug(this, "Elements dump: fwd");
-			for (Entry entry : fwd.values()) {
-				StringBuilder sb = new StringBuilder();
-				for (PathsNode tok : entry.relations) {
-					sb.append(tok.getRuleName() + " ");
-				}
-				Log.debug(this, "  " + entry.getRefName() + "-> " + sb.toString());
-			}
-			Log.debug(this, "");
-			Log.debug(this, "Elements dump: rev");
-			for (Entry entry : rev.values()) {
-				StringBuilder sb = new StringBuilder();
-				for (PathsNode tok : entry.relations) {
-					sb.append(tok.getRuleName() + " ");
-				}
-				Log.debug(this, "  " + entry.getRefName() + "-> " + sb.toString());
-			}
-		}
+		// void dumpElements() {
+		// Log.debug(this, "Entries dump");
+		// for (Entry entry : entries.values()) {
+		// Log.debug(this, " " + entry.getRefName());
+		// }
+		// Log.debug(this, "");
+		// Log.debug(this, "Elements dump: fwd");
+		// for (Entry entry : fwd.values()) {
+		// StringBuilder sb = new StringBuilder();
+		// for (PathsNode tok : entry.relations) {
+		// sb.append(tok.getRuleName() + " ");
+		// }
+		// Log.debug(this, " " + entry.getRefName() + "-> " + sb.toString());
+		// }
+		// Log.debug(this, "");
+		// Log.debug(this, "Elements dump: rev");
+		// for (Entry entry : rev.values()) {
+		// StringBuilder sb = new StringBuilder();
+		// for (PathsNode tok : entry.relations) {
+		// sb.append(tok.getRuleName() + " ");
+		// }
+		// Log.debug(this, " " + entry.getRefName() + "-> " + sb.toString());
+		// }
+		// }
 	}
 
 	// used for both forward and reverse relations
 	// 'parserRule' and 'fragment' valid only if 'forward'
 	public static class Entry {
+
 		PathsNode ref;				// containing rule (rev: child term)
 		List<PathsNode> relations;	// child terms (rev: rules containing child term)
 
@@ -157,7 +147,7 @@ public class PathsData {
 			this.relations.add(entry);
 		}
 
-		public PathsNode getRef() {
+		public PathsNode getPathNode() {
 			return ref;
 		}
 
@@ -234,4 +224,10 @@ public class PathsData {
 			return null;
 		}
 	}
+
+	// private void dumpElement(Token ref, Token term, boolean parserRule, boolean fragment) {
+	// String parts = ref.getText() + "->" + term.getText();
+	// String state = "[" + parserRule + ", " + fragment + "]";
+	// Log.debug(this, "Element: " + parts + state);
+	// }
 }

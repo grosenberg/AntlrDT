@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.layout.GridDataFactory;

@@ -88,6 +88,9 @@ public class AntlrDTImages extends DslImages {
 	public final ImageDescriptor IMG_REMOVE = create(locBundle, OBJ, locPrefix + "interest-filtering.gif");
 	public final ImageDescriptor IMG_GOTO = create(locBundle, OBJ, locPrefix + "goto_obj.gif");
 
+	public final ImageDescriptor IMG_ACTION_ADD_PATHS = create(locBundle, OBJ, locPrefix + "ch_callees.gif");
+	public final ImageDescriptor IMG_ACTION_REMOVE_PATHS = create(locBundle, OBJ, locPrefix + "remove_obj.gif");
+
 	public final ImageDescriptor COLLAPSE = create(locBundle, OBJ, locPrefix + "collapseall.gif");
 	public final ImageDescriptor EXPAND = create(locBundle, OBJ, locPrefix + "expandall.gif");
 	public final ImageDescriptor LINK = create(locBundle, OBJ, locPrefix + "link_editor.gif");

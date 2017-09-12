@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import java.util.List;
 import java.util.Timer;

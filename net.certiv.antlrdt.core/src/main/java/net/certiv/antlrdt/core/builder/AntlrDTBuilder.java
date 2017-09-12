@@ -1,7 +1,6 @@
 package net.certiv.antlrdt.core.builder;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +40,11 @@ import net.certiv.antlrdt.core.parser.AntlrDTSourceParser;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
+import net.certiv.dsl.core.model.DslModelException;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.util.ErrorListener;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Parsers;
 import net.certiv.v4.runtime.dsl.MsgUtil;
 
 @SuppressWarnings("restriction")
@@ -77,14 +77,12 @@ public class AntlrDTBuilder extends DslBuilder {
 	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> srcModules)
 			throws CoreException {
 
-		if (!builderEnabled()) return null;
+		if (!builderEnabled() || srcModules.isEmpty()) return null;
 
 		try {
 			monitor.beginTask(CoreUtil.EMPTY_STRING, WORK_BUILD);
-
-			Log.debug(this, String.format("%s invoked on $s", this.getClass().getName(), srcModules));
 			file = CoreUtil.getActiveDslFile(getDslCore().getDslFileExtensions());
-			filepath = file.getFullPath();
+			filepath = file != null ? file.getFullPath() : null;
 			projpath = getProject().getFullPath();
 
 			for (IFile module : srcModules) {
@@ -93,7 +91,6 @@ public class AntlrDTBuilder extends DslBuilder {
 				if (restrictToActiveProjectPath() && !modpath.equals(filepath)) continue;
 				if (excludeIgnoredPaths(module)) continue;
 
-				Log.info(this, "Building " + buildDescription(module));
 				clearMarkers(module);
 				try {
 					compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
@@ -304,11 +301,9 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	/**
-	 * Determine the build folder for a given a resource representing a grammar
-	 * file.
+	 * Determine the build folder for a given a resource representing a grammar file.
 	 * 
-	 * @param resource
-	 *            typically the grammar IFile
+	 * @param resource typically the grammar IFile
 	 * @return a filesystem absolute path to the build folder
 	 */
 	private IPath determineBuildFolder(IResource resource) {
@@ -328,8 +323,13 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	private String resolvePackageName(IResource resource) {
-		AntlrDTSourceParser parser = (AntlrDTSourceParser) Parsers.getSourceParser(getDslCore(), (IFile) resource);
-		return parser.resolvePackageName();
+		ICodeUnit unit = getDslCore().getModelManager().create((IFile) resource);
+		try {
+			AntlrDTSourceParser parser = (AntlrDTSourceParser) unit.getSourceParser();
+			return parser.resolvePackageName();
+		} catch (DslModelException e) {
+			return null;
+		}
 	}
 
 	private ICompilationUnit[] getCompilationUnits(IResource resource, IContainer folder) {
@@ -352,8 +352,8 @@ public class AntlrDTBuilder extends DslBuilder {
 		return cuList.toArray(new ICompilationUnit[cuList.size()]);
 	}
 
-	private String buildDescription(IFile file) {
-		String name = file != null ? "proj=" + file.getProject().getName() + ", " : "";
-		return "[" + name + "time=" + new Date(System.currentTimeMillis()) + "]";
-	}
+	// private String buildDescription(IFile file) {
+	// String name = file != null ? "proj=" + file.getProject().getName() + ", " : "";
+	// return "[" + name + "time=" + new Date(System.currentTimeMillis()) + "]";
+	// }
 }

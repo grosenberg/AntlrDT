@@ -137,7 +137,7 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 		Label fig = new StdToolTip();
 		ParseTree element = (ParseTree) entity;
 		if (getPrefs().matches(PrefsKey.PT_TOOLTIP_TYPE, PrefsKey.PT_TTT_ENH)) {
-			EnhTipHelper helper = ((IDslGraphViewer) viewer).getCoolTipHelper();
+			EnhTipHelper helper = ((IDslGraphViewer) viewer).getTipHelper();
 			fig = new InfoLabel(helper, getInfoImage(element), getText(element), labelDetail(element),
 					contentDetail(element));
 		} else {

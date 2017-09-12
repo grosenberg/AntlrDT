@@ -16,36 +16,39 @@ import net.certiv.antlrdt.ui.graph.IGraphModel;
 import net.certiv.antlrdt.ui.graph.IHelper;
 import net.certiv.antlrdt.ui.graph.paths.model.PathsModel;
 
-public class PathsHelper implements IHelper {
+public class PathHelper implements IHelper {
 
-	private PathsEditor view;
-	private IGraphModel model;
+	private PathsEditor editor;
+	private PathsModel model;
 
-	public PathsHelper(PathsEditor view) {
-		this.view = view;
-		model = new PathsModel();
+	public PathHelper(PathsEditor editor) {
+		this.editor = editor;
 	}
 
 	@Override
 	public void clear() {
-		model.clear();
+		if (model != null) model.clear();
+	}
+
+	public void dispose() {
+		if (model != null) model.dispose();
 	}
 
 	@Override
-	public IGraphModel getModel() {
+	public PathsModel getModel() {
 		return model;
 	}
 
 	@Override
 	public void setModel(IGraphModel pathsModel) {
-		if (this.model != pathsModel) this.model.clear();
-		this.model = pathsModel;
+		clear();
+		model = (PathsModel) pathsModel;
 	}
 
 	/** Return an array of all model member nodes excluding the given member node. */
 	@Override
 	public Object[] getMembers(Object member) {
-		List<PathsNode> members = ((PathsModel) model).getNodeList();
+		List<PathsNode> members = model.getNodeList();
 		members.remove(member);
 		return members.toArray(new Object[members.size()]);
 	}
@@ -53,18 +56,29 @@ public class PathsHelper implements IHelper {
 	/** Return the nodes that are direct decendants of this given node. */
 	@Override
 	public Object[] getConnectedMembers(Object member) {
-		List<PathsNode> callees = ((PathsModel) model).findCallees((PathsNode) member);
+		List<PathsNode> callees = model.findCallees((PathsNode) member);
 		return callees.toArray(new Object[callees.size()]);
 	}
 
 	@Override
 	public IProgressMonitor getProgressMonitor() {
-		IStatusLineManager statusLineMgr = view.getEditorSite().getActionBars().getStatusLineManager();
+		IStatusLineManager statusLineMgr = editor.getEditorSite().getActionBars().getStatusLineManager();
 		return statusLineMgr.getProgressMonitor();
 	}
 
 	public PathsNode getPathsNode(String selected) {
-		return ((PathsModel) model).namedPathsNode(selected);
+		return model.namedPathsNode(selected);
 	}
 
+	public PathsModel addSubPaths(String ruleName) {
+		PathsNode current = model.namedPathsNode(ruleName);
+		model.addSubPaths(current);
+		return model;
+	}
+
+	public PathsModel removeNode(String ruleName) {
+		PathsNode current = model.namedPathsNode(ruleName);
+		model.removeNode(current);
+		return model;
+	}
 }

@@ -10,10 +10,8 @@ package net.certiv.antlrdt.ui.graph;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MouseEvent;
-import org.eclipse.draw2d.PopUpHelper;
 import org.eclipse.draw2d.ToolTipHelper;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -35,38 +33,32 @@ import net.certiv.dsl.core.preferences.IDslPrefsManager;
  * LineBorder. The background of the tooltips will be the standard SWT tooltipBackground color
  * unless the Figure's tooltip has set its own background.
  */
-public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
+public class EnhTipHelper extends ToolTipHelper {
 
 	private Timer timer;
 	private IFigure currentTipSource;
-
-	private MouseAdapter2d nodeWatcher;
 
 	/**
 	 * Constructs a EnhTipHelper to be associated with Control <i>c</i>.
 	 * 
 	 * @param c the control
-	 * @since 2.0
 	 */
 	public EnhTipHelper(Control c) {
-		super(c/* , SWT.TOOL | SWT.ON_TOP */);
-		getShell().setBackground(ColorConstants.tooltipBackground);
-		getShell().setForeground(ColorConstants.tooltipForeground);
+		super(c);
 	}
 
 	/**
-	 * Sets the LightWeightSystem's contents to the passed tooltip, and displays the tip. The tip
-	 * will be displayed only if the tip source is different than the previously viewed tip source.
-	 * (i.e. The cursor has moved off of the previous tooltip source figure.)
+	 * Sets the LightWeightSystem's contents to the passed tooltip, and displays the tip. The tip will
+	 * be displayed only if the tip source is different than the previously viewed tip source. (i.e. The
+	 * cursor has moved off of the previous tooltip source figure.)
 	 * <p>
-	 * The tooltip will be painted directly below the cursor if possible, otherwise it will be
-	 * painted directly above cursor.
+	 * The tooltip will be painted directly below the cursor if possible, otherwise it will be painted
+	 * directly above cursor.
 	 * 
 	 * @param hoverSource the figure over which the hover event was fired
 	 * @param tip the tooltip to be displayed
 	 * @param eventX the x coordinate of the hover event
 	 * @param eventY the y coordinate of the hover event
-	 * @since 2.0
 	 */
 	@Override
 	public void displayToolTipNear(IFigure hoverSource, IFigure tip, int eventX, int eventY) {
@@ -80,32 +72,28 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 			setShellBounds(displayPoint.x, displayPoint.y, shellSize.width, shellSize.height);
 			show();
 
-			if (advancedMode) {
-				if (nodeWatcher == null) nodeWatcher = new NodeWatcher();
-				currentTipSource.addMouseListener(nodeWatcher);
-				// currentTipSource.addMouseMotionListener(nodeWatcher);
-			} else {
-				timer = new Timer(true);
-				timer.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								hide();
-								timer.cancel();
-							}
-						});
-					}
-				}, getPrefs().getInt(PrefsKey.PT_TIP_DURATION));
-			}
+			timer = new Timer(true);
+			timer.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					Display.getDefault().syncExec(new Runnable() {
+
+						@Override
+						public void run() {
+							hide();
+							timer.cancel();
+						}
+					});
+				}
+			}, getPrefs().getInt(PrefsKey.PT_TIP_DURATION));
 		}
 	}
 
 	/*
-	 * Calculates the location where the tooltip will be painted. Returns this as a Point. Tooltip
-	 * will be painted directly below the cursor if possible, otherwise it will be painted directly
-	 * above cursor. Note: watch for swt/draw2d Point confusion
+	 * Calculates the location where the tooltip will be painted. Returns this as a Point. Tooltip will
+	 * be painted directly below the cursor if possible, otherwise it will be painted directly above
+	 * cursor. Note: watch for swt/draw2d Point confusion
 	 */
 	private Point computeWindowLocation(IFigure tip, int eventX, int eventY) {
 		int enhGapX = getPrefs().getInt(PrefsKey.PT_GAP_ENH_X);
@@ -148,8 +136,6 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 
 	/**
 	 * Disposes of the tooltip's shell and kills the timer.
-	 * 
-	 * @see PopUpHelper#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -160,13 +146,16 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 		getShell().dispose();
 	}
 
-	/**
-	 * @see PopUpHelper#hookShellListeners()
-	 */
+	/** Hides the tool tip */
+	public void hideTip() {
+		hide();
+	}
+
 	@Override
 	protected void hookShellListeners() {
 		// Close the tooltip window if the mouse enters the tooltip
 		getShell().addMouseTrackListener(new MouseTrackAdapter() {
+
 			@Override
 			public void mouseEnter(org.eclipse.swt.events.MouseEvent e) {
 				boolean advancedMode = getPrefs().matches(PrefsKey.PT_TOOLTIP_TYPE, PrefsKey.PT_TTT_ENH);
@@ -180,21 +169,15 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 	}
 
 	/**
-	 * Displays the hover source's tooltip if a tooltip of another source is currently being
-	 * displayed.
+	 * Displays the hover source's tooltip if a tooltip of another source is currently being displayed.
 	 * 
 	 * @param figureUnderMouse the figure over which the cursor was when called
 	 * @param tip the tooltip to be displayed
 	 * @param eventX the x coordinate of the cursor
 	 * @param eventY the y coordinate of the cursor
-	 * @since 2.0
 	 */
 	@Override
 	public void updateToolTip(IFigure figureUnderMouse, IFigure tip, int eventX, int eventY) {
-		/*
-		 * If the cursor is not on any Figures, it has been moved off of the source control. Hide
-		 * the tool tip.
-		 */
 		boolean advancedMode = getPrefs().matches(PrefsKey.PT_TOOLTIP_TYPE, PrefsKey.PT_TTT_ENH);
 		if (advancedMode && isShowing()) {
 			hoverEnded();
@@ -205,8 +188,7 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 					timer.cancel();
 				}
 			}
-			// Makes tooltip appear without a hover event if a tip is currently being
-			// displayed
+			// Makes tooltip appear without a hover event if a tip is currently being displayed
 			if (isShowing() && figureUnderMouse != currentTipSource) {
 				hide();
 				timer.cancel();
@@ -218,10 +200,8 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 	}
 
 	/**
-	 * Starts the interval timer to delay killing the InfoLabel until the mouse (possibly) moves
-	 * over the InfoLabel. If the kill timer ends normally, then the InfoLabel is closed.
-	 * 
-	 * @param me
+	 * Starts the interval timer to delay killing the InfoLabel until the mouse (possibly) moves over
+	 * the InfoLabel. If the kill timer ends normally, then the InfoLabel is closed.
 	 */
 	public void hoverEnded() {
 		if (timer != null) timer.cancel();
@@ -234,9 +214,11 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 	}
 
 	private class KillTask extends TimerTask {
+
 		@Override
 		public void run() {
 			Display.getDefault().syncExec(new Runnable() {
+
 				@Override
 				public void run() {
 					if (isShowing()) {
@@ -254,16 +236,5 @@ public class EnhTipHelper extends ToolTipHelper /* PopUpHelper */ {
 
 	public void mouseExited(MouseEvent me, InfoLabel self) {
 		if (isShowing()) hide();
-	}
-
-	private class NodeWatcher extends MouseAdapter2d {
-
-		@Override
-		public void mousePressed(MouseEvent me) {
-			if (currentTipSource != null) {
-				// Log.debug(this, "Pressed");
-				if (isShowing()) hide();
-			}
-		}
 	}
 }

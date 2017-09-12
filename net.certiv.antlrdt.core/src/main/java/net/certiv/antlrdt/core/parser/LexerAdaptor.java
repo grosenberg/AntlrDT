@@ -93,16 +93,10 @@ public abstract class LexerAdaptor extends Lexer {
 			default:
 				_atType = false;
 		}
-
 		return super.emit();
 	}
 
 	private boolean inLexerRule() {
 		return _currentRuleType == AntlrDT4Lexer.TOKEN_REF;
-	}
-
-	@SuppressWarnings("unused")
-	private boolean inParserRule() {
-		return _currentRuleType == AntlrDT4Lexer.RULE_REF;
 	}
 }

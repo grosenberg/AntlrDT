@@ -13,8 +13,9 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ActionContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarSpecContext;
-import net.certiv.antlrdt.core.parser.gen.OutlineVisitor;
+import net.certiv.antlrdt.core.parser.gen.CodeAssistVisitor;
 import net.certiv.antlrdt.core.parser.gen.PathVisitor;
+import net.certiv.antlrdt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.parser.DslParseErrorListener;
 import net.certiv.dsl.core.parser.DslSourceParser;
@@ -25,7 +26,6 @@ import net.certiv.dsl.core.util.Strings;
 public class AntlrDTSourceParser extends DslSourceParser {
 
 	private String packageName;
-	private PathsData pathsData;
 
 	public AntlrDTSourceParser() {
 		super();
@@ -37,10 +37,7 @@ public class AntlrDTSourceParser extends DslSourceParser {
 		return AntlrDTCore.getDefault();
 	}
 
-	/**
-	 * Builds a ParseTree for the given content representing the source of a
-	 * corresponding module (file).
-	 */
+	/** Builds a ParseTree for the given content representing the source of a corresponding unit. */
 	@Override
 	public ParseTree parse(String name, String content, DslParseErrorListener errListener)
 			throws RecognitionException, Exception {
@@ -55,81 +52,65 @@ public class AntlrDTSourceParser extends DslSourceParser {
 
 		parser = new AntlrDT4Parser(tokens);
 		parser.setTokenFactory(factory);
-		parser.removeErrorListeners(); // remove ConsoleErrorListener to reduce the noise
-		parser.addErrorListener(errListener); // add error listener to feed error markers
+		parser.removeErrorListeners();
+		parser.addErrorListener(errListener);
 		GrammarSpecContext parseTree = ((AntlrDT4Parser) parser).grammarSpec();
 
 		return parseTree;
 	}
 
-	/**
-	 * Build the internal minimal model used as the structure basis for the outline
-	 * view, etc.
-	 */
+	/** Make the code unit internal element structure. */
 	@Override
-	public void buildModel() {
-		Log.debug(this, "Model [root=" + (parseTree != null ? "not null" : "null") + "]");
-
+	public void buildStructure() {
 		try {
-			OutlineVisitor outline = new OutlineVisitor(parseTree);
-			outline.setHelper(this);
-			outline.findAll();
+			StructureVisitor walker = new StructureVisitor(tree);
+			walker.setMaker(this);
+			walker.findAll();
 		} catch (IllegalArgumentException e) {
 			Log.error(this, "Model - Outline processing error", e);
 		}
-
-		collectPathsData();
 	}
 
-	public void collectPathsData() {
-		try {
-			PathVisitor paths = new PathVisitor(parseTree);
-			this.pathsData = new PathsData();
-			paths.setHelper(pathsData);
-			paths.findAll();
-		} catch (IllegalArgumentException e) {
-			Log.error(this, "Model - Paths processing error", e);
-		}
-	}
-
-	public PathsData getPathsData() {
-		return pathsData;
-	}
-
-	/**
-	 * Tree pattern matcher used to identify the code elements that may be
-	 * signficant in CodeAssist operations
-	 */
+	/** Tree walker used to identify the code elements signficant in CodeAssist operations. */
 	@Override
 	public void buildCodeAssist() {
-		Log.debug(this, "CodeAssist [root=" + (parseTree != null ? "not null" : "null") + "]");
-
 		try {
-			Collection<ParseTree> ruleNames = XPath.findAll(parseTree, "//RULE_REF", parser);
-			ruleNames.addAll(XPath.findAll(parseTree, "//TOKEN_REF", parser));
-			codeAssist(ruleNames);
+			CodeAssistVisitor walker = new CodeAssistVisitor(tree);
+			walker.setHelper(this);
+			walker.findAll();
 		} catch (Exception e) {
 			Log.error(this, "CodeAssist - Tree walk error", e);
 		}
 	}
 
+	public PathsData buildPathsData() {
+		PathsData data = new PathsData();
+		try {
+			PathVisitor walker = new PathVisitor(tree);
+			walker.setHelper(data);
+			walker.findAll();
+		} catch (IllegalArgumentException e) {
+			Log.error(this, "Paths - Tree walk error", e);
+		}
+		return data;
+	}
+
 	// /////////////////////////////////////////////////////////////////////////////////
 
 	public String resolvePackageName() {
-		if (packageName == null)
-			extractPackage();
+		if (packageName == null) extractPackage();
 		return packageName;
 	}
 
 	/**
-	 * Tree pattern matcher used to identify package defining statements NOTE:
-	 * compare to implementation in core builder
+	 * Tree pattern matcher used to identify package defining statements NOTE: compare to implementation
+	 * in core builder
 	 */
 	private void extractPackage() {
-		Log.debug(this, "ExtractPackage [root=" + (parseTree != null ? "not null" : "null") + "]");
+		Log.debug(this, "ExtractPackage [root=" + (tree != null ? "not null" : "null") + "]");
 
 		try {
-			Collection<ParseTree> actions = XPath.findAll(parseTree, "/grammarSpec/prequelConstruct/action", parser);
+			Collection<ParseTree> actions = XPath.findAll(tree, "/grammarSpec/prequelConstruct/action", parser);
 			for (ParseTree action : actions) {
 				ActionContext ctx = (ActionContext) action;
 				if (ctx.id().getText().equals("header")) {

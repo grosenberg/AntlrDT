@@ -71,8 +71,8 @@ import net.certiv.antlrdt.ui.graph.cst.providers.INodeLabelProvider;
 import net.certiv.antlrdt.ui.graph.cst.providers.NodeContentProvider;
 import net.certiv.antlrdt.ui.graph.cst.providers.NodeLabelProvider;
 import net.certiv.antlrdt.ui.graph.figures.ZoomContributionViewItemFix;
-import net.certiv.antlrdt.ui.view.Source;
-import net.certiv.antlrdt.ui.view.TargetBuilder;
+import net.certiv.antlrdt.ui.view.tokens.Source;
+import net.certiv.antlrdt.ui.view.tokens.TargetBuilder;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 
 public class CstEditor extends EditorPart implements IZoomableEditor {

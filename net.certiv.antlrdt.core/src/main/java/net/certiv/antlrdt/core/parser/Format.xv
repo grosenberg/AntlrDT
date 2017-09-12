@@ -33,6 +33,7 @@ format
 	| ruleAlt
 	| ruleAction
 	| ruleActionBlock
+	| actionBlock
 	;
 
 # ----------------------------------------------------------------
@@ -119,17 +120,16 @@ importStatement
 			}
 	;
 
-importValue
-	:	//delegate
+importId
+	:  //delegateGrammars//id
 			{
-				helper.locate($lbl).wrapNone();
-				helper.locate($ASSIGN).wrapNone().spaceAround();
-				helper.locate($gram).wrapNone().keep();
+				helper.locate($RULE_REF).wrapNone().keep();
+				helper.locate($TOKEN_REF).wrapNone().keep();
 			}
 	;
 
 importComma
-	:	//delegateElement
+	:  //delegateGrammars//COMMA
 			{	helper.locate($COMMA).spaceAfter();	}
 	;
 

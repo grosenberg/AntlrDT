@@ -1,5 +1,7 @@
 package net.certiv.antlrdt.core;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlrdt.core.parser.AntlrDTSourceParserFactory;
@@ -58,5 +60,18 @@ public class AntlrDTCore extends DslCore {
 			factory = new AntlrDTSourceParserFactory();
 		}
 		return factory;
+	}
+
+	@Override
+	public IPath convertImport(IPath container, String name) {
+		IPath path = new Path(name);
+		String ext = path.getFileExtension();
+		if (ext == null) {
+			path = path.append("." + EXTENSIONS[0]);
+		}
+		if (!path.isAbsolute() && container != null) {
+			path = container.append(path);
+		}
+		return path;
 	}
 }

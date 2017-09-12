@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

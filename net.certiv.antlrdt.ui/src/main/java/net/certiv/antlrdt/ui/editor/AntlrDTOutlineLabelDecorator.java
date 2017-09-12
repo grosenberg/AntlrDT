@@ -27,6 +27,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					return data.key;
 				}
 				return text;
+				
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
 				if (hasData()) {
@@ -34,6 +35,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					switch (data.mType) {
 						case Option:
 							return data.key + " = " + data.value.getText();
+						case Channel:
 						case Token:
 							return data.key;
 						case AtAction:
@@ -46,7 +48,9 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				return text;
-			case IDslElement.BLOCK:
+				
+			case IDslElement.BEG_BLOCK:
+			case IDslElement.END_BLOCK:
 				return text;
 		}
 		return text + "[element kind=" + getElementKind() + "]";
@@ -114,7 +118,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 							baseImage = getImageProvider().DESC_OBJ_ACTION;
 							type = 14;
 							break;
-						case LableId:
+						case LabelId:
 							baseImage = getImageProvider().DESC_OBJ_LABEL;
 							type = 15;
 							break;
@@ -125,8 +129,9 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				break;
-			case IDslElement.BLOCK:
-				baseImage = getImageProvider().DESC_OBJ_BLOCK;
+			case IDslElement.BEG_BLOCK:
+			case IDslElement.END_BLOCK:
+				baseImage = getImageProvider().DESC_OBJS_EMPTY;
 				type = 20;
 				break;
 		}

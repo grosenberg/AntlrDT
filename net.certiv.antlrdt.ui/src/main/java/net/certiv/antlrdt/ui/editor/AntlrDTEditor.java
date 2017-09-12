@@ -2,6 +2,7 @@ package net.certiv.antlrdt.ui.editor;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -13,6 +14,7 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
+import net.certiv.dsl.ui.text.DslWordFinder;
 import net.certiv.dsl.ui.text.folding.IFoldingStructureProvider;
 
 public class AntlrDTEditor extends DslEditor {
@@ -24,8 +26,9 @@ public class AntlrDTEditor extends DslEditor {
 	private static final String[] EDITOR_KEY_SCOPE = new String[] { "net.certiv.antlrdt.ui.antlrdtEditorScope" };
 	private static final String MARK_OCCURRENCES_ANNOTATION_TYPE = "net.certiv.antlrdt.ui.occurrences";
 
-	private DefaultCharacterPairMatcher pairMatcher = null;
-	private IFoldingStructureProvider foldingProvider = null;
+	private DefaultCharacterPairMatcher pairMatcher;
+	private IFoldingStructureProvider foldingProvider;
+	private DslWordFinder finder;
 
 	public AntlrDTEditor() {
 		super();
@@ -38,6 +41,7 @@ public class AntlrDTEditor extends DslEditor {
 		super.initializeEditor();
 		setEditorContextMenuId(EDITOR_CONTEXT);
 		setRulerContextMenuId(RULER_CONTEXT);
+		finder = new DslWordFinder();
 	}
 
 	@Override
@@ -65,6 +69,11 @@ public class AntlrDTEditor extends DslEditor {
 	@Override
 	public char[] getBrackets() {
 		return AntlrDTTextTools.PAIRS;
+	}
+
+	@Override
+	protected IRegion findWord(IDocument doc, int offset) {
+		return finder.findWord(doc, offset);
 	}
 
 	@Override

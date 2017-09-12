@@ -1,6 +1,5 @@
 package net.certiv.antlrdt.ui;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
@@ -11,7 +10,6 @@ import net.certiv.antlrdt.ui.preferences.formatter.FormatterFactory;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
-import net.certiv.dsl.ui.DslImages;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.dsl.ui.text.DslTextTools;
@@ -29,14 +27,12 @@ public class AntlrDTUI extends DslUI {
 
 	private static AntlrDTUI plugin;
 
-	private DslImages imageProvider;
+	private AntlrDTImages imageProvider;
 	private DslTextTools textTools;
 	private IDslFormatterFactory factory;
 
 	private CstEditor cstEditor;
 	private PathsEditor pathsEditor;
-
-	// private WizardsFactory wizardFactory;
 
 	public AntlrDTUI() {
 		super();
@@ -80,14 +76,9 @@ public class AntlrDTUI extends DslUI {
 		return DSL_NAME;
 	}
 
-	/** Returns an image descriptor for the image file at the given plug-in relative path */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-
 	/** Returns the image provider */
 	@Override
-	public DslImages getImageProvider() {
+	public AntlrDTImages getImageProvider() {
 		if (imageProvider == null) {
 			imageProvider = new AntlrDTImages();
 		}
@@ -110,14 +101,6 @@ public class AntlrDTUI extends DslUI {
 		}
 		return factory;
 	}
-	//
-	// @Override
-	// public IWizardsFactory getWizardsFactory() {
-	// if (wizardFactory == null) {
-	// wizardFactory = new WizardsFactory();
-	// }
-	// return wizardFactory;
-	// }
 
 	public CstEditor getCstEditor() {
 		return cstEditor;

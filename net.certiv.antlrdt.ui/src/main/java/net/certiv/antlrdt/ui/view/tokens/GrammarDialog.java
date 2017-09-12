@@ -1,6 +1,6 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
-import static net.certiv.antlrdt.ui.view.GrammarRecord.*;
+import static net.certiv.antlrdt.ui.view.tokens.GrammarRecord.*;
 
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.layout.GridDataFactory;

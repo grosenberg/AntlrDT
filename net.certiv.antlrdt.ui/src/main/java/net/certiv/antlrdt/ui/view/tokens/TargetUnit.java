@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.view;
+package net.certiv.antlrdt.ui.view.tokens;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

@@ -19,8 +19,7 @@ public class OpenPathsEditorHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPage page = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage();
-		PathsEditor editor = openPathsEditor(page);
-		if (editor != null) editor.setInput(null, null);
+		openPathsEditor(page);
 		return null;
 	}
 

@@ -16,7 +16,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.ui.view.Source;
+import net.certiv.antlrdt.ui.view.tokens.Source;
 import net.certiv.dsl.core.util.Log;
 
 public class AntlrDTUtil {

@@ -1,102 +1,49 @@
 package net.certiv.antlrdt.ui.graph.paths.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import net.certiv.antlrdt.core.parser.PathsData;
-import net.certiv.antlrdt.core.parser.PathsNode;
 import net.certiv.antlrdt.core.parser.PathsData.Entry;
+import net.certiv.antlrdt.core.parser.PathsNode;
 import net.certiv.antlrdt.ui.graph.IGraphModel;
-import net.certiv.dsl.core.util.Log;
 
 public class PathsModel implements IGraphModel {
 
+	/*
+	 * The {@code fanoutNodes} map represents a directred graph having a root. The key set represents
+	 * the unique, ordered set of nodes in the graph. The first key node is a root node. Each value set
+	 * represents the unique, ordered set of fanout nodes that are directly connnected to a
+	 * corresponding key node.
+	 */
+	private LinkedHashMap<PathsNode, LinkedHashSet<PathsNode>> fanoutNodes;
 	private LinkedHashMap<PathsNode, ArrayList<PathsConnector>> connectors;
-	private LinkedHashMap<PathsNode, LinkedHashSet<PathsNode>> filteredData;
 
 	private PathsData data;
 
-	public PathsModel() {
-		this.connectors = new LinkedHashMap<>();
-		this.filteredData = new LinkedHashMap<>();
+	/**
+	 * Constructs the model. Searches up the connection network from the target node to the network root
+	 * node that represents the first grammar rule.
+	 * 
+	 * @param data the connection network representing the rule and token relations of the grammar.
+	 * @param target the name of the target node in the connecton network.
+	 */
+	public PathsModel(PathsData data, String target) {
+		init(data);
+		boolean ok = addAllCallers(target);
+		if (ok) buildConnectors();
 	}
 
-	public PathsModel(PathsData data, String ruleName) {
-		this();
+	private void init(PathsData data) {
 		this.data = data;
-		boolean ok = filterData(ruleName);
-		if (ok) connectGraph();
+		fanoutNodes = new LinkedHashMap<>();
+		connectors = new LinkedHashMap<>();
 	}
 
-	private boolean filterData(String ruleName) {
-		Entry start = data.namedEntry(ruleName);
-		if (start == null) {
-			Log.error(this, "Start failed (" + ruleName + ")");
-			return false;
-		}
-		filterData(start);
-		return true;
-	}
-
-	// 'out' = rules that contain 'in' from 'data'
-	// add out to filtered
-	// recurse with in = out
-	// until out is empty
-	private void filterData(Entry in) {
-		for (PathsNode item : data.containingRules(in)) {
-			boolean known = accumulateData(item, in.getRef());
-			if (known) continue;		// item known; already been visited
-
-			Entry out = data.namedEntry(item.getRuleName());
-			if (out != null) {
-				filterData(out);		// recurse
-			}
-		}
-	}
-
-	// 'entry' is a rule that contains the term 'in'
-	// the set of 'in' terms are those that are on the filtered path
-	private boolean accumulateData(PathsNode out, PathsNode pathsNode) {
-		boolean known = true;
-		LinkedHashSet<PathsNode> set = filteredData.get(out);
-		if (set == null) {
-			set = new LinkedHashSet<>();
-			filteredData.put(out, set);
-			known = false;
-		}
-		set.add(pathsNode);
-		return known;
-	}
-
-	private void connectGraph() {
-		for (PathsNode parent : filteredData.keySet()) {
-			LinkedHashSet<PathsNode> terms = filteredData.get(parent);
-			for (PathsNode child : terms) {
-				add(parent, child);
-			}
-		}
-	}
-
-	private void add(PathsNode parent, PathsNode child) {
-		if (parent != null) {
-			PathsConnector connector = new PathsConnector(parent, child);
-			addEndpoint(parent, connector);
-			addEndpoint(child, connector);
-		}
-	}
-
-	private void addEndpoint(PathsNode parent, PathsConnector conn) {
-		ArrayList<PathsConnector> list = connectors.get(parent);
-		if (list == null) {
-			list = new ArrayList<PathsConnector>();
-			connectors.put(parent, list);
-		}
-		list.add(conn);
-	}
+	// ------------------------------------------------
 
 	@Override
 	public void clear() {
@@ -106,40 +53,158 @@ public class PathsModel implements IGraphModel {
 
 	public PathsNode namedPathsNode(String selected) {
 		Entry entry = data.namedEntry(selected);
-		return entry.getRef();
+		return entry.getPathNode();
 	}
 
+	/** Returns the direct callers of the given target based on the existing fanouts. */
 	public ArrayList<PathsNode> findCallers(PathsNode target) {
-		ArrayList<PathsNode> sources = new ArrayList<>();
-		ArrayList<PathsConnector> conns = connectors.get(target);
-		if (conns == null) return sources;
-		for (PathsConnector conn : conns) {
-			if (conn.getTarget().equals(target)) {
-				sources.add(conn.getSource());
+		ArrayList<PathsNode> callers = new ArrayList<>();
+		for (Map.Entry<PathsNode, LinkedHashSet<PathsNode>> entry : fanoutNodes.entrySet()) {
+			if (entry.getValue().contains(target)) {
+				callers.add(entry.getKey());
 			}
 		}
-		return sources;
+		return callers;
 	}
 
-	public List<PathsNode> findCallees(PathsNode source) {
-		ArrayList<PathsNode> targets = new ArrayList<>();
-		ArrayList<PathsConnector> conns = connectors.get(source);
-		if (conns == null) return targets;
-		for (PathsConnector conn : conns) {
-			if (conn.getSource() != null && conn.getSource().equals(source)) {
-				targets.add(conn.getTarget());
-			}
-		}
-		return targets;
+	/** Returns the direct callees of the given target based on the existing fanouts. */
+	public List<PathsNode> findCallees(PathsNode target) {
+		LinkedHashSet<PathsNode> callees = fanoutNodes.get(target);
+		return new ArrayList<>(callees);
 	}
 
 	public List<PathsNode> getNodeList() {
-		if (connectors != null) {
-			Set<PathsNode> nodes = connectors.keySet();
-			return new ArrayList<PathsNode>(nodes);
-		}
-		return Collections.emptyList();
+		return new ArrayList<PathsNode>(fanoutNodes.keySet());
 	}
+
+	// ------------------------------------------------
+
+	/**
+	 * Adds the direct callees of the given node to the model. References the underlying
+	 * {@code PathsData} to find the actual callees.
+	 */
+	public void addSubPaths(PathsNode node) {
+		Entry ne = data.namedEntry(node.getRuleName());
+		List<PathsNode> callees = data.getCalledRules(ne);
+		if (callees.isEmpty()) return;
+
+		LinkedHashSet<PathsNode> fanoutSet = fanoutNodes.get(node);
+		if (fanoutSet == null) {
+			fanoutSet = new LinkedHashSet<>();
+			fanoutNodes.put(node, fanoutSet);
+		}
+		for (PathsNode callee : callees) {
+			addCallers(callee);
+		}
+		buildConnectors();
+	}
+
+	// adds caller links to the given node, for callers within the existing network
+	private void addCallers(PathsNode callee) {
+		Entry ne = data.namedEntry(callee.getRuleName());
+		List<PathsNode> callers = data.getCallingRules(ne);
+		for (PathsNode caller : callers) {
+			LinkedHashSet<PathsNode> fanoutSet = fanoutNodes.get(caller);
+			if (fanoutSet != null) {
+				fanoutSet.add(callee);
+			}
+		}
+	}
+
+	// adds callees of the given node with caller links limited to within the existing network
+	private boolean addAllCallers(String target) {
+		Entry current = data.namedEntry(target);
+		recurse(current);
+		return true;
+	}
+
+	/*
+	 * Evaluates the caller relations, as identified from the network, for a current target entry.
+	 * Recurses over each new caller until done.
+	 */
+	private void recurse(Entry current) {
+		for (PathsNode caller : data.getCallingRules(current)) {
+			boolean known = accumulate(caller, current.getPathNode());
+			if (known) continue;	// caller already visited
+
+			Entry nextCurrent = data.namedEntry(caller.getRuleName());
+			if (nextCurrent != null) recurse(nextCurrent);
+		}
+	}
+
+	// records the relation between the caller and current nodes
+	private boolean accumulate(PathsNode caller, PathsNode current) {
+		boolean known = true;
+		LinkedHashSet<PathsNode> fanoutSet = fanoutNodes.get(caller);
+		if (fanoutSet == null) {
+			fanoutSet = new LinkedHashSet<>();
+			fanoutNodes.put(caller, fanoutSet);
+			known = false;
+		}
+		fanoutSet.add(current);
+		return known;
+	}
+
+	// ------------------------------------------------
+
+	/**
+	 * Removes the given node and connections to the immediate callee nodes of the given node. If the
+	 * callee node has no other callers, removes that node.
+	 */
+	public void removeNode(PathsNode node) {
+		removeSubNodes(node, 1);
+		for (PathsNode caller : findCallers(node)) {
+			fanoutNodes.get(caller).remove(node);
+		}
+		fanoutNodes.remove(node);
+		buildConnectors();
+	}
+
+	private void removeSubNodes(PathsNode node, int level) {
+		LinkedHashSet<PathsNode> callees = fanoutNodes.get(node);
+		if (callees == null || callees.isEmpty()) return;
+
+		LinkedHashSet<PathsNode> calleeSet = new LinkedHashSet<>(callees);
+		for (PathsNode callee : calleeSet) {
+			fanoutNodes.get(node).remove(callee);		// rm link to the callee
+			ArrayList<PathsNode> callers = findCallers(callee);
+			if (callers.size() == 0) {
+				removeSubNodes(callee, level + 1);		// recurse
+				fanoutNodes.remove(callee);				// rm callee
+			}
+		}
+	}
+
+	// ------------------------------------------------
+
+	private void buildConnectors() {
+		connectors.clear();
+		for (PathsNode caller : fanoutNodes.keySet()) {
+			LinkedHashSet<PathsNode> fanoutSet = fanoutNodes.get(caller);
+			for (PathsNode callee : fanoutSet) {
+				connect(caller, callee);
+			}
+		}
+	}
+
+	private void connect(PathsNode caller, PathsNode callee) {
+		if (caller != null) {
+			PathsConnector connector = new PathsConnector(caller, callee);
+			addEndpoint(connector, caller);
+			addEndpoint(connector, callee);
+		}
+	}
+
+	private void addEndpoint(PathsConnector conn, PathsNode node) {
+		ArrayList<PathsConnector> list = connectors.get(node);
+		if (list == null) {
+			list = new ArrayList<PathsConnector>();
+			connectors.put(node, list);
+		}
+		list.add(conn);
+	}
+
+	// ------------------------------------------------
 
 	@Override
 	public void dispose() {

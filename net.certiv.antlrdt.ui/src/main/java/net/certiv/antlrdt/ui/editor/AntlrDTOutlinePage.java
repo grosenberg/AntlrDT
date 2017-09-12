@@ -14,6 +14,9 @@ import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
 import net.certiv.antlrdt.ui.editor.filter.RuleFilter;
 import net.certiv.antlrdt.ui.editor.filter.TokenFilter;
+import net.certiv.dsl.core.model.IDslElement;
+import net.certiv.dsl.core.model.Statement;
+import net.certiv.dsl.core.model.util.ISourceRef;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslOutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
@@ -91,5 +94,30 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction[] fFilterActions = actions.toArray(new DslFilterAction[actions.size()]);
 		fMemberFilterActionGroup.setActions(fFilterActions);
 		fMemberFilterActionGroup.contributeToToolBar(toolBarManager);
+	}
+
+	@Override
+	public IDslElement[] filterOutlineNodeChildren(ISourceRef node) {
+		ArrayList<IDslElement> results = new ArrayList<>();
+		boolean empty = false;
+		for (IDslElement child : node.getChildList()) {
+			switch (child.getKind()) {
+				case IDslElement.BEG_BLOCK:
+					if (child.getChildList().isEmpty()) {
+						empty = true;
+						continue;
+					}
+				case IDslElement.END_BLOCK:
+					if (empty) {
+						empty = false;
+						continue;
+					}
+				case IDslElement.FIELD:
+					if (((Statement) child).isDeclaration()) continue;
+				default:
+					results.add(child);
+			}
+		}
+		return results.toArray(new IDslElement[results.size()]);
 	}
 }

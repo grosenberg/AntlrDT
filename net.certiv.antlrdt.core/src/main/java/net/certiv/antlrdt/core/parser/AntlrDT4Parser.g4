@@ -85,29 +85,16 @@ option
 optionValue
 	:	id ( DOT id )*
 	|	STRING_LITERAL
-	|	actionBlock			// TODO: is this valid?
+	|	actionBlock
 	|	INT
 	;
 
 // ------------
-// Delegates
+// Tokens, Imports & Channels
 
 delegateGrammars
-	:	IMPORT delegate delegateElement* SEMI
+	:	IMPORT idList? SEMI
 	;
-
-delegateElement
-	: COMMA delegate
-	;
-
-delegate
-	:	lbl=id ASSIGN gram=id
-	|	gram=id
-	;
-
-
-// ------------
-// Tokens & Channels
 
 tokensSpec
 	:	TOKENS LBRACE idList? RBRACE
@@ -233,20 +220,19 @@ labeledAlt
 // Lexer rules
 
 modeRuleSpec
-	:	MODE id SEMI lexerRuleSpec*
+	:	DOC_COMMENT?
+		MODE id SEMI
+		lexerRuleSpec+
 	;
 
 lexerRuleSpec
-	:	DOC_COMMENT? 
+	:	DOC_COMMENT?
 		TOKEN_REF COLON lexerRuleBlock SEMI
 	;
 
-// The 'fragment' rule is a lexer rule that functions like an 
-// inlined subroutine for other lexer rules to reuse for 
-// certain lexical patterns.
 fragmentRuleSpec
-	:	DOC_COMMENT? FRAGMENT
-		TOKEN_REF COLON lexerRuleBlock SEMI
+	:	DOC_COMMENT?
+		FRAGMENT TOKEN_REF COLON lexerRuleBlock SEMI
 	;
 
 lexerRuleBlock
@@ -259,7 +245,7 @@ lexerAltList
 
 lexerAlt
 	:	lexerElements lexerCommands?
-	|									// explicitly allow empty alts
+	|	// explicitly allow empty alts
 	;
 
 lexerElements
@@ -270,8 +256,8 @@ lexerElement
 	:	labeledLexerElement ebnfSuffix?
 	|	lexerAtom ebnfSuffix?
 	|	lexerBlock ebnfSuffix?
-	|	actionBlock QUESTION?	// actions only allowed at end of outer alt actually,
-	;							// but preds can be anywhere
+	|	actionBlock QUESTION?	// actions only allowed on outer alt; preds can be anywhere
+	;
 
 labeledLexerElement
 	:	id ( ASSIGN | PLUS_ASSIGN )
@@ -284,14 +270,13 @@ lexerBlock
 	:	LPAREN lexerAltList RPAREN
 	;
 
-// E.g., channel(HIDDEN), skip, more, mode(INSIDE), push(INSIDE), pop
+/** E.g., channel(HIDDEN), skip, more, mode(INSIDE), push(INSIDE), pop */
 lexerCommands
-	:	RARROW lexerCommand (COMMA lexerCommand)*
+	:	RARROW lexerCommand ( COMMA lexerCommand )*
 	;
 
 lexerCommand
-	:	lexerCommandName LPAREN lexerCommandExpr RPAREN
-	|	lexerCommandName
+	:	lexerCommandName ( LPAREN lexerCommandExpr RPAREN )?
 	;
 
 lexerCommandName
@@ -418,7 +403,7 @@ terminal
 	;
 
 // Terminals may be adorned with certain options when
-// reference in the grammar: TOK<,,,>
+// referenced in the grammar: TOK<,,,>
 elementOptions
 	:	LT elementOption (COMMA elementOption)* GT
 	;

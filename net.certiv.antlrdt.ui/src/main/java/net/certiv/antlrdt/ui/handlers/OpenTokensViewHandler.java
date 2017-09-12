@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import net.certiv.antlrdt.ui.view.TokensView;
+import net.certiv.antlrdt.ui.view.tokens.TokensView;
 
 public class OpenTokensViewHandler extends AbstractHandler {
 

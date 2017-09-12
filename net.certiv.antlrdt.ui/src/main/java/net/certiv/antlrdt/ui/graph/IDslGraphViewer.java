@@ -12,12 +12,10 @@
  *******************************************************************************/
 package net.certiv.antlrdt.ui.graph;
 
-import org.eclipse.draw2d.SWTEventDispatcher;
-
 public interface IDslGraphViewer {
 
-	public SWTEventDispatcher getEventDispatcher();
+	public EnhSWTEventDispatcher getEventDispatcher();
 
-	public EnhTipHelper getCoolTipHelper();
+	public EnhTipHelper getTipHelper();
 
 }

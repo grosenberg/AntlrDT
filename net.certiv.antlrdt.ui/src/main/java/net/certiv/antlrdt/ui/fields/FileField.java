@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import net.certiv.antlrdt.ui.view.Source;
+import net.certiv.antlrdt.ui.view.tokens.Source;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.ui.fields.TextField;
 

@@ -7,7 +7,7 @@
  *******************************************************************************/
 package net.certiv.antlrdt.ui.graph;
 
-import org.eclipse.draw2d.SWTEventDispatcher;
+import org.eclipse.draw2d.LightweightSystem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -20,9 +20,6 @@ import org.eclipse.zest.core.widgets.Graph;
 import net.certiv.dsl.core.util.Reflect;
 
 public class DslGraphViewer extends GraphViewer implements IDslGraphViewer {
-
-	private SWTEventDispatcher dispatcher;
-	private EnhTipHelper helper;
 
 	public DslGraphViewer(Composite parent, int style) {
 		super(parent, style);
@@ -41,10 +38,9 @@ public class DslGraphViewer extends GraphViewer implements IDslGraphViewer {
 				setAntialias(gc, SWT.ON);
 			}
 		});
-		setControl(graph);
 
-		dispatcher = new SWTEventDispatcher();
-		graph.getLightweightSystem().setEventDispatcher(dispatcher);
+		setControl(graph);
+		graph.getLightweightSystem().setEventDispatcher(new EnhSWTEventDispatcher());
 	}
 
 	public static void setAntialias(GC gc, int style) {
@@ -58,13 +54,14 @@ public class DslGraphViewer extends GraphViewer implements IDslGraphViewer {
 	}
 
 	@Override
-	public SWTEventDispatcher getEventDispatcher() {
-		return dispatcher;
+	public EnhSWTEventDispatcher getEventDispatcher() {
+		LightweightSystem lws = graph.getLightweightSystem();
+		return (EnhSWTEventDispatcher) Reflect.get(lws, "dispatcher", true);
 	}
 
 	@Override
-	public EnhTipHelper getCoolTipHelper() {
-		return helper;
+	public EnhTipHelper getTipHelper() {
+		return getEventDispatcher().getEnhTipHelper();
 	}
 
 	public void setZoomLevels(double[] zoomLevels) {
@@ -72,9 +69,7 @@ public class DslGraphViewer extends GraphViewer implements IDslGraphViewer {
 		// TODO: fix when Bug 247788 is addressed
 		// Necessary hack to circumvent getZoomManager being overly restricted/protected.
 		// So, instead of this:
-
 		// getZoomManager().setZoomLevels(zoomLevels);
-
 		// have to do this:
 		Object zMgr = Reflect.invokeSuperDeclared(this, "getZoomManager", null, null);
 		Class<?>[] params = new Class[] { zoomLevels.getClass() };

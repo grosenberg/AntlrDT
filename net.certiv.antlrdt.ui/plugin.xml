@@ -70,6 +70,17 @@
    </extension>
 -->
 
+
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+            id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+            name="Antlr grammar element hyperlink"
+            targetId="net.certiv.dsl.ui.codeUnit">
+      </hyperlinkDetector>
+   </extension>
+
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -182,11 +193,11 @@
       <view
             allowMultiple="false"
             category="net.certiv.certivtools"
-            class="net.certiv.antlrdt.ui.view.TokensView"
+            class="net.certiv.antlrdt.ui.view.tokens.TokensView"
             icon="icons/obj16/grammarAst.gif"
             id="net.certiv.antlrdt.ui.view.tokens"
             name="Tokens View"
-            restorable="true">
+            restorable="false">
       </view>
    </extension>
 
@@ -517,6 +528,7 @@
             verticalRulerPreferenceValue="false">
       </specification>
    </extension>
+   
   <!--
   <extension
         id="defaultProposalCategory"
