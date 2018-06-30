@@ -17,7 +17,8 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String EDITOR_ACTION_NAMED_COLOR = "{DSL_ID}" + ".actionNamed";
 	public static final String EDITOR_ACTION_NAMED_BOLD = EDITOR_ACTION_NAMED_COLOR + EDITOR_BOLD_SUFFIX;
 	public static final String EDITOR_ACTION_NAMED_ITALIC = EDITOR_ACTION_NAMED_COLOR + EDITOR_ITALIC_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_STRIKETHROUGH = EDITOR_ACTION_NAMED_COLOR  + EDITOR_STRIKETHROUGH_SUFFIX;
+	public static final String EDITOR_ACTION_NAMED_STRIKETHROUGH = EDITOR_ACTION_NAMED_COLOR
+			+ EDITOR_STRIKETHROUGH_SUFFIX;
 	public static final String EDITOR_ACTION_NAMED_UNDERLINE = EDITOR_ACTION_NAMED_COLOR + EDITOR_UNDERLINE_SUFFIX;
 	// @formatter:on
 
@@ -161,4 +162,6 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_NODE_RULE = PT_COLOR_PREFIX + "NodeRule";
 
 	public static final String PT_ANIMATION_LIMIT = "{DSL_ID}" + ".ptAnimationLimit";
+
+	public static final String PT_DEPTH_LIMIT = "{DSL_ID}" + ".ptDepthLimit";
 }

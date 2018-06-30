@@ -11,8 +11,8 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
-import net.certiv.dsl.ui.text.DslTextTools;
 
 /**
  * The activator class controls the plug-in life cycle

@@ -7,8 +7,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.text.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.text.DslTextTools;
+import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.editor.text.DslTextTools;
 
 public class AntlrDTTextTools extends DslTextTools {
 

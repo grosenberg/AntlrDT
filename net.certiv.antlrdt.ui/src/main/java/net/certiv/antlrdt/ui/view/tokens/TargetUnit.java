@@ -27,7 +27,7 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.loader.ClassLoaderFactory;
+import net.certiv.dsl.core.util.loader.DynamicLoader;
 
 class TargetUnit {
 
@@ -39,10 +39,7 @@ class TargetUnit {
 	private Class<?> lexerClass;
 
 	private Class<?> factoryClass;
-	private Class<?> errorClass; // parser.addErrorHandler()
-
-	private String parserName;
-	private String lexerName;
+	private Class<?> errorClass; // parser error handler
 
 	private CstModel model;
 	private ParseTree tree;
@@ -53,19 +50,25 @@ class TargetUnit {
 	private String[] tokenNames;
 	private String mainRuleName;
 
+	/**
+	 * Loads and holds the classes that corresponding to the current editor content: the source grammar.
+	 * 
+	 * @param record a data record describing the source grammar
+	 * @param srcGrammar the source grammar file
+	 * @param content the content of the source grammar file
+	 */
 	public TargetUnit(GrammarRecord record, IFile srcGrammar, String content) {
 		Log.setLevel(this, Log.LogLevel.Debug);
 		this.record = record;
-		evalGrammar(srcGrammar);
 
 		Thread thread = Thread.currentThread();
 		ClassLoader parent = thread.getContextClassLoader();
 		IProject project = record.getProject();
 
-		ClassLoader projectLoader;
+		DynamicLoader loader;
 		try {
-			projectLoader = ClassLoaderFactory.create(parent, project);
-			thread.setContextClassLoader(projectLoader);
+			loader = DynamicLoader.create(project, parent);
+			thread.setContextClassLoader(loader);
 		} catch (MalformedURLException e) {
 			Log.info(this, "Restoring classloader after failure");
 			thread.setContextClassLoader(parent);
@@ -73,7 +76,7 @@ class TargetUnit {
 		}
 
 		try {
-			if (buildClasses(projectLoader)) generate(content);
+			if (buildClasses(loader)) generate(content);
 		} finally {
 			Log.info(this, "Restoring classloader after generate");
 			thread.setContextClassLoader(parent);
@@ -108,46 +111,30 @@ class TargetUnit {
 		return tokenNames;
 	}
 
-	private void evalGrammar(IFile srcGrammar) {
-		String name = srcGrammar.getName();
-		int dot = name.lastIndexOf('.');
-		if (dot < 1) return;
-		name = name.substring(0, dot);
-		if (name.endsWith("Lexer")) {
-			lexerName = name;
-			dot = name.lastIndexOf("Lexer");
-			parserName = name.substring(0, dot) + "Parser";
-		} else if (name.endsWith("Parser")) {
-			parserName = name;
-			dot = name.lastIndexOf("Parser");
-			lexerName = name.substring(0, dot) + "Lexer";
-		} else {
-			parserName = name + "Parser";
-			lexerName = name + "Lexer";
-		}
-	}
-
-	private boolean buildClasses(ClassLoader projLoader) {
-		if (parserName != null && lexerName != null) {
-			parserClass = loadClass(projLoader, parserName);
-			lexerClass = loadClass(projLoader, lexerName);
-			factoryClass = loadClass(projLoader, record.getTokenFactory().getName().replace(".java", ""));
-			errorClass = loadClass(projLoader, record.getErrorStrategy().getName().replace(".java", ""));
-		}
+	private boolean buildClasses(DynamicLoader loader) {
+		parserClass = loadFqClass(loader, record.getParserFQName());
+		lexerClass = loadFqClass(loader, record.getLexerFQName());
+		factoryClass = loadClass(loader, record.getTokenFactory().getName());
+		errorClass = loadClass(loader, record.getErrorStrategy().getName());
 		return parserClass != null && lexerClass != null;
 	}
 
-	private Class<?> loadClass(ClassLoader projLoader, String name) {
-		if (name.equals("")) return null;
-		IProject project = record.getProject();
-		String fqname = CoreUtil.determineFQName(project, name);
-		Log.info(this, "Loading " + fqname);
+	private Class<?> loadFqClass(DynamicLoader loader, String fqName) {
+		if (fqName.isEmpty()) return null;
+		Log.info(this, "Loading " + fqName);
 		try {
-			return projLoader.loadClass(fqname);
+			return loader.loadClass(fqName);
 		} catch (ClassNotFoundException e) {
-			Log.error(this, "Failed to load class '" + fqname + "' (" + e.getMessage() + ")");
+			Log.error(this, "Failed to load class '" + fqName + "' (" + e.getMessage() + ")");
 		}
 		return null;
+	}
+
+	private Class<?> loadClass(DynamicLoader loader, String name) {
+		if (name.isEmpty()) return null;
+		IProject project = record.getProject();
+		String fqname = CoreUtil.determineFQName(project, name);
+		return loadFqClass(loader, fqname);
 	}
 
 	@SuppressWarnings("deprecation")

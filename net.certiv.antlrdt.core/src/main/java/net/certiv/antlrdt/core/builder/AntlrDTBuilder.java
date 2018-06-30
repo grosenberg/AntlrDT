@@ -27,20 +27,18 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery;
 import org.eclipse.jdt.core.search.TypeNameMatch;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation.IChooseImportQuery;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.parser.AntlrDTSourceParser;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
-import net.certiv.dsl.core.model.DslModelException;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.util.ErrorListener;
 import net.certiv.dsl.core.util.CoreUtil;
@@ -265,6 +263,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		IContainer folder = getBuildFolder(file);
 		IChooseImportQuery query = new IChooseImportQuery() {
 
+			@Override
 			public TypeNameMatch[] chooseImports(TypeNameMatch[][] openChoices, ISourceRange[] ranges) {
 				return null;
 			}
@@ -302,7 +301,7 @@ public class AntlrDTBuilder extends DslBuilder {
 
 	/**
 	 * Determine the build folder for a given a resource representing a grammar file.
-	 * 
+	 *
 	 * @param resource typically the grammar IFile
 	 * @return a filesystem absolute path to the build folder
 	 */
@@ -324,16 +323,11 @@ public class AntlrDTBuilder extends DslBuilder {
 
 	private String resolvePackageName(IResource resource) {
 		ICodeUnit unit = getDslCore().getModelManager().create((IFile) resource);
-		try {
-			AntlrDTSourceParser parser = (AntlrDTSourceParser) unit.getSourceParser();
-			return parser.resolvePackageName();
-		} catch (DslModelException e) {
-			return null;
-		}
+		return unit.resolveParserPackageName();
 	}
 
 	private ICompilationUnit[] getCompilationUnits(IResource resource, IContainer folder) {
-		ArrayList<ICompilationUnit> cuList = new ArrayList<ICompilationUnit>();
+		ArrayList<ICompilationUnit> cuList = new ArrayList<>();
 		IResource[] children = null;
 		try {
 			children = folder.members();

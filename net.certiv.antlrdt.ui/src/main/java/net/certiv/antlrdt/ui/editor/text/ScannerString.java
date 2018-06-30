@@ -10,12 +10,11 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.text.AbstractBufferedRuleBasedScanner;
-import net.certiv.dsl.ui.text.rules.NestingDelimiterRule;
+import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
 
 public class ScannerString extends AbstractBufferedRuleBasedScanner {
 
-	private String[] fgTokenProperties;
+	private String[] tokenProperties;
 
 	public ScannerString(IDslPrefsManager store) {
 		super(store);
@@ -24,10 +23,10 @@ public class ScannerString extends AbstractBufferedRuleBasedScanner {
 
 	@Override
 	protected String[] getTokenProperties() {
-		if (fgTokenProperties == null) {
-			fgTokenProperties = new String[] { bind(PrefsKey.EDITOR_STRING_COLOR) };
+		if (tokenProperties == null) {
+			tokenProperties = new String[] { bind(PrefsKey.EDITOR_STRING_COLOR) };
 		}
-		return fgTokenProperties;
+		return tokenProperties;
 	}
 
 	// Have to evaluate bracketed strings before single quoted strings to avoid a single quote
@@ -38,10 +37,10 @@ public class ScannerString extends AbstractBufferedRuleBasedScanner {
 		setDefaultReturnToken(token);
 
 		List<IRule> rules = new ArrayList<IRule>();
-		rules.add(new NestingDelimiterRule("[", "]", token, '\\'));
-		rules.add(new SingleLineRule("[", "]", token, '\\')); // non-nested
-		rules.add(new SingleLineRule("'", "'", token, '\\', true));
 		rules.add(new WhitespaceRule(new WhitespaceDetector()));
+		// rules.add(new NestingDelimiterRule("[", "]", token, '\\'));
+		// rules.add(new SingleLineRule("[", "]", token, '\\')); // non-nested
+		rules.add(new SingleLineRule("'", "'", token, '\\', true));
 		return rules;
 	}
 }

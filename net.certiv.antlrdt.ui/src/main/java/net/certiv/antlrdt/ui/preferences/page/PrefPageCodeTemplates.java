@@ -13,9 +13,9 @@ import net.certiv.dsl.core.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.templates.DslTemplateAccess;
 import net.certiv.dsl.ui.templates.DslTemplatePreferencePage;
-import net.certiv.dsl.ui.text.DslTextTools;
 
 public class PrefPageCodeTemplates extends DslTemplatePreferencePage {
 

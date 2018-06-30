@@ -144,7 +144,7 @@ public class TokensView extends ViewPart {
 		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(AntlrDTUI.PT_DIALOG_SEC);
 		}
-		history = new ArrayList<Source>();
+		history = new ArrayList<>();
 
 		decoRegistry = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 
@@ -167,17 +167,17 @@ public class TokensView extends ViewPart {
 		IEditorPart part = CoreUtil.getActiveEditor();
 		if (part instanceof AntlrDTEditor) {
 			AntlrDTEditor editor = (AntlrDTEditor) part;
-			IFile srcGrammar = CoreUtil.getInputFile(editor);
-			if (srcGrammar != null && srcGrammar.exists() && !editor.isDirty()) {
+			IFile grammarFile = CoreUtil.getInputFile(editor);
+			if (grammarFile != null && grammarFile.exists() && !editor.isDirty()) {
 				gmrBlock.getDecorator().hide();
-				if (gmrBlock.setText(srcGrammar.getName())) {
-					srcBlock.clear();  // srcGrammar name changed
+				if (gmrBlock.setText(grammarFile.getName())) {
+					srcBlock.clear();  // grammarFile name changed
 					tokBlock.clear();
 				}
 				valid = true;
-				IProject project = srcGrammar.getProject();
+				IProject project = grammarFile.getProject();
 				if (record == null) {
-					record = new GrammarRecord(project, srcGrammar);
+					record = new GrammarRecord(project, grammarFile);
 					record.load();
 					Log.debug(this, "Loaded record");
 				}
@@ -301,7 +301,7 @@ public class TokensView extends ViewPart {
 		dialogSettings.put(grammarName + KEY_NAME, source.name);
 		dialogSettings.put(grammarName + KEY_PATH, source.path);
 
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<String> tmp = new ArrayList<>();
 		for (Source h : history) {
 			tmp.add(h.name);
 			tmp.add(h.path);
@@ -401,7 +401,7 @@ public class TokensView extends ViewPart {
 	}
 
 	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
+		return AntlrDTUI.getDefault().getImageProvider();
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -476,7 +476,7 @@ public class TokensView extends ViewPart {
 
 					List<ErrorRecord> errors = target.getErrorList();
 					if (errors != null) {
-						ArrayList<String[]> data = ListProcessor.extract(errors);
+						ArrayList<String[]> data = ListProcessor.extract(errors, target.getTokenNames());
 						tokBlock.getErrorsViewer().setInput(data);
 					}
 

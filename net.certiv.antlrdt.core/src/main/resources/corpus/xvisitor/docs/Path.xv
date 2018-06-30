@@ -1,0 +1,35 @@
+xvisitor grammar Path;
+
+options {
+	superClass = PathAdaptor ;
+	parserClass = AntlrDT4Parser ;
+}
+
+@header {
+	package net.certiv.antlrdt.core.parser.gen;
+
+	import net.certiv.antlrdt.core.parser.PathAdaptor;
+}
+
+paths
+	: parserRuleRef
+	| parserTokenRef
+	| lexerTokenRef
+	| fragTokenRef
+	;
+
+parserRuleRef	: //parserRuleSpec//ruleref
+					{ parserRef($RULE_REF); }
+				;
+
+parserTokenRef	: //parserRuleSpec//terminal
+					{ parserRef($TOKEN_REF); }
+				;
+
+lexerTokenRef	: //lexerRuleSpec//terminal
+					{ lexerRef($TOKEN_REF); }
+				;
+
+fragTokenRef	: //fragmentRuleSpec//terminal
+					{ fragmentRef($TOKEN_REF); }
+				;

@@ -9,8 +9,8 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.text.DslWordFinder;
-import net.certiv.dsl.ui.text.hover.DslSourceHover;
+import net.certiv.dsl.ui.editor.text.DslWordFinder;
+import net.certiv.dsl.ui.editor.text.hover.DslSourceHover;
 
 public class SourceHover extends DslSourceHover {
 

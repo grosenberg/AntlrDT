@@ -1,13 +1,13 @@
 package net.certiv.antlrdt.ui.editor;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
+
 import net.certiv.antlrdt.core.parser.ModelData;
 import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
@@ -16,9 +16,10 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 	}
 
 	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
+		return AntlrDTUI.getDefault().getImageProvider();
 	}
 
+	@Override
 	public String decorateText(String text) {
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
@@ -27,7 +28,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					return data.key;
 				}
 				return text;
-				
+
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
 				if (hasData()) {
@@ -48,14 +49,17 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				return text;
-				
+
 			case IDslElement.BEG_BLOCK:
+				return "(Alt Group)";
+
 			case IDslElement.END_BLOCK:
-				return text;
+				return null;
 		}
 		return text + "[element kind=" + getElementKind() + "]";
 	}
 
+	@Override
 	public Image decorateImage(Image image) {
 		// create the base image
 		ImageDescriptor baseImage = createBaseImageDescriptor(image);
@@ -129,10 +133,13 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				break;
+
 			case IDslElement.BEG_BLOCK:
-			case IDslElement.END_BLOCK:
-				baseImage = getImageProvider().DESC_OBJS_EMPTY;
+				baseImage = getImageProvider().DESC_OBJ_EXTEND;
 				type = 20;
+				break;
+
+			case IDslElement.END_BLOCK:
 				break;
 		}
 		Image img = fetchImage(type);

@@ -10,12 +10,12 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.text.AbstractBufferedRuleBasedScanner;
-import net.certiv.dsl.ui.text.rules.BalancedBraceRule;
+import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.text.rules.BalancedBraceRule;
 
 public class ScannerAction extends AbstractBufferedRuleBasedScanner {
 
-	private String[] fgTokenProperties;
+	private String[] tokenProperties;
 
 	public ScannerAction(IDslPrefsManager store) {
 		super(store);
@@ -24,10 +24,10 @@ public class ScannerAction extends AbstractBufferedRuleBasedScanner {
 
 	@Override
 	protected String[] getTokenProperties() {
-		if (fgTokenProperties == null) {
-			fgTokenProperties = new String[] { bind(PrefsKey.EDITOR_ACTION_COLOR) };
+		if (tokenProperties == null) {
+			tokenProperties = new String[] { bind(PrefsKey.EDITOR_ACTION_COLOR) };
 		}
-		return fgTokenProperties;
+		return tokenProperties;
 	}
 
 	@Override

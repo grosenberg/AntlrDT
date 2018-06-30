@@ -5,7 +5,7 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.text.folding.AbstractDslFoldingStructureProvider;
+import net.certiv.dsl.ui.editor.text.folding.AbstractDslFoldingStructureProvider;
 
 public class AntlrDTFoldingStructureProvider extends AbstractDslFoldingStructureProvider {
 

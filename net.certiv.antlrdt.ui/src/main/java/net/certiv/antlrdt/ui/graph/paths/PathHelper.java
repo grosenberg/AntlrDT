@@ -1,8 +1,11 @@
 /*******************************************************************************
- * Copyright 2009, Gerald B. Rosenberg, Certiv Analytics and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of the Eclipse Public
- * License v1.0 which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html Contributors: Certiv Analytics
+ * Copyright 2009, Gerald B. Rosenberg, Certiv Analytics and others.
+ * All rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors: Certiv Analytics
  *******************************************************************************/
 package net.certiv.antlrdt.ui.graph.paths;
 
@@ -68,6 +71,12 @@ public class PathHelper implements IHelper {
 
 	public PathsNode getPathsNode(String selected) {
 		return model.namedPathsNode(selected);
+	}
+
+	public PathsModel addSupPaths(String ruleName) {
+		PathsNode current = model.namedPathsNode(ruleName);
+		model.addSupPaths(current);
+		return model;
 	}
 
 	public PathsModel addSubPaths(String ruleName) {

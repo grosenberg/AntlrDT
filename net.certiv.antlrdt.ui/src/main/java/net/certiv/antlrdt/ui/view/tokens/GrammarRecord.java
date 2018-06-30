@@ -6,7 +6,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Log;
 
 public class GrammarRecord {
 
@@ -33,8 +36,12 @@ public class GrammarRecord {
 	private Source tokenFactory;
 	private Source errorStrategy;
 
+	private String snippetDir; // defines the source data directory
+
+	private String basePathame = ""; // derived values
+	private String parserPathname = "";
+	private String lexerPathname = "";
 	private String recId;
-	private String defDir;
 
 	public GrammarRecord(IProject project, IFile grammar) {
 		super();
@@ -44,38 +51,53 @@ public class GrammarRecord {
 	}
 
 	private void init() {
-		this.recId = genID();
-		this.defDir = "";
+		genPackageNames();
+		genID();
+		this.snippetDir = "";
 		if (project.exists()) {
-			IPath path = Path.ROOT.append(project.getFullPath());
+			IPath path = CoreUtil.getWorkspaceLocation().append(project.getFullPath());
 			if (project.exists(DEF_SNIPPETS_DIR)) {
 				path = path.append(DEF_SNIPPETS_DIR);
 			}
-			defDir = path.toString();
+			snippetDir = path.toString();
+		} else {
+			Log.error(this, "Project does not exist: " + project.getName());
+		}
+	}
+
+	private void genPackageNames() {
+		ICodeUnit unit = AntlrDTCore.getDefault().getModelManager().create(grammar);
+		String pkgName = unit.resolveParserPackageName();
+
+		String filename = grammar.getName();
+		int dot = filename.lastIndexOf('.');
+		filename = filename.substring(0, dot);
+
+		dot = -1;
+		if (filename.endsWith("Lexer")) {
+			dot = filename.lastIndexOf("Lexer");
+
+		} else if (filename.endsWith("Parser")) {
+			dot = filename.lastIndexOf("Parser");
+		}
+
+		if (dot > -1) {
+			this.basePathame = pkgName + "." + filename.substring(0, dot);
+			this.parserPathname = basePathame + "Parser";
+			this.lexerPathname = basePathame + "Lexer";
+		} else {
+			Log.error(this, "Unrecognizable grammar name: " + filename);
 		}
 	}
 
 	// id encodes project relative grammar name
-	private String genID() {
-		IPath path = grammar.getProjectRelativePath();
-		String name = path.toString();
-		String ext = path.getFileExtension();
-		if (ext != null) {
-			int dot = name.lastIndexOf('.');
-			name = name.substring(0, dot);
-		}
-		if (name.endsWith("Lexer")) {
-			int dot = name.lastIndexOf("Lexer");
-			name = name.substring(0, dot);
-		} else if (name.endsWith("Parser")) {
-			int dot = name.lastIndexOf("Parser");
-			name = name.substring(0, dot);
-		}
-		return "{DSL_ID}." + name.replaceAll("/", ".") + "." + ext;
+	private void genID() {
+		String ext = grammar.getFileExtension();
+		this.recId = "{DSL_ID}." + basePathame.replaceAll("/", ".") + "." + ext;
 	}
 
 	public void load() {
-		String path = getPrefs().getString(null, recId + SNIPPET_DIR + PATH, defDir);
+		String path = getPrefs().getString(null, recId + SNIPPET_DIR + PATH, snippetDir);
 		String name = getPrefs().getString(null, recId + SNIPPET_DIR + NAME, "");
 		snippetsDir = new Source(path, name);
 
@@ -140,6 +162,14 @@ public class GrammarRecord {
 		return grammar;
 	}
 
+	public String getParserFQName() {
+		return parserPathname;
+	}
+
+	public String getLexerFQName() {
+		return lexerPathname;
+	}
+
 	public Source getSnippetsDir() {
 		return snippetsDir;
 	}
@@ -171,24 +201,4 @@ public class GrammarRecord {
 	public void setErrorStrategy(Source errorStrategy) {
 		this.errorStrategy = errorStrategy;
 	}
-
-	public boolean matches(IProject project2, IFile grammar2) {
-		if (project == null && project2 != null) return false;
-		if (!project.equals(project2)) return false;
-		if (grammar == null && grammar2 != null) return false;
-		if (!grammar.equals(grammar2)) return false;
-		return true;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
-		GrammarRecord other = (GrammarRecord) obj;
-		if (!this.matches(other.project, other.grammar)) return false;
-		return true;
-	}
-
-	public void compareTo(GrammarRecord test) {}
 }

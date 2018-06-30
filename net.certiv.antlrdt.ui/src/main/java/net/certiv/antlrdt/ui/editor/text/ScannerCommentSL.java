@@ -10,7 +10,7 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
 
 public class ScannerCommentSL extends AbstractBufferedRuleBasedScanner {
 

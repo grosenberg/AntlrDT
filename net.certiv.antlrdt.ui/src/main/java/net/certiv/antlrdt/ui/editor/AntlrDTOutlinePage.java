@@ -1,11 +1,13 @@
 package net.certiv.antlrdt.ui.editor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 
 import net.certiv.antlrdt.ui.AntlrDTImages;
@@ -14,9 +16,9 @@ import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
 import net.certiv.antlrdt.ui.editor.filter.RuleFilter;
 import net.certiv.antlrdt.ui.editor.filter.TokenFilter;
+import net.certiv.dsl.core.model.Field;
 import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.core.model.Statement;
-import net.certiv.dsl.core.model.util.ISourceRef;
+import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslOutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
@@ -24,8 +26,70 @@ import net.certiv.dsl.ui.viewsupport.DslFilterActionGroup;
 
 public class AntlrDTOutlinePage extends DslOutlinePage {
 
+	private class ChildrenProvider extends DefaultChildrenProvider {
+
+		private static final String Keys = ":;{})";
+
+		@Override
+		public Object getParent(Object child) {
+			if (child instanceof IDslElement) {
+				IDslElement parent = ((IDslElement) child).getParent();
+				if (isBlock(IDslElement.BEG_BLOCK, parent)) {
+					return getParent(parent);
+				}
+				return parent;
+			}
+			return null;
+		}
+
+		@Override
+		public Object[] getChildren(Object elem) {
+			if (elem instanceof IDslElement) {
+				List<IDslElement> children = ((IDslElement) elem).getChildList();
+				if (children.isEmpty()) return DslOutlinePage.NO_CHILDREN;
+
+				List<IDslElement> hoisted = new ArrayList<>();
+				for (IDslElement child : children) {
+					if (child instanceof Field && ((Field) child).isDeclaration()) {
+						continue;
+
+					} else if (isBlock(IDslElement.BEG_BLOCK, child)) {
+						for (Object c : getChildren(child)) {
+							hoisted.add((IDslElement) c);
+						}
+
+					} else if (isBlock(IDslElement.END_BLOCK, child)) {
+						continue;
+
+					} else {
+						hoisted.add(child);
+					}
+				}
+				return hoisted.toArray(new IDslElement[hoisted.size()]);
+			}
+
+			return DslOutlinePage.NO_CHILDREN;
+		}
+
+		private boolean isBlock(int kind, IDslElement elem) {
+			if (elem != null && elem instanceof IStatement) {
+				IStatement stmt = (IStatement) elem;
+				if (stmt.getKind() == kind) {
+					if (Keys.contains(stmt.getElementName())) return true;
+				}
+			}
+			return false;
+		}
+	}
+
 	public AntlrDTOutlinePage(DslEditor editor, IPreferenceStore store) {
 		super(AntlrDTUI.getDefault(), editor, store);
+	}
+
+	@Override
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		viewer.setContentProvider(new ChildrenProvider());
 	}
 
 	@Override
@@ -39,8 +103,8 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		DslFilterActionGroup fMemberFilterActionGroup = new DslFilterActionGroup(viewer, store);
 		String title, helpContext;
-		ArrayList<DslFilterAction> actions = new ArrayList<DslFilterAction>(4);
-		AntlrDTImages imgProvider = (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
+		ArrayList<DslFilterAction> actions = new ArrayList<>(4);
+		AntlrDTImages imgProvider = AntlrDTUI.getDefault().getImageProvider();
 
 		// fill-in actions rule
 		title = ActionMessages.MemberFilterActionGroup_hide_rules_label;
@@ -94,30 +158,5 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction[] fFilterActions = actions.toArray(new DslFilterAction[actions.size()]);
 		fMemberFilterActionGroup.setActions(fFilterActions);
 		fMemberFilterActionGroup.contributeToToolBar(toolBarManager);
-	}
-
-	@Override
-	public IDslElement[] filterOutlineNodeChildren(ISourceRef node) {
-		ArrayList<IDslElement> results = new ArrayList<>();
-		boolean empty = false;
-		for (IDslElement child : node.getChildList()) {
-			switch (child.getKind()) {
-				case IDslElement.BEG_BLOCK:
-					if (child.getChildList().isEmpty()) {
-						empty = true;
-						continue;
-					}
-				case IDslElement.END_BLOCK:
-					if (empty) {
-						empty = false;
-						continue;
-					}
-				case IDslElement.FIELD:
-					if (((Statement) child).isDeclaration()) continue;
-				default:
-					results.add(child);
-			}
-		}
-		return results.toArray(new IDslElement[results.size()]);
 	}
 }

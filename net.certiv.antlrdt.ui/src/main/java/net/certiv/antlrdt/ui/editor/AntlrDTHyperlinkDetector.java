@@ -7,7 +7,7 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.model.DslModelManager;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
-import net.certiv.dsl.ui.text.DslWordFinder;
+import net.certiv.dsl.ui.editor.text.DslWordFinder;
 
 public class AntlrDTHyperlinkDetector extends DslHyperlinkDetector {
 

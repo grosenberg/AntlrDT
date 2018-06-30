@@ -14,9 +14,9 @@ import net.certiv.dsl.core.model.DslModelException;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.text.completion.CompletionLabelProvider;
-import net.certiv.dsl.ui.text.completion.DslCollector;
-import net.certiv.dsl.ui.text.completion.DslCompletionProposal;
+import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
+import net.certiv.dsl.ui.editor.text.completion.DslCollector;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 
 public class AntlrDTCollector extends DslCollector {
 

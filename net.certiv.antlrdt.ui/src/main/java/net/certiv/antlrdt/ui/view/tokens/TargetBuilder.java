@@ -56,10 +56,6 @@ public class TargetBuilder {
 		return target != null ? target.getErrors() : null;
 	}
 
-	// public CharStreams getInput() {
-	// return target != null ? target.getInput() : null;
-	// }
-
 	public String getMainRuleName() {
 		return target != null ? target.getMainRuleName() : "";
 	}
@@ -118,7 +114,7 @@ public class TargetBuilder {
 				if (thread != null)
 					thread.interrupt();
 			}
-		}, 2000);
+		}, 20000000);
 		return timer;
 	}
 

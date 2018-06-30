@@ -12,7 +12,7 @@ import net.certiv.dsl.core.util.Strings;
 public class ListProcessor {
 
 	public static ArrayList<String[]> extract(List<Token> tokensList, String[] tokenNames, boolean nodesOnly) {
-		ArrayList<String[]> tokens = new ArrayList<String[]>();
+		ArrayList<String[]> tokens = new ArrayList<>();
 		for (Token token : tokensList) {
 			if (nodesOnly && token.getChannel() == Lexer.HIDDEN) continue;
 
@@ -27,15 +27,19 @@ public class ListProcessor {
 		return tokens;
 	}
 
-	public static ArrayList<String[]> extract(List<ErrorRecord> errorList) {
-		ArrayList<String[]> errors = new ArrayList<String[]>();
+	public static ArrayList<String[]> extract(List<ErrorRecord> errorList, String[] tokenNames) {
+		ArrayList<String[]> errors = new ArrayList<>();
 		for (ErrorRecord error : errorList) {
+			int ttype = error.getOffendingSymbol().getType();
+
 			String idx = String.valueOf(error.getTokenIndex());
 			String line = String.valueOf(error.getLine());
 			String col = String.valueOf(error.getVisCol());
+			String src = error.errorSource().toString();
+			String tname = ttype == Token.EOF ? "EOF" : tokenNames[ttype];
 			String message = Strings.escape(error.getMessage());
-			String src = String.valueOf(error.errorSource());
-			errors.add(new String[] { idx, line, col, message, src });
+
+			errors.add(new String[] { idx, line, col, src, tname, message });
 		}
 		return errors;
 	}

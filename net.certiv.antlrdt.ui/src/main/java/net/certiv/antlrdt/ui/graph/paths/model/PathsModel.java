@@ -9,7 +9,9 @@ import java.util.Map;
 import net.certiv.antlrdt.core.parser.PathsData;
 import net.certiv.antlrdt.core.parser.PathsData.Entry;
 import net.certiv.antlrdt.core.parser.PathsNode;
+import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.graph.IGraphModel;
+import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
 
 public class PathsModel implements IGraphModel {
 
@@ -23,24 +25,22 @@ public class PathsModel implements IGraphModel {
 	private LinkedHashMap<PathsNode, ArrayList<PathsConnector>> connectors;
 
 	private PathsData data;
+	private PathsEditor editor;
 
 	/**
 	 * Constructs the model. Searches up the connection network from the target node to the network root
 	 * node that represents the first grammar rule.
-	 * 
+	 *
 	 * @param data the connection network representing the rule and token relations of the grammar.
 	 * @param target the name of the target node in the connecton network.
 	 */
-	public PathsModel(PathsData data, String target) {
-		init(data);
-		boolean ok = addAllCallers(target);
-		if (ok) buildConnectors();
-	}
-
-	private void init(PathsData data) {
+	public PathsModel(PathsEditor editor, PathsData data, String target) {
+		this.editor = editor;
 		this.data = data;
 		fanoutNodes = new LinkedHashMap<>();
 		connectors = new LinkedHashMap<>();
+		boolean ok = addAllCallers(target);
+		if (ok) buildConnectors();
 	}
 
 	// ------------------------------------------------
@@ -74,10 +74,30 @@ public class PathsModel implements IGraphModel {
 	}
 
 	public List<PathsNode> getNodeList() {
-		return new ArrayList<PathsNode>(fanoutNodes.keySet());
+		return new ArrayList<>(fanoutNodes.keySet());
 	}
 
 	// ------------------------------------------------
+
+	/**
+	 * Adds the direct callers of the given node to the model. References the underlying
+	 * {@code PathsData} to find the actual callers.
+	 */
+	public void addSupPaths(PathsNode node) {
+		Entry ne = data.namedEntry(node.getRuleName());
+		List<PathsNode> callers = data.getCallingRules(ne);
+		if (callers.isEmpty()) return;
+
+		for (PathsNode caller : callers) {
+			LinkedHashSet<PathsNode> fanoutSet = fanoutNodes.get(caller);
+			if (fanoutSet == null) {
+				fanoutSet = new LinkedHashSet<>();
+				fanoutNodes.put(caller, fanoutSet);
+			}
+			fanoutSet.add(node);
+		}
+		buildConnectors();
+	}
 
 	/**
 	 * Adds the direct callees of the given node to the model. References the underlying
@@ -99,7 +119,7 @@ public class PathsModel implements IGraphModel {
 		buildConnectors();
 	}
 
-	// adds caller links to the given node, for callers within the existing network
+	/** adds caller links to the given node, for callers within the existing network */
 	private void addCallers(PathsNode callee) {
 		Entry ne = data.namedEntry(callee.getRuleName());
 		List<PathsNode> callers = data.getCallingRules(ne);
@@ -114,7 +134,7 @@ public class PathsModel implements IGraphModel {
 	// adds callees of the given node with caller links limited to within the existing network
 	private boolean addAllCallers(String target) {
 		Entry current = data.namedEntry(target);
-		recurse(current);
+		recurse(current, editor.getPrefs().getInt(PrefsKey.PT_DEPTH_LIMIT));
 		return true;
 	}
 
@@ -122,13 +142,15 @@ public class PathsModel implements IGraphModel {
 	 * Evaluates the caller relations, as identified from the network, for a current target entry.
 	 * Recurses over each new caller until done.
 	 */
-	private void recurse(Entry current) {
+	private void recurse(Entry current, int limit) {
+		if (limit == 0) return;
+		limit--;
 		for (PathsNode caller : data.getCallingRules(current)) {
 			boolean known = accumulate(caller, current.getPathNode());
 			if (known) continue;	// caller already visited
 
 			Entry nextCurrent = data.namedEntry(caller.getRuleName());
-			if (nextCurrent != null) recurse(nextCurrent);
+			if (nextCurrent != null) recurse(nextCurrent, limit);
 		}
 	}
 
@@ -198,7 +220,7 @@ public class PathsModel implements IGraphModel {
 	private void addEndpoint(PathsConnector conn, PathsNode node) {
 		ArrayList<PathsConnector> list = connectors.get(node);
 		if (list == null) {
-			list = new ArrayList<PathsConnector>();
+			list = new ArrayList<>();
 			connectors.put(node, list);
 		}
 		list.add(conn);

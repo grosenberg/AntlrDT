@@ -9,10 +9,10 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 
 import net.certiv.antlrdt.ui.templates.AntlrDTTemplateCompletionProcessor;
-import net.certiv.dsl.ui.text.completion.ContentAssistInvocationContext;
-import net.certiv.dsl.ui.text.completion.DslCollector;
-import net.certiv.dsl.ui.text.completion.DslCompletionProposalComputer;
-import net.certiv.dsl.ui.text.completion.DslContentAssistInvocationContext;
+import net.certiv.dsl.ui.editor.text.completion.ContentAssistInvocationContext;
+import net.certiv.dsl.ui.editor.text.completion.DslCollector;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposalComputer;
+import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
 
 public class AntlrDTCodeCompletionComputer extends DslCompletionProposalComputer {
 

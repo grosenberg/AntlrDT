@@ -12,8 +12,8 @@ import net.certiv.dsl.core.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.formatter.DslFormatterPreferencePage;
-import net.certiv.dsl.ui.text.DslSourceViewerConfiguration;
 
 /** Preference page for formatting */
 public class PrefPageFormatter extends DslFormatterPreferencePage {

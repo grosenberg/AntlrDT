@@ -14,6 +14,7 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 
 	private static final Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE);
 
+	@Override
 	public String getColumnText(Object obj, int index) {
 		String[] rec = (String[]) obj;
 		switch (index) {
@@ -24,11 +25,16 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 			case 2:
 				return rec[2]; // col
 			case 3:
-				return rec[3]; // message
+				// source & message
+				if (rec[4].equals(ErrorSrc.PARSER.toString())) {
+					return String.format("%s: %s is %s", rec[3], rec[4], rec[5]);
+				}
+				return rec[3] + ": " + rec[5];
 		}
 		return "<<??>>";
 	}
 
+	@Override
 	public Image getColumnImage(Object obj, int index) {
 		return null;
 	}
@@ -41,7 +47,7 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		String[] rec = (String[]) element;
-		if (rec[4].equals(ErrorSrc.PARSER.toString())) return blue; // parser
+		if (rec[3].equals(ErrorSrc.PARSER.toString())) return blue; // parser
 		return null;
 	}
 }

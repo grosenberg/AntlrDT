@@ -126,4 +126,9 @@ public class ModelData implements IDescriptionData {
 	public void setScope(Realm realm) {
 		this.realm = realm;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("ModelData [key=%s]", key);
+	}
 }

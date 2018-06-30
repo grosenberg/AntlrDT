@@ -19,6 +19,7 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.core.util.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
@@ -29,15 +30,24 @@ import net.certiv.dsl.ui.util.SWTFactory;
 
 public class TabPageGeneral extends FormatterModifyTabPage {
 
+	private static final String[] TabItems = new String[] { PrefsKey.SPACE, PrefsKey.TAB, PrefsKey.MIXED };
+	private static final String[] TabNames = new String[] {
+			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_SPACE,
+			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_TAB,
+			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_MIXED };
+
+	// private static final FileFilter DirFilter = new FileFilter() {
+	//
+	// @Override
+	// public boolean accept(File pathname) {
+	// return pathname.isDirectory();
+	// }
+	// };
+
 	private Combo tabPolicy;
 	private Text indentSize;
 	private Text tabSize;
 	private TabPolicyListener tabPolicyListener;
-
-	String[] tabItems = new String[] { PrefsKey.SPACE, PrefsKey.TAB, PrefsKey.MIXED };
-	String[] tabNames = new String[] { FormatterMessages.IndentationTabPage_general_group_option_tab_policy_SPACE,
-			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_TAB,
-			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_MIXED };
 
 	public TabPageGeneral(IFormatterModifyDialog dialog) {
 		super(dialog);
@@ -65,7 +75,7 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 		public void widgetSelected(SelectionEvent e) {
 			int index = tabPolicy.getSelectionIndex();
 			if (index >= 0) {
-				final boolean tabMode = PrefsKey.TAB.equals(tabItems[index]);
+				final boolean tabMode = PrefsKey.TAB.equals(TabItems[index]);
 				manager.enableControl(indentSize, !tabMode);
 			}
 		}
@@ -82,7 +92,7 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 
 		Group tabPolicyGroup = SWTFactory.createGroup(parent, "General Settings", 2, 1, GridData.FILL_HORIZONTAL);
 		tabPolicy = manager.createCombo(tabPolicyGroup, bind(PrefsKey.FORMATTER_TAB_POLICY),
-				FormatterMessages.IndentationTabPage_general_group_option_tab_policy, tabItems, tabNames);
+				FormatterMessages.IndentationTabPage_general_group_option_tab_policy, TabItems, TabNames);
 
 		tabPolicyListener = new TabPolicyListener(manager);
 		tabPolicy.addSelectionListener(tabPolicyListener);
@@ -97,7 +107,7 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 			public void modifyText(ModifyEvent e) {
 				int index = tabPolicy.getSelectionIndex();
 				if (index >= 0) {
-					final boolean tabMode = PrefsKey.TAB.equals(tabItems[index]);
+					final boolean tabMode = PrefsKey.TAB.equals(TabItems[index]);
 					if (tabMode) {
 						indentSize.setText(tabSize.getText());
 					}
@@ -105,34 +115,63 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 			}
 		});
 
-		// // ///////////////////////////////////////////////////////
+		// ///////////////////////////////////////////////////////
 
-		// Group group = SWTFactory.createGroup(parent, "Indentation", 1, 1,
-		// GridData.FILL_HORIZONTAL);
+		Group dirGroup = SWTFactory.createGroup(parent, "Corpus", 1, 1, GridData.FILL_HORIZONTAL);
+
+		Composite dirComp = new Composite(dirGroup, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(dirComp);
+		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(dirComp);
+
+		manager.createDirSelect(dirComp, bind(PrefsKey.FORMATTER_CORPUS_BASEDIR), "Corpus root directory",
+				getDslCore().getEnvManager());
+		manager.createCombo(dirComp, bind(PrefsKey.FORMATTER_CORPUS_LANGUAGE), "Language", Formatter.ADEPT_LANGS);
+
+		// dirText.addModifyListener(new ModifyListener() {
 		//
-		// Composite comp = new Composite(group, SWT.NONE);
-		// GridDataFactory.fillDefaults().applyTo(comp);
-		// GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(2).applyTo(comp);
+		// @Override
+		// public void modifyText(ModifyEvent e) {
+		// String[] langs = resolve();
+		// langCombo.setItems(langs);
+		// }
 		//
-		// manager.createCheckbox(comp, bind(PrefsKey.FORMATTER_INDENT_BLOCK_STATEMENTS),
-		// "Statements within blocks", 2);
-		// manager.createCheckbox(comp, bind(PrefsKey.FORMATTER_INDENT_BLOCK), "Blocks starting on
-		// new lines", 2);
+		// private String[] resolve() {
+		// IPath root = CoreUtil.getWorkspaceLocation();
+		// IPath path = root.append(dirText.getText());
+		// File file = path.toFile();
+		// File[] dirs = file.listFiles(DirFilter);
+		// List<String> langs = Arrays.asList(Langs);
+		// List<String> found = new ArrayList<>();
+		// for (File d : dirs) {
+		// String name = d.getName();
+		// if (langs.contains(name)) {
+		// found.add(name);
+		// }
+		// }
+		//
+		// return found.toArray(new String[found.size()]);
+		// }
+		// });
 
-		// // ///////////////////////////////////////////////////////
+		// ///////////////////////////////////////////////////////
 
-		Group jdtGroup = SWTFactory.createGroup(parent, "Comment/Java Formatting Integration", 1, 1,
-				GridData.FILL_HORIZONTAL);
+		Group fmtGroup = SWTFactory.createGroup(parent, "Formatting Options", 1, 1, GridData.FILL_HORIZONTAL);
 
-		Composite jdtComp = new Composite(jdtGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().applyTo(jdtComp);
-		GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(1).applyTo(jdtComp);
+		Composite fmtComp = new Composite(fmtGroup, SWT.NONE);
+		GridDataFactory.fillDefaults().applyTo(fmtComp);
+		GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(1).applyTo(fmtComp);
 
-		manager.createCheckbox(jdtComp, bind(PrefsKey.FORMATTER_COMMENT_FORMAT), "Enable formatting of comments");
-		manager.createCheckbox(jdtComp, bind(PrefsKey.FORMATTER_NATIVE_ENABLE),
-				"Enable formatting of native code blocks");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_CODE_FORMAT), "Enable code formatting");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_COMMENT_FORMAT), "Enable comment formatting");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_HEADER_FORMAT), "Enable comment header formatting");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_ALIGN_FIELD), "Enable code field alignment");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_ALIGN_COMMENT), "Enable comment alignment");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_SPLIT_WRAP), "Enable line split/wrapping");
+		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_NATIVE_ENABLE), "Enable native code formatting");
+
 	}
 
+	@Override
 	protected URL getPreviewContent() {
 		return getClass().getResource("PreviewGeneral.g4"); //$NON-NLS-1$
 	}

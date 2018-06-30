@@ -1,0 +1,211 @@
+xvisitor grammar Format;
+
+options { 
+	superClass  = FormatAdaptor  ;
+	parserClass = AntlrDT4Parser ;
+}
+
+@header {
+	
+	package net.certiv.antlrdt.core.parser.gen;
+
+	import static net.certiv.antlrdt.core.preferences.PrefsKey.*;
+	import net.certiv.antlrdt.core.formatter.FormatAdaptor;
+}
+
+format
+	: grammarStatement
+	| optionsBlock
+	| optionStatement
+	| tokensBlock
+	| tokensId
+	| tokensIdComma
+	| channelsBlock
+	| channelsId
+	| channelsIdComma
+	| importStatement
+	| importId
+	| importComma
+	| prequelAction
+	| prequelActionBlock
+	| parserRule
+	| lexerRule
+	| ruleAlt
+	| ruleAction
+	| ruleActionBlock
+	| actionBlock
+	;
+
+# ----------------------------------------------------------------
+grammarStatement
+	: /grammarSpec
+			{ 
+				helper.locate($grammarType).newLine();
+				helper.locate($id).keep();
+				helper.locate($SEMI).space(SPACE_SEMI_HDR).terminal();
+			}
+	;
+
+# ----------------------------------------------------------------
+optionsBlock
+	:  //optionsSpec
+			{
+				helper.locate($OPTIONS).newLine();
+				helper.locate($LBRACE).spaceAround();
+				helper.locate($RBRACE).wrapBefore().spaceAfter().terminal();
+			}
+	;
+
+optionStatement
+	:  //optionsSpec/option
+			{
+				helper.locate($id).newLine();
+				helper.locate($ASSIGN).space(SPACE_EQ_OPT);
+				helper.locate($SEMI).space(SPACE_SEMI_OPT);
+			}
+	;
+
+# ----------------------------------------------------------------
+tokensBlock
+	:  //tokensSpec
+			{
+				helper.locate($TOKENS).newLine();
+				helper.locate($LBRACE).space(SPACE_LBRACE_TOK);
+				helper.locate($RBRACE).wrap(WRAP_RBRACE_TOK).space(SPACE_RBRACE_TOK).terminal();
+			}
+	;
+
+tokensId
+	:  //tokensSpec//id
+			{
+				helper.locate($RULE_REF).wrap(WRAP_ID_TOK);
+				helper.locate($TOKEN_REF).wrap(WRAP_ID_TOK);
+			}
+	;
+
+tokensIdComma
+	:  //tokensSpec//COMMA
+			{	helper.locate($COMMA).space(SPACE_COMMA_TOK);	}
+	;
+
+# ----------------------------------------------------------------
+channelsBlock
+	:  //channelsSpec
+			{
+				helper.locate($CHANNELS).newLine();
+				helper.locate($LBRACE).space(SPACE_LBRACE_CHAN);
+				helper.locate($RBRACE).wrap(WRAP_RBRACE_CHAN).space(SPACE_RBRACE_CHAN).terminal();
+			}
+	;
+
+channelsId
+	:  //channelsSpec//id
+			{
+				helper.locate($RULE_REF).wrap(WRAP_ID_CHAN);
+				helper.locate($TOKEN_REF).wrap(WRAP_ID_CHAN);
+			}
+	;
+
+channelsIdComma
+	:  //channelsSpec//COMMA
+			{	helper.locate($COMMA).space(SPACE_COMMA_CHAN);	}
+	;
+
+# ----------------------------------------------------------------
+importStatement
+	:	//delegateGrammars
+			{
+				helper.locate($IMPORT).newLine();
+				helper.locate($SEMI).space(SPACE_SEMI_HDR).terminal();
+			}
+	;
+
+importId
+	:  //delegateGrammars//id
+			{
+				helper.locate($RULE_REF).wrapNone().keep();
+				helper.locate($TOKEN_REF).wrapNone().keep();
+			}
+	;
+
+importComma
+	:  //delegateGrammars//COMMA
+			{	helper.locate($COMMA).spaceAfter();	}
+	;
+
+# ----------------------------------------------------------------
+prequelAction
+	: //prequelConstruct/action
+			{
+				helper.locate($AT).newLine();
+				helper.locate($actionScopeName).wrapNone();
+				helper.locate($COLONCOLON).wrapNone();
+				helper.locate($id).wrapNone();
+			}
+	;
+
+prequelActionBlock
+	: //prequelConstruct/action/actionBlock
+			{	// header and member blocks
+				helper.locate($BEGIN_ACTION).splitAfter().spaceAround();
+				helper.locate($END_ACTION).wrapBefore().spaceAfter().terminal();
+			}
+	;
+
+# ----------------------------------------------------------------
+parserRule
+	: //parserRuleSpec
+			{
+				helper.locate($ruleModifiers).newLine().spaceAfter();
+				helper.locate($RULE_REF).wrap(WRAP_NAME_RULE);
+				helper.locate($COLON).wrap(WRAP_COLON_RULE).space(SPACE_COLON_RULE);
+				helper.locate($SEMI).wrap(WRAP_SEMI_RULE).space(SPACE_SEMI_RULE).terminal();
+			}
+	;
+
+lexerRule
+	: //lexerRuleSpec
+			{
+				// helper.locate($FRAGMENT).newLine().spaceAfter(); 
+				helper.locate($TOKEN_REF).wrap(WRAP_NAME_RULE);
+				helper.locate($COLON).wrap(WRAP_COLON_RULE).space(SPACE_COLON_RULE);
+				helper.locate($SEMI).wrap(WRAP_SEMI_RULE).space(SPACE_SEMI_RULE).terminal();
+			}
+	;
+
+ruleAlt
+	: //OR
+			{
+				if (!hasAncestor(lexerBlock, block, blockSet)) {
+					helper.locate($OR).wrap(WRAP_ALT_OR).space(SPACE_ALT_OR);
+				}
+			}
+	;
+
+ruleAction
+	: //ruleAction
+			{
+				helper.locate($AT).wrapBefore();
+				helper.locate($id).keep();
+			}
+	;
+
+ruleActionBlock
+	: //ruleAction/actionBlock
+			{
+				helper.locate($BEGIN_ACTION).wrap(WRAP_LBRACE_AT).space(SPACE_LBRACE_AT);
+				helper.locate($END_ACTION).wrap(WRAP_RBRACE_AT).space(SPACE_RBRACE_AT);
+			}
+	;
+
+# ----------------------------------------------------------------
+actionBlock
+	: //actionBlock
+			{
+				if (!hasAncestor(optionValue, ruleAction) && !beforeSibling(QUESTION)) {
+					helper.locate($BEGIN_ACTION).wrap(WRAP_LBRACE_AT).space(SPACE_LBRACE_AT);
+					helper.locate($END_ACTION).wrap(WRAP_RBRACE_AT).space(SPACE_RBRACE_AT);
+				}
+			}
+	;
+

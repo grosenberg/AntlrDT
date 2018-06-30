@@ -20,17 +20,6 @@ public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 	/**
 	 * Creates a damager/repairer that uses the given scanner and returns the given default text
 	 * attribute if the current token does not carry a text attribute.
-	 * 
-	 * @param scanner the token scanner to be used
-	 * @param
-	 */
-	public EnhDamagerRepairer(ITokenScanner scanner) {
-		super(scanner);
-	}
-
-	/**
-	 * Creates a damager/repairer that uses the given scanner and returns the given default text
-	 * attribute if the current token does not carry a text attribute.
 	 */
 	public EnhDamagerRepairer(ITokenScanner scanner, TextAttribute namedAttribute) {
 		super(scanner);

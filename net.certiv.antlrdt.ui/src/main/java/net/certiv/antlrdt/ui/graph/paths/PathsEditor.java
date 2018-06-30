@@ -71,7 +71,8 @@ import net.certiv.antlrdt.ui.graph.IZoomableEditor;
 import net.certiv.antlrdt.ui.graph.ViewForm;
 import net.certiv.antlrdt.ui.graph.actions.Layout;
 import net.certiv.antlrdt.ui.graph.actions.LayoutToolbarGroup;
-import net.certiv.antlrdt.ui.graph.actions.PathsAddAction;
+import net.certiv.antlrdt.ui.graph.actions.PathsAddSubAction;
+import net.certiv.antlrdt.ui.graph.actions.PathsAddSupAction;
 import net.certiv.antlrdt.ui.graph.actions.PathsRemoveAction;
 import net.certiv.antlrdt.ui.graph.actions.Router;
 import net.certiv.antlrdt.ui.graph.actions.RouterToolbarGroup;
@@ -98,7 +99,8 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	private static final String KEY_LAYOUT = "keyLayout";
 	private static final String KEY_ROUTER = "keyRouter";
 
-	public static final String ADD_PATHS = "addPaths";
+	public static final String ADD_SUP_PATHS = "addSupPaths";
+	public static final String ADD_SUB_PATHS = "addSubPaths";
 	public static final String REMOVE_PATHS = "removePaths";
 
 	private AntlrDTUI ui;
@@ -123,7 +125,8 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	private Router router;
 
 	private Action screenshotAction;
-	private Action addPathsAction;
+	private Action addSupPathsAction;
+	private Action addSubPathsAction;
 	private Action removePathsAction;
 
 	private SurfaceDragAdapter dragAdapter;
@@ -155,7 +158,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		}
 	}
 
-	private DslPrefsManager getPrefs() {
+	public DslPrefsManager getPrefs() {
 		return core.getPrefsManager();
 	}
 
@@ -220,7 +223,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	private ISelectionService getSelectionService() {
-		return (ISelectionService) getSite().getService(ISelectionService.class);
+		return getSite().getService(ISelectionService.class);
 	}
 
 	/** Retrieve the current GraphViewer */
@@ -306,7 +309,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 						return;
 					}
 					PathsData data = parser.buildPathsData();
-					model = new PathsModel(data, ruleName);
+					model = new PathsModel(this, data, ruleName);
 					break;
 			}
 
@@ -324,6 +327,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		}
 	}
 
+	@Override
 	public void setConnectionRouter(Router router) {
 		this.router = router;
 		dialogSettings.put(KEY_ROUTER, router.getName());
@@ -337,6 +341,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 		viewer.update(helper.getModel(), null);
 	}
 
+	@Override
 	public void setLayoutAlgorithm(Layout layout) {
 		dialogSettings.put(KEY_LAYOUT, layout.getName());
 	}
@@ -391,7 +396,8 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 	protected void fillContextMenu(MenuManager manager, boolean onFigure) {
 		if (onFigure) {
-			manager.add(addPathsAction);
+			manager.add(addSupPathsAction);
+			manager.add(addSubPathsAction);
 			manager.add(new Separator());
 			manager.add(removePathsAction);
 		} else {
@@ -423,7 +429,8 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 	}
 
 	private void makePathsActions() {
-		addPathsAction = new PathsAddAction(this, helper);
+		addSupPathsAction = new PathsAddSupAction(this, helper);
+		addSubPathsAction = new PathsAddSubAction(this, helper);
 		removePathsAction = new PathsRemoveAction(this, helper);
 	}
 

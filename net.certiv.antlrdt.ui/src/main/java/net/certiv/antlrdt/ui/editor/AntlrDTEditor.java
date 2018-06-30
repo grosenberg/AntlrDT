@@ -14,8 +14,8 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
-import net.certiv.dsl.ui.text.DslWordFinder;
-import net.certiv.dsl.ui.text.folding.IFoldingStructureProvider;
+import net.certiv.dsl.ui.editor.text.DslWordFinder;
+import net.certiv.dsl.ui.editor.text.folding.IFoldingStructureProvider;
 
 public class AntlrDTEditor extends DslEditor {
 

@@ -2,8 +2,8 @@ package net.certiv.antlrdt.ui.templates;
 
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
+import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
 import net.certiv.dsl.ui.templates.DslTemplateCompletionProcessor;
-import net.certiv.dsl.ui.text.completion.DslContentAssistInvocationContext;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;

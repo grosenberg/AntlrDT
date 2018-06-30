@@ -97,18 +97,14 @@ public class AntlrDTSourceParser extends DslSourceParser {
 
 	// /////////////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public String resolvePackageName() {
 		if (packageName == null) extractPackage();
 		return packageName;
 	}
 
-	/**
-	 * Tree pattern matcher used to identify package defining statements NOTE: compare to implementation
-	 * in core builder
-	 */
+	// Tree pattern matcher used to extract the package defining statement
 	private void extractPackage() {
-		Log.debug(this, "ExtractPackage [root=" + (tree != null ? "not null" : "null") + "]");
-
 		try {
 			Collection<ParseTree> actions = XPath.findAll(tree, "/grammarSpec/prequelConstruct/action", parser);
 			for (ParseTree action : actions) {

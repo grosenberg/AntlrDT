@@ -103,10 +103,10 @@ public class PrefsInitializer extends DslPrefsInit {
 
 		// indent
 
-		setBool(PrefsKey.FORMATTER_COMMENT_HEADER_ENABLE, false);
-		setBool(PrefsKey.FORMATTER_COMMENT_FORMAT, false);
 		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_MULTILINE, false);
 		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_SINGLELINE, false);
+
+		setBool(PrefsKey.FORMATTER_NATIVE_ENABLE, false);
 
 		// unused
 
@@ -123,6 +123,11 @@ public class PrefsInitializer extends DslPrefsInit {
 		// Other
 
 		setString(PrefsKey.SNIPPETTEST_BASEDIR_SOURCE, "");
+
+		// ------------------------------------------------------------------------------
+		// Paths View
+
+		setInt(PrefsKey.PT_DEPTH_LIMIT, 2);
 
 		setRGB(PrefsKey.PT_CONN_COLOR, new RGB(128, 128, 128));
 		setRGB(PrefsKey.PT_CONN_HIGHLIGHT, new RGB(127, 0, 0));

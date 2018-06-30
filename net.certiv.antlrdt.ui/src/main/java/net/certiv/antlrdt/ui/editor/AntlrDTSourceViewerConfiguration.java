@@ -39,10 +39,10 @@ import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
-import net.certiv.dsl.ui.text.AbstractBufferedRuleBasedScanner;
-import net.certiv.dsl.ui.text.DslPresentationReconciler;
-import net.certiv.dsl.ui.text.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.text.completion.DslCompletionProcessor;
+import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.text.DslPresentationReconciler;
+import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
 
 @SuppressWarnings("restriction")
 public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfiguration {

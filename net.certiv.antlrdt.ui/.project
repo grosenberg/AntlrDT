@@ -3,6 +3,10 @@
 	<name>net.certiv.antlrdt.ui</name>
 	<comment></comment>
 	<projects>
+		<project>net.certiv.antlrdt.core</project>
+		<project>net.certiv.dsl.core</project>
+		<project>net.certiv.dsl.lib</project>
+		<project>net.certiv.dsl.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

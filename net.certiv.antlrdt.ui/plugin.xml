@@ -301,6 +301,12 @@
             id="net.certiv.antlrdt.ui.edit.text.format">
       </command>
       <command
+            name="Learn"
+            description="Learn Formatting"
+            categoryId="net.certiv.antlrdt.ui.category.source"
+            id="net.certiv.antlrdt.ui.edit.text.format.learn">
+      </command>
+      <command
             name="Comment/Uncomment"
             description="Comment/Uncomment the selected lines"
             categoryId="net.certiv.antlrdt.ui.category.source"
@@ -356,6 +362,33 @@
      </command>
   </extension>
 -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="AntlrDT Category"
+            id="net.certiv.antlrdt.ui.commands.category">
+      </category>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.removeNatureCommand"
+            name="Remove AntlrDT Nature">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.cleanGrammarCommand"
+            name="Clean Grammar Problems">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.openTokensViewCommand"
+            name="Open Tokens View">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.ui.commands.category"
+            id="net.certiv.antlrdt.ui.openPathsEditorCommand"
+            name="Open Paths View">
+      </command>
+   </extension>
 
    <extension
          point="org.eclipse.ui.handlers">
@@ -382,6 +415,16 @@
       <handler
             class="net.certiv.dsl.ui.handlers.FormatHandler"
             commandId="net.certiv.antlrdt.ui.edit.text.format">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
+			</enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.dsl.ui.handlers.FormatLearnHandler"
+            commandId="net.certiv.antlrdt.ui.edit.text.format.learn">
 			<activeWhen>
 				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
 			</activeWhen>
@@ -419,6 +462,14 @@
 				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
 			</enabledWhen>
       </handler>
+      <handler
+            commandId="net.certiv.antlrdt.ui.removeNatureCommand"
+            class="net.certiv.antlrdt.ui.handlers.RemoveNatureHandler">
+      </handler>
+      <handler
+            class="net.certiv.antlrdt.ui.handlers.CleanGrammarHandler"
+            commandId="net.certiv.antlrdt.ui.cleanGrammarCommand">
+      </handler>
 
 <!-- 
       <handler
@@ -443,7 +494,12 @@
             sequence="M1+M2+F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
-            commandId="net.certiv.antlrdt.ui.edit.text.format"/>      
+            commandId="net.certiv.antlrdt.ui.edit.text.format"/>
+     <key
+            sequence="M2+M3+L"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            commandId="net.certiv.antlrdt.ui.edit.text.format.learn"/>
      <key
             sequence="M1+/"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -664,44 +720,6 @@
       </actionSet>
    </extension>
 -->
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="AntlrDT Category"
-            id="net.certiv.antlrdt.ui.commands.category">
-      </category>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.removeNatureCommand"
-            name="Remove AntlrDT Nature">
-      </command>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.cleanGrammarCommand"
-            name="Clean Grammar Problems">
-      </command>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.openTokensViewCommand"
-            name="Open Tokens View">
-      </command>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.openPathsEditorCommand"
-            name="Open Paths View">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            commandId="net.certiv.antlrdt.ui.removeNatureCommand"
-            class="net.certiv.antlrdt.ui.handlers.RemoveNatureHandler">
-      </handler>
-      <handler
-            class="net.certiv.antlrdt.ui.handlers.CleanGrammarHandler"
-            commandId="net.certiv.antlrdt.ui.cleanGrammarCommand">
-      </handler>
-   </extension>
    
    <extension point="org.eclipse.ui.menus">
       <menuContribution

@@ -1,7 +1,7 @@
 package net.certiv.antlrdt.ui.editor.text;
 
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.ui.text.IPrefixRuleBasedScanner;
+import net.certiv.dsl.ui.editor.text.IPrefixRuleBasedScanner;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 

@@ -13,7 +13,7 @@ import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditSemicolonStrategy;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.text.completion.DslCompletionProposal;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 
 public class AntlrDTCompletionProposal extends DslCompletionProposal {
 

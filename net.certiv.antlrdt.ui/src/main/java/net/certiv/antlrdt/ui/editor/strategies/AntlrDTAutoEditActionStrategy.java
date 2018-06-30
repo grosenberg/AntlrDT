@@ -11,9 +11,9 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.ui.text.DslTextTools;
-import net.certiv.dsl.ui.text.util.AutoEdit;
-import net.certiv.dsl.ui.text.util.LineRegion;
+import net.certiv.dsl.ui.editor.text.DslTextTools;
+import net.certiv.dsl.ui.editor.text.util.AutoEdit;
+import net.certiv.dsl.ui.editor.text.util.LineRegion;
 
 public class AntlrDTAutoEditActionStrategy extends DefaultIndentLineAutoEditStrategy {
 

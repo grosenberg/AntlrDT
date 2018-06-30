@@ -116,7 +116,7 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 	public String getText(Object element) {
 		if (element instanceof TerminalNode) {
 			String value = ((TerminalNode) element).getText();
-			return Strings.escape(value);
+			return Strings.displyEscape(value, 40);
 		}
 		if (element instanceof RuleNode) {
 			RuleContext node = (RuleContext) element;
