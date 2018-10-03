@@ -15,12 +15,12 @@ import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
-import net.certiv.dsl.ui.editor.text.completion.DslCollector;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposalCollector;
 
-public class AntlrDTCollector extends DslCollector {
+public class AntlrCollector extends DslCompletionProposalCollector {
 
-	public AntlrDTCollector(ICodeUnit unit) {
+	public AntlrCollector(ICodeUnit unit) {
 		super(unit);
 	}
 
@@ -35,21 +35,20 @@ public class AntlrDTCollector extends DslCollector {
 	}
 
 	@Override
-	protected CompletionLabelProvider createCompletionProposalLabelProvider() {
-		return new AntlrDTCompletionLabelProvider();
+	protected CompletionLabelProvider createProposalLabelProvider() {
+		return new AntlrCompletionLabelProvider();
 	}
 
 	@Override
-	protected DslCompletionProposal createDslCompletionProposal(String completion, int offset, int length, Image image,
-			String label, int relevance) {
-		return createDslCompletionProposal(completion, offset, length, image, new StyledString(label), relevance,
-				false);
+	protected DslCompletionProposal createDslProposal(String completion, int offset, int length, Image image, String label,
+			int relevance) {
+		return createDslProposal(completion, offset, length, image, new StyledString(label), relevance, false);
 	}
 
 	@Override
-	protected DslCompletionProposal createDslCompletionProposal(String completion, int offset, int length, Image image,
-			StyledString label, int relevance, boolean inDoc) {
-		return new AntlrDTCompletionProposal(completion, offset, length, image, label, relevance, inDoc);
+	protected DslCompletionProposal createDslProposal(String completion, int offset, int length, Image image, StyledString label,
+			int relevance, boolean inDoc) {
+		return new AntlrProposal(completion, offset, length, image, label, relevance, inDoc);
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class AntlrDTCollector extends DslCollector {
 
 	@Override
 	public void prepareProposals(ICodeUnit unit, int offset) throws DslModelException {
-		if (!parseValid()) return;
+		if (unit.getParseRecord() == null || !unit.getParseRecord().hasTree()) return;
 
 		// 1) handle lexer and parser rule names
 		Set<IStatement> rules = getDslCore().getModelManager().getCodeAssistElements(unit);

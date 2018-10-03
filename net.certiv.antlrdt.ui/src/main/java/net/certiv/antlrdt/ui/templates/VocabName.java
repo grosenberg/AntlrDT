@@ -1,10 +1,10 @@
 package net.certiv.antlrdt.ui.templates;
 
-import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.ui.templates.DslTemplateContext;
-
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
+
+import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateContext;
 
 public class VocabName extends TemplateVariableResolver {
 

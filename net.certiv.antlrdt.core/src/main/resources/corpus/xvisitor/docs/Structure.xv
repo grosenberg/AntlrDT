@@ -7,7 +7,7 @@ options {
 
 @header {
 	package net.certiv.antlrdt.core.parser.gen;
-	import net.certiv.antlrdt.core.parser.StructureAdaptor;
+	import net.certiv.antlrdt.core.parser.StructureBuilder;
 }
 
 structure

@@ -20,12 +20,12 @@ import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Formatter;
-import net.certiv.dsl.core.util.TabStyle;
+import net.certiv.dsl.core.util.eclipse.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.preferences.FormatterMessages;
-import net.certiv.dsl.ui.preferences.IControlCreationManager;
+import net.certiv.dsl.ui.preferences.bind.IControlCreationManager;
 import net.certiv.dsl.ui.util.SWTFactory;
 
 public class TabPageGeneral extends FormatterModifyTabPage {

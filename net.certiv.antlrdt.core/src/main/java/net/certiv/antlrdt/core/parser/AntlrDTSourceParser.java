@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.xpath.XPath;
 
@@ -12,18 +12,18 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ActionContext;
-import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarSpecContext;
-import net.certiv.antlrdt.core.parser.gen.CodeAssistVisitor;
 import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.parser.DslParseErrorListener;
+import net.certiv.dsl.core.model.builder.DslModelMaker;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.core.util.Strings;
 
 public class AntlrDTSourceParser extends DslSourceParser {
+
+	private static final AntlrDT4TokenFactory Factory = new AntlrDT4TokenFactory();
 
 	private String packageName;
 
@@ -37,67 +37,58 @@ public class AntlrDTSourceParser extends DslSourceParser {
 		return AntlrDTCore.getDefault();
 	}
 
-	/** Builds a ParseTree for the given content representing the source of a corresponding unit. */
 	@Override
-	public ParseTree parse(String name, String content, DslParseErrorListener errListener)
-			throws RecognitionException, Exception {
-		Log.info(this, "Parse [name=" + name + "]");
+	public void parse() {
+		record.cs = CharStreams.fromString(record.doc.get());
+		Lexer lexer = new AntlrDT4Lexer(record.cs);
+		lexer.setTokenFactory(Factory);
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(getDslErrorListener());
 
-		input = CharStreams.fromString(content, name);
-		lexer = new AntlrDT4Lexer(input);
-
-		AntlrDT4TokenFactory factory = new AntlrDT4TokenFactory(input);
-		lexer.setTokenFactory(factory);
-		tokens = new CommonTokenStream(lexer);
-
-		parser = new AntlrDT4Parser(tokens);
-		parser.setTokenFactory(factory);
-		parser.removeErrorListeners();
-		parser.addErrorListener(errListener);
-		GrammarSpecContext parseTree = ((AntlrDT4Parser) parser).grammarSpec();
-
-		return parseTree;
+		record.ts = new CommonTokenStream(lexer);
+		record.parser = new AntlrDT4Parser(record.ts);
+		record.parser.setTokenFactory(Factory);
+		record.parser.removeErrorListeners();
+		record.parser.addErrorListener(getDslErrorListener());
+		record.tree = ((AntlrDT4Parser) record.parser).grammarSpec();
 	}
 
-	/** Make the code unit internal element structure. */
 	@Override
-	public void buildStructure() {
+	public void analyzeStructure(DslModelMaker maker) {
 		try {
-			StructureVisitor walker = new StructureVisitor(tree);
-			walker.setMaker(this);
-			walker.findAll();
+			StructureVisitor visitor = new StructureVisitor(record.tree);
+			visitor.setMaker(maker);
+			visitor.findAll();
 		} catch (IllegalArgumentException e) {
-			Log.error(this, "Model - Outline processing error", e);
+			getDslErrorListener().generalError("Model analysis: %s @%s:%s", e);
 		}
 	}
 
-	/** Tree walker used to identify the code elements signficant in CodeAssist operations. */
-	@Override
-	public void buildCodeAssist() {
-		try {
-			CodeAssistVisitor walker = new CodeAssistVisitor(tree);
-			walker.setHelper(this);
-			walker.findAll();
-		} catch (Exception e) {
-			Log.error(this, "CodeAssist - Tree walk error", e);
-		}
-	}
+	// /** Tree walker used to identify the code elements signficant in CodeAssist operations. */
+	// public void buildCodeAssist() {
+	// try {
+	// CodeAssistVisitor walker = new CodeAssistVisitor(record.tree);
+	// walker.setHelper(new AssistBuilder(this));
+	// walker.findAll();
+	// } catch (Exception e) {
+	// getDslErrorListener().generalError("CodeAssist: %s @%s:%s", e);
+	// }
+	// }
 
 	public PathsData buildPathsData() {
 		PathsData data = new PathsData();
 		try {
-			PathVisitor walker = new PathVisitor(tree);
+			PathVisitor walker = new PathVisitor(record.tree);
 			walker.setHelper(data);
 			walker.findAll();
 		} catch (IllegalArgumentException e) {
-			Log.error(this, "Paths - Tree walk error", e);
+			getDslErrorListener().generalError("Paths: %s @%s:%s", e);
 		}
 		return data;
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////
 
-	@Override
 	public String resolvePackageName() {
 		if (packageName == null) extractPackage();
 		return packageName;
@@ -106,7 +97,9 @@ public class AntlrDTSourceParser extends DslSourceParser {
 	// Tree pattern matcher used to extract the package defining statement
 	private void extractPackage() {
 		try {
-			Collection<ParseTree> actions = XPath.findAll(tree, "/grammarSpec/prequelConstruct/action", parser);
+			Collection<ParseTree> actions = XPath.findAll(record.tree, "/grammarSpec/prequelConstruct/action",
+					record.parser);
+
 			for (ParseTree action : actions) {
 				ActionContext ctx = (ActionContext) action;
 				if (ctx.id().getText().equals("header")) {
@@ -125,5 +118,13 @@ public class AntlrDTSourceParser extends DslSourceParser {
 		} catch (Exception e) {
 			Log.error(this, "ExtractPackage - Tree walk error", e);
 		}
+	}
+
+	@Override
+	public void build() {}
+
+	@Override
+	public boolean modelContributor() {
+		return false;
 	}
 }

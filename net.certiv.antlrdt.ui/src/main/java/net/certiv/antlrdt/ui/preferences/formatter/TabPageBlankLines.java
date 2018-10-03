@@ -5,13 +5,13 @@ import java.net.URL;
 import org.eclipse.swt.widgets.Composite;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
-import net.certiv.dsl.ui.preferences.IControlCreationManager;
+import net.certiv.dsl.ui.preferences.bind.IControlCreationManager;
 
 public class TabPageBlankLines extends FormatterModifyTabPage {
 
@@ -24,8 +24,8 @@ public class TabPageBlankLines extends FormatterModifyTabPage {
 
 		Composite blanks = createOptionGroup(parent, "Blank Lines", 2);
 
-		manager.createNumber(blanks, bind(PrefsKey.FORMATTER_EMPTY_LINES_TO_PRESERVE), "Blank lines to preserve: ");
-		manager.createNumber(blanks, bind(PrefsKey.FORMATTER_EMPTY_LINES_AFTER_TERMINAL),
+		manager.createNumber(blanks, bind(Formatter.FORMATTER_EMPTY_LINES_TO_PRESERVE), "Blank lines to preserve: ");
+		manager.createNumber(blanks, bind(Formatter.FORMATTER_EMPTY_LINES_AFTER_TERMINAL),
 				"Required blank lines after terminal: ");
 	}
 

@@ -9,6 +9,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
+import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.jdt.util.DialogUtil;
+import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
@@ -38,6 +43,7 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 		super("newPage", selection);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
@@ -75,11 +81,11 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 		public void buttonPressed(TextButtonField field, String id, SelectionEvent e) {
 			switch (id) {
 				case PACKAGE:
-					IPackageFragment result = choosePackage();
+					IPackageFragment result = DialogUtil.choosePackage();
 					pkgField.setText(result.getElementName());
 					break;
 				case SUPER:
-					IType sType = chooseSuperClass();
+					IType sType = DialogUtil.chooseSuperClass();
 					superField.setText(sType.getElementName());
 					importTxt = sType.getFullyQualifiedName();
 					break;
@@ -120,5 +126,15 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 
 	public boolean getUnicode() {
 		return genUnicode;
+	}
+
+	@Override
+	public DslUI getDslUI() {
+		return AntlrDTUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrDTCore.getDefault();
 	}
 }

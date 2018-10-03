@@ -7,18 +7,18 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
-import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditSemicolonStrategy;
+import net.certiv.antlrdt.ui.editor.strategies.AntlrAutoEditSemicolonStrategy;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 
-public class AntlrDTCompletionProposal extends DslCompletionProposal {
+public class AntlrProposal extends DslCompletionProposal {
 
-	public AntlrDTCompletionProposal(String completion, int start, int length, Image image, StyledString label,
-			int relevance, boolean inDoc) {
+	public AntlrProposal(String completion, int start, int length, Image image, StyledString label, int relevance,
+			boolean inDoc) {
 		super(completion, start, length, image, label, relevance, inDoc);
 	}
 
@@ -34,7 +34,7 @@ public class AntlrDTCompletionProposal extends DslCompletionProposal {
 
 	@Override
 	public char[] getPrefixCompletionTextStops() {
-		return new char[] { LBRACK };
+		return new char[] { LBRACK, LBRACE };
 	}
 
 	@Override
@@ -44,9 +44,8 @@ public class AntlrDTCompletionProposal extends DslCompletionProposal {
 
 	@Override
 	protected boolean isSmartTrigger(char trigger) {
-		return trigger == ';' && getDslCore().getPrefsManager().getBoolean(PrefsKey.EDITOR_SMART_SEMICOLON);
-		// || trigger == '{' &&
-		// getDslCore().getPrefsManager().getBoolean(PrefsKey.EDITOR_SMART_OPENING_BRACE);
+		return trigger == SEMI && getPrefsMgr().getBoolean(Editor.EDITOR_SMART_SEMICOLON)
+				|| trigger == LBRACE && getPrefsMgr().getBoolean(Editor.EDITOR_SMART_OPENING_BRACE);
 	}
 
 	@Override
@@ -61,8 +60,7 @@ public class AntlrDTCompletionProposal extends DslCompletionProposal {
 		cmd.shiftsCaret = true;
 		cmd.caretOffset = getReplacementOffset() + getCursorPosition();
 
-		AntlrDTAutoEditSemicolonStrategy strategy = new AntlrDTAutoEditSemicolonStrategy(
-				Partitions.ANTLRDT_PARTITIONING);
+		AntlrAutoEditSemicolonStrategy strategy = new AntlrAutoEditSemicolonStrategy(Partitions.PARTITIONING);
 		strategy.customizeDocumentCommand(document, cmd);
 
 		replace(document, cmd.offset, cmd.length, cmd.text);

@@ -1,9 +1,9 @@
 package net.certiv.antlrdt.ui.editor.text;
 
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.ui.editor.text.IPrefixRuleBasedScanner;
-
 import org.eclipse.jface.text.rules.ICharacterScanner;
+
+import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.ui.editor.scanners.IPrefixRuleBasedScanner;
 
 /** TODO: need to refactor */
 public class ScanUtil {

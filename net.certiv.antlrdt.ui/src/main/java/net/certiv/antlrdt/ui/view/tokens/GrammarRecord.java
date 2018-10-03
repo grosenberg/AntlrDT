@@ -10,6 +10,7 @@ import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class GrammarRecord {
 
@@ -67,7 +68,7 @@ public class GrammarRecord {
 
 	private void genPackageNames() {
 		ICodeUnit unit = AntlrDTCore.getDefault().getModelManager().create(grammar);
-		String pkgName = unit.resolveParserPackageName();
+		String pkgName = AntlrUtil.resolvePackageName(unit);
 
 		String filename = grammar.getName();
 		int dot = filename.lastIndexOf('.');

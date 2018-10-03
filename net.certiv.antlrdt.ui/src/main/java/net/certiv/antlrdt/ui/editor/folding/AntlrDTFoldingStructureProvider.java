@@ -25,7 +25,7 @@ public class AntlrDTFoldingStructureProvider extends AbstractDslFoldingStructure
 
 	@Override
 	protected String getPartitioning() {
-		return Partitions.ANTLRDT_PARTITIONING;
+		return Partitions.PARTITIONING;
 	}
 
 	@Override

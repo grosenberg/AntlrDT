@@ -9,7 +9,7 @@ import org.eclipse.jface.text.IDocument;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.ui.editor.text.util.LineRegion;
+import net.certiv.dsl.ui.editor.text.LineRegion;
 import net.certiv.dsl.ui.formatter.strategies.JavaFormattingStrategy;
 
 public class ActionCodeFormattingStrategy extends JavaFormattingStrategy {

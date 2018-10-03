@@ -1,9 +1,9 @@
 package net.certiv.antlrdt.ui.editor.filter;
 
+import org.eclipse.jface.viewers.Viewer;
+
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.viewsupport.AbstractDslElementFilter;
-
-import org.eclipse.jface.viewers.Viewer;
 
 public class TokenFilter extends AbstractDslElementFilter {
 

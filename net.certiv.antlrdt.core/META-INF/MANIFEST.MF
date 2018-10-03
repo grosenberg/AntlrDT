@@ -23,11 +23,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Eclipse-RegisterBuddy: net.certiv.dsl.lib
 Bundle-Vendor: Certiv Analytics
+Import-Package: org.apache.commons.io;version="2.2.0"
 Export-Package: net.certiv.antlrdt.core,
  net.certiv.antlrdt.core.builder,
  net.certiv.antlrdt.core.formatter,
  net.certiv.antlrdt.core.parser,
  net.certiv.antlrdt.core.parser.gen,
- net.certiv.antlrdt.core.preferences,
- net.certiv.antlrdt.core.util
-Import-Package: org.apache.commons.io;version="2.2.0"
+ net.certiv.antlrdt.core.preferences

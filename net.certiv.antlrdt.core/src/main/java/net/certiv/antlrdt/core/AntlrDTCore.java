@@ -4,18 +4,16 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.BundleContext;
 
-import net.certiv.antlrdt.core.parser.AntlrDTSourceParserFactory;
+import net.certiv.antlrdt.core.parser.AntlrDTSourceParser;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.parser.ISourceParserFactory;
+import net.certiv.dsl.core.parser.DslSourceParser;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class AntlrDTCore extends DslCore {
 
 	public static final String[] EXTENSIONS = new String[] { "g4" };
 
-	private AntlrDTSourceParserFactory factory;
+	// unique parser language types
+	public static final String ANTLR = "antlr";
 
 	private static AntlrDTCore plugin;
 
@@ -50,16 +48,23 @@ public class AntlrDTCore extends DslCore {
 	}
 
 	@Override
-	public String[] getDslFileExtensions() {
-		return EXTENSIONS;
+	public DslSourceParser createSourceParser(String type) {
+		switch (type) {
+			case ANTLR:
+				return new AntlrDTSourceParser();
+			default:
+				return null;
+		}
 	}
 
 	@Override
-	public ISourceParserFactory getSourceParserFactory() {
-		if (factory == null) {
-			factory = new AntlrDTSourceParserFactory();
-		}
-		return factory;
+	public String getProblemMakerId(String type) {
+		return getPluginId() + String.format(".%s_marker", type);
+	}
+
+	@Override
+	public String[] getDslFileExtensions() {
+		return EXTENSIONS;
 	}
 
 	@Override

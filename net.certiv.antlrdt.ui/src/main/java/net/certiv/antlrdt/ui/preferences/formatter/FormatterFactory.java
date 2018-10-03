@@ -5,6 +5,7 @@ import java.net.URL;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.formatter.IDslCodeFormatter;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.DslFormatterFactory;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
@@ -34,5 +35,10 @@ public class FormatterFactory extends DslFormatterFactory {
 	@Override
 	public URL getPreviewContent() {
 		return getClass().getResource("FormatPreview.g4");
+	}
+
+	@Override
+	public IDslCodeFormatter createFormatter() {
+		return null;
 	}
 }

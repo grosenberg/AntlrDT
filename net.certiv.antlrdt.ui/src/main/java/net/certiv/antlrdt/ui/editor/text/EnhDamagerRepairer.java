@@ -1,8 +1,5 @@
 package net.certiv.antlrdt.ui.editor.text;
 
-import net.certiv.antlrdt.ui.editor.Partitions;
-import net.certiv.dsl.core.util.Log;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITypedRegion;
@@ -12,6 +9,9 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
+
+import net.certiv.antlrdt.ui.editor.Partitions;
+import net.certiv.dsl.core.util.Log;
 
 public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 
@@ -36,7 +36,7 @@ public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 		} else {
 			ITypedRegion lRegion;
 			try {
-				lRegion = TextUtilities.getPartition(fDocument, Partitions.ANTLRDT_PARTITIONING, chRegion.getOffset(),
+				lRegion = TextUtilities.getPartition(fDocument, Partitions.PARTITIONING, chRegion.getOffset(),
 						false);
 			} catch (BadLocationException e) {
 				Log.error(this, "Region [offset=" + chRegion.getOffset() + ", len=" + chRegion.getLength() + ", type="

@@ -3,10 +3,12 @@ package net.certiv.antlrdt.ui;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.editor.AntlrDTTextTools;
 import net.certiv.antlrdt.ui.graph.cst.CstEditor;
 import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
 import net.certiv.antlrdt.ui.preferences.formatter.FormatterFactory;
+import net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
@@ -14,9 +16,6 @@ import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class AntlrDTUI extends DslUI {
 
 	// Should be unique, lower case, single word
@@ -45,7 +44,7 @@ public class AntlrDTUI extends DslUI {
 
 	@Override
 	public DslUI getDslUI() {
-		return getDefault();
+		return plugin;
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class AntlrDTUI extends DslUI {
 
 	@Override
 	public String getPluginId() {
-		return getDefault().getBundle().getSymbolicName();
+		return plugin.getBundle().getSymbolicName();
 	}
 
 	@Override
@@ -100,6 +99,20 @@ public class AntlrDTUI extends DslUI {
 			factory = new FormatterFactory();
 		}
 		return factory;
+	}
+
+	@Override
+	protected String getEditorId() {
+		return AntlrDTEditor.EDITOR_ID;
+	}
+
+	@Override
+	protected String[] getDslContextTypes() {
+		return new String[] { AntlrDTTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID,
+				AntlrDTTemplateContextType.OPTIONS_CONTEXT_TYPE_ID, //
+				AntlrDTTemplateContextType.ACTIONS_CONTEXT_TYPE_ID, //
+				AntlrDTTemplateContextType.JAVADOC_CONTEXT_TYPE_ID //
+		};
 	}
 
 	public CstEditor getCstEditor() {

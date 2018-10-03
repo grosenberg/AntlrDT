@@ -12,21 +12,24 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
-import net.certiv.dsl.ui.preferences.BooleanFieldEditor2;
-import net.certiv.dsl.ui.preferences.SpinnerFieldEditor;
-import net.certiv.dsl.ui.preferences.page.AbstractFieldEditorPreferencePage;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
+import net.certiv.dsl.ui.preferences.editors.BooleanFieldEditor;
+import net.certiv.dsl.ui.preferences.editors.SpinnerFieldEditor;
+import net.certiv.dsl.ui.preferences.pages.AbstractFieldEditorPreferencePage;
 
-public class PrefsPageGraph extends AbstractFieldEditorPreferencePage {
+public class GraphPage extends AbstractFieldEditorPreferencePage {
 
-	public PrefsPageGraph() {
+	public GraphPage() {
 		super(GRID);
-		DslPrefsManagerDelta delta = AntlrDTCore.getDefault().getPrefsManager().createDeltaManager();
-		delta.setDefaultProject(null);
-		setPreferenceStore(delta);
 	}
 
 	/** Creates the field editors. */
@@ -45,8 +48,8 @@ public class PrefsPageGraph extends AbstractFieldEditorPreferencePage {
 		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(genComp);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(genComp);
 
-		addField(new BooleanFieldEditor2(bind(PrefsKey.PT_FIND_IMPL), "Double-click activates code editor", genComp));
-		addField(new BooleanFieldEditor2(bind(PrefsKey.PT_SURFACE_DRAG_ENABLED), "Surface drag enabled", genComp));
+		addField(new BooleanFieldEditor(bind(PrefsKey.PT_FIND_IMPL), "Double-click activates code editor", genComp));
+		addField(new BooleanFieldEditor(bind(PrefsKey.PT_SURFACE_DRAG_ENABLED), "Surface drag enabled", genComp));
 		addField(
 				new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit", genComp, 0, 10, 10000, 1));
 
@@ -110,4 +113,23 @@ public class PrefsPageGraph extends AbstractFieldEditorPreferencePage {
 
 		// ///////////////////////////////////////////////////////
 	}
+
+	@Override
+	public DslUI getDslUI() {
+		return AntlrDTUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrDTCore.getDefault();
+	}
+
+	@Override
+	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
+			DslPrefsManagerDelta delta, FormToolkit formkit, DslColorManager colorMgr) {
+		return null;
+	}
+
+	@Override
+	protected void adjustSubLayout() {}
 }

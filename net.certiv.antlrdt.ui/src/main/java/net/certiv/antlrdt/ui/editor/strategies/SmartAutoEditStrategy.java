@@ -4,11 +4,11 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.text.AbstractStringEditStrategy;
+import net.certiv.dsl.ui.editor.text.AbstractAutoEditStrategy;
 
-public class AntlrDTAutoEditStringStrategy extends AbstractStringEditStrategy {
+public class SmartAutoEditStrategy extends AbstractAutoEditStrategy {
 
-	public AntlrDTAutoEditStringStrategy(String partitioning) {
+	public SmartAutoEditStrategy(String partitioning) {
 		super(partitioning);
 	}
 

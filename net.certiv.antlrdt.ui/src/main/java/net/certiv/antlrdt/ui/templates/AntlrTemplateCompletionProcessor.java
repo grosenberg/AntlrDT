@@ -1,10 +1,5 @@
 package net.certiv.antlrdt.ui.templates;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
-import net.certiv.antlrdt.ui.editor.Partitions;
-import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
-import net.certiv.dsl.ui.templates.DslTemplateCompletionProcessor;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -16,17 +11,22 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
-public class AntlrDTTemplateCompletionProcessor extends DslTemplateCompletionProcessor {
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.editor.Partitions;
+import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
+import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateCompletionProcessor;
+
+public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProcessor {
 
 	private static char[] IGNORE = new char[] { '.' };
 
-	public AntlrDTTemplateCompletionProcessor(DslContentAssistInvocationContext context) {
+	public AntlrTemplateCompletionProcessor(DslContentAssistInvocationContext context) {
 		super(AntlrDTUI.getDefault(), context);
 	}
 
 	@Override
 	protected String getContextTypeId() {
-		return AntlrDTTemplateContextType.ANTLRDT_CONTEXT_TYPE_ID;
+		return AntlrDTTemplateContextType.CONTEXT_TYPE_ID;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class AntlrDTTemplateCompletionProcessor extends DslTemplateCompletionPro
 		if (prefix.length() == 0) {
 			TemplateContextType contextType = getContextType(viewer, region);
 			String cId = contextType.getId();
-			if (AntlrDTTemplateContextType.ANTLRDT_CONTEXT_TYPE_ID.equals(cId)) {
+			if (AntlrDTTemplateContextType.CONTEXT_TYPE_ID.equals(cId)) {
 				return true;
 			}
 			return false;
@@ -59,7 +59,7 @@ public class AntlrDTTemplateCompletionProcessor extends DslTemplateCompletionPro
 		IDocumentExtension3 doc = (IDocumentExtension3) viewer.getDocument();
 		ITypedRegion typedRegion = null;
 		try {
-			typedRegion = doc.getPartition(Partitions.ANTLRDT_PARTITIONING, region.getOffset(), true);
+			typedRegion = doc.getPartition(Partitions.PARTITIONING, region.getOffset(), true);
 		} catch (BadLocationException | BadPartitioningException e) {
 			e.printStackTrace();
 		}

@@ -11,7 +11,7 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.folding.AntlrDTFoldingStructureProvider;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.preferences.DslPrefsKey;
+import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.text.DslWordFinder;
@@ -23,38 +23,23 @@ public class AntlrDTEditor extends DslEditor {
 	public static final String EDITOR_CONTEXT = "#AntlrDTEditorContext";
 	public static final String RULER_CONTEXT = "#AntlrDTRulerContext";
 
-	private static final String[] EDITOR_KEY_SCOPE = new String[] { "net.certiv.antlrdt.ui.antlrdtEditorScope" };
+	private static final String[] KEY_SCOPES = new String[] { "net.certiv.antlrdt.ui.antlrdtEditorScope" };
 	private static final String MARK_OCCURRENCES_ANNOTATION_TYPE = "net.certiv.antlrdt.ui.occurrences";
 
-	private DefaultCharacterPairMatcher pairMatcher;
+	private final DefaultCharacterPairMatcher pairMatcher = new DefaultCharacterPairMatcher(STD_PAIRS,
+			Partitions.PARTITIONING);
+	private final DslWordFinder finder = new DslWordFinder();
+
 	private IFoldingStructureProvider foldingProvider;
-	private DslWordFinder finder;
 
 	public AntlrDTEditor() {
 		super();
-		// must init on construction
-		pairMatcher = new DefaultCharacterPairMatcher(AntlrDTTextTools.PAIRS, Partitions.ANTLRDT_PARTITIONING);
-	}
-
-	@Override
-	protected void initializeEditor() {
-		super.initializeEditor();
-		setEditorContextMenuId(EDITOR_CONTEXT);
-		setRulerContextMenuId(RULER_CONTEXT);
-		finder = new DslWordFinder();
 	}
 
 	@Override
 	public String getEditorId() {
 		return EDITOR_ID;
 	}
-
-	@Override
-	public String getMarkOccurrencesAnnotationType() {
-		return MARK_OCCURRENCES_ANNOTATION_TYPE;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public DslUI getDslUI() {
@@ -68,12 +53,34 @@ public class AntlrDTEditor extends DslEditor {
 
 	@Override
 	public char[] getBrackets() {
-		return AntlrDTTextTools.PAIRS;
+		return STD_PAIRS;
+	}
+
+	@Override
+	protected void initializeEditor() {
+		super.initializeEditor();
+		setEditorContextMenuId(EDITOR_CONTEXT);
+		setRulerContextMenuId(RULER_CONTEXT);
+	}
+
+	@Override
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(KEY_SCOPES);
+	}
+
+	@Override
+	public String getMarkOccurrencesAnnotationType() {
+		return MARK_OCCURRENCES_ANNOTATION_TYPE;
 	}
 
 	@Override
 	protected IRegion findWord(IDocument doc, int offset) {
 		return finder.findWord(doc, offset);
+	}
+
+	@Override
+	protected AntlrDTOutlinePage doCreateOutlinePage() {
+		return new AntlrDTOutlinePage(this, getPreferenceStore());
 	}
 
 	@Override
@@ -84,36 +91,22 @@ public class AntlrDTEditor extends DslEditor {
 		return foldingProvider;
 	}
 
-	// /////////////////////////////////////////////////////////////////////////
-
-	@Override
-	protected AntlrDTOutlinePage doCreateOutlinePage() {
-		return new AntlrDTOutlinePage(this, getPreferenceStore());
-	}
-
 	@Override
 	protected void connectPartitioningToElement(IEditorInput input, IDocument document) {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension = (IDocumentExtension3) document;
-			if (extension.getDocumentPartitioner(Partitions.ANTLRDT_PARTITIONING) == null) {
+			if (extension.getDocumentPartitioner(Partitions.PARTITIONING) == null) {
 				AntlrDTDocumentSetupParticipant participant = new AntlrDTDocumentSetupParticipant();
 				participant.setup(document);
 			}
 		}
 	}
 
-	// //////////////////////////////////////////////////////////////////////////
-
-	@Override
-	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(EDITOR_KEY_SCOPE);
-	}
-
 	@Override
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 		support.setCharacterPairMatcher(pairMatcher);
-		support.setMatchingCharacterPainterPreferenceKeys(bind(DslPrefsKey.EDITOR_MATCHING_BRACKETS),
-				bind(DslPrefsKey.EDITOR_MATCHING_BRACKETS_COLOR));
+		support.setMatchingCharacterPainterPreferenceKeys(bind(Editor.EDITOR_MATCHING_BRACKETS),
+				bind(Editor.EDITOR_MATCHING_BRACKETS_COLOR));
 		super.configureSourceViewerDecorationSupport(support);
 	}
 }

@@ -27,7 +27,7 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.loader.DynamicLoader;
+import net.certiv.dsl.jdt.util.DynamicLoader;
 
 class TargetUnit {
 

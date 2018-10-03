@@ -1,6 +1,7 @@
 package net.certiv.antlrdt.ui.preferences.page;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
@@ -8,18 +9,24 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.AntlrDTSimpleSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.IColorManager;
+import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.formatter.DslFormatterPreferencePage;
+import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.preferences.pages.DslFormatterPreferencePage;
 
 /** Preference page for formatting */
-public class PrefPageFormatter extends DslFormatterPreferencePage {
+public class FormatterPage extends DslFormatterPreferencePage {
 
-	public PrefPageFormatter() {
+	public FormatterPage() {
 		super();
+
+	}
+
+	@Override
+	public void init(IWorkbench workbench) {
+		super.init(workbench);
 		DslPrefsManagerDelta delta = (DslPrefsManagerDelta) getDslUI().getFormatterFactory().getPrefsManager();
 		setPreferenceStore(delta);
 	}
@@ -29,7 +36,7 @@ public class PrefPageFormatter extends DslFormatterPreferencePage {
 			IPreferenceStore store, ITextEditor editor, boolean configureFormatter) {
 
 		return new AntlrDTSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) store, editor,
-				Partitions.ANTLRDT_PARTITIONING, configureFormatter);
+				Partitions.PARTITIONING, configureFormatter);
 	}
 
 	@Override

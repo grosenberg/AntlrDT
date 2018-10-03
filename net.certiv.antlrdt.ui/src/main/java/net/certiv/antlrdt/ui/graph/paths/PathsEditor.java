@@ -60,9 +60,9 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.parser.AntlrDTSourceParser;
 import net.certiv.antlrdt.core.parser.PathsData;
 import net.certiv.antlrdt.core.parser.PathsNode;
+import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.graph.DslGraphViewer;
@@ -82,12 +82,13 @@ import net.certiv.antlrdt.ui.graph.figures.ZoomContributionViewItemFix;
 import net.certiv.antlrdt.ui.graph.paths.model.PathsModel;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeContentProvider;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeLabelProvider;
-import net.certiv.dsl.core.model.DslModelException;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IModuleStmt;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
+import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
+import net.certiv.dsl.core.util.Log;
 
 public class PathsEditor extends EditorPart implements IZoomableEditor, ISelectionListener {
 
@@ -302,15 +303,9 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 
 				default: // FULL
 					ICodeUnit unit = core.getModelManager().create((IFile) res);
-					AntlrDTSourceParser parser;
-					try {
-						parser = (AntlrDTSourceParser) unit.getSourceParser();
-					} catch (DslModelException e) {
-						return;
-					}
-					PathsData data = parser.buildPathsData();
+					DslParseRecord record = unit.getParseRecord();
+					PathsData data = buildPathsData(record);
 					model = new PathsModel(this, data, ruleName);
-					break;
 			}
 
 			helper.setModel(model);
@@ -318,6 +313,20 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 			nodeLabelProvider.setCurrentSelection(selected, selected);
 			refresh();
 		}
+	}
+
+	private PathsData buildPathsData(DslParseRecord record) {
+		PathsData data = new PathsData();
+		if (record != null && record.hasTree()) {
+			try {
+				PathVisitor walker = new PathVisitor(record.tree);
+				walker.setHelper(data);
+				walker.findAll();
+			} catch (IllegalArgumentException e) {
+				Log.error(this, "Paths: " + e.getMessage());
+			}
+		}
+		return data;
 	}
 
 	public void refresh() {

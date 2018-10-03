@@ -1,6 +1,5 @@
 package net.certiv.antlrdt.ui.editor.completion;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.antlrdt.ui.AntlrDTUI;
@@ -8,9 +7,9 @@ import net.certiv.dsl.core.completion.CompletionProposal;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
 
-public class AntlrDTCompletionLabelProvider extends CompletionLabelProvider {
+public class AntlrCompletionLabelProvider extends CompletionLabelProvider {
 
-	public AntlrDTCompletionLabelProvider() {
+	public AntlrCompletionLabelProvider() {
 		super(AntlrDTUI.getDefault());
 	}
 
@@ -35,8 +34,7 @@ public class AntlrDTCompletionLabelProvider extends CompletionLabelProvider {
 			case CompletionProposal.LABEL_REF:
 				return createSimpleLabel(proposal);
 			default:
-				Assert.isTrue(false);
-				return null;
+				return createSimpleLabel(proposal);
 		}
 	}
 

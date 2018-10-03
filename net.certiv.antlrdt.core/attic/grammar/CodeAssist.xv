@@ -7,17 +7,14 @@ options {
 @header {
 	
 	package net.certiv.antlrdt.core.parser.gen;
-	import net.certiv.antlrdt.core.parser.AntlrDTSourceParser;
+	import net.certiv.antlrdt.core.parser.AssistBuilder;
 	import org.antlr.v4.runtime.Token;
 }
 
-
-
-
 @members {
-	private AntlrDTSourceParser helper;
-	public void setHelper(AntlrDTSourceParser helper) {
-		this.helper = helper;
+	private AssistBuilder builder;
+	public void setHelper(AssistBuilder builder) {
+		this.builder = builder;
 	}
 }
 
@@ -34,45 +31,45 @@ codeAssist
 
 tokens
 	: //tokensSpec//id
-		{ helper.addCodeAssistElement($TOKEN_REF); }
+		{ builder.addCodeAssistElement($TOKEN_REF); }
 	;
 
 imports
 	: //delegateGrammars//id {
 			Token token = $RULE_REF != null ? $RULE_REF : $TOKEN_REF;
-			helper.addCodeAssistElement(token);
+			builder.addCodeAssistElement(token);
 		}
 	;
 
 labels
 	: //labeledElement//id {
 			Token token = $RULE_REF != null ? $RULE_REF : $TOKEN_REF;
-			helper.addCodeAssistElement(token);
+			builder.addCodeAssistElement(token);
 		}
 	;
 
 parserRuleSpec
 	: //parserRuleSpec
-		{ helper.addCodeAssistElement($RULE_REF); }
+		{ builder.addCodeAssistElement($RULE_REF); }
 	;
 
 parserRules
 	: //ruleBlock//atom/ruleref
-		{ helper.addCodeAssistElement($RULE_REF); }
+		{ builder.addCodeAssistElement($RULE_REF); }
 	;
 
 parserTerminals
 	: //ruleBlock//atom/terminal
-		{ helper.addCodeAssistElement($TOKEN_REF); }
+		{ builder.addCodeAssistElement($TOKEN_REF); }
 	;
 
 lexerRuleSpec
 	: //lexerRuleSpec
-		{ helper.addCodeAssistElement($TOKEN_REF); }
+		{ builder.addCodeAssistElement($TOKEN_REF); }
 	;
 
 lexerRules
 	: //lexerRuleBlock//terminal
-		{ helper.addCodeAssistElement($TOKEN_REF); }
+		{ builder.addCodeAssistElement($TOKEN_REF); }
 	;
 

@@ -9,12 +9,10 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
-import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
-import net.certiv.dsl.ui.templates.DslTemplateContext;
 
-public class AntlrDTCompletionProcessor extends DslCompletionProcessor {
+public class AntlrCompletionProcessor extends DslCompletionProcessor {
 
-	public AntlrDTCompletionProcessor(IEditorPart editor, ContentAssistant assistant, String partition) {
+	public AntlrCompletionProcessor(IEditorPart editor, ContentAssistant assistant, String partition) {
 		super(editor, assistant, partition);
 	}
 
@@ -30,12 +28,14 @@ public class AntlrDTCompletionProcessor extends DslCompletionProcessor {
 
 	@Override
 	protected CompletionLabelProvider getProposalLabelProvider() {
-		return new AntlrDTCompletionLabelProvider();
+		return new AntlrCompletionLabelProvider();
 	}
 
-	@Override
-	public void createCategories() {
-		addCategory(DslCompletionProposal.ID, DslCompletionProposal.NAME, new AntlrDTCodeCompletionComputer());
-		addCategory(DslTemplateContext.ID, DslTemplateContext.NAME, new AntlrDTTemplateCompletionComputer());
-	}
+	// @Override
+	// public void createCategories() {
+	// addCategory(DslCompletionProposal.ID, DslCompletionProposal.NAME, new
+	// AntlrCodeCompletionComputer());
+	// addCategory(DslTemplateContext.ID, DslTemplateContext.NAME, new
+	// AntlrTemplateCompletionComputer());
+	// }
 }

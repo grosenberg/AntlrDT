@@ -110,6 +110,7 @@
             name="Paths">
       </editor>
    </extension>
+   
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
@@ -134,6 +135,49 @@
             name="net.certiv.antlrdt.ui.occurrences">
       </type>
    </extension>
+
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.error">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.warning">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationType="net.certiv.antlrdt.ui.info">
+      </specification>
+      <specification
+            annotationType="net.certiv.antlrdt.ui.occurrences"
+            colorPreferenceKey="occurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            contributesToHeader="false"
+            highlightPreferenceKey="occurrenceHighlighting"
+            highlightPreferenceValue="true"
+            icon="$nl$/icons/full/obj16/searchm_obj.gif"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
+            label="Occurrences"
+            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
+            textPreferenceKey="occurrenceIndication"
+            textPreferenceValue="false"
+            textStylePreferenceKey="occurrenceTextStyle"
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
+   
   <extension
         point="org.eclipse.ui.editors.templates">
      <include
@@ -205,25 +249,25 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="net.certiv.certivtools.prefs.TopLevelPage"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.ui.preferences.page.GeneralPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
             name="AntlrDT ">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageMarkOccurrences"
+            class="net.certiv.antlrdt.ui.preferences.page.MarkOccurrencesPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageMarkOccurrences"
             name="Mark Occurrences">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageEditor"
+            class="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColor"
             id="net.certiv.antlrdt.preferences.page.PrefPageEditor"
             name="Editor">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageFolding"
+            class="net.certiv.antlrdt.ui.preferences.page.FoldingPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageFolding"
             name="Folding">
       </page>
@@ -235,37 +279,37 @@
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageCodeTemplates"
+            class="net.certiv.antlrdt.ui.preferences.page.TemplatesPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageCodeTemplates"
             name="Templates">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageFormatter"
+            class="net.certiv.antlrdt.ui.preferences.page.FormatterPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageFormatter"
             name="Formatter">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageBuilder"
+            class="net.certiv.antlrdt.ui.preferences.page.BuilderPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageBuilder"
             name="Builder">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlrdt.ui.preferences.page.GraphPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
             name="ParseTree Display">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphColoring"
+            class="net.certiv.antlrdt.ui.preferences.page.GraphColoringPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphColoring"
             name="Graph Coloring">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
+            class="net.certiv.antlrdt.ui.preferences.page.GraphToolTipsPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
             name="Tool Tips">
       </page>
@@ -542,48 +586,6 @@
 		-->
 	        
 	</extension>
-
-   <extension
-         point="org.eclipse.ui.editors.markerAnnotationSpecification">
-      <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
-            annotationType="net.certiv.antlrdt.ui.error">
-      </specification>
-      <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
-            annotationType="net.certiv.antlrdt.ui.warning">
-      </specification>
-      <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
-            annotationType="net.certiv.antlrdt.ui.info">
-      </specification>
-      <specification
-            annotationType="net.certiv.antlrdt.ui.occurrences"
-            colorPreferenceKey="occurrenceIndicationColor"
-            colorPreferenceValue="212,212,212"
-            contributesToHeader="false"
-            highlightPreferenceKey="occurrenceHighlighting"
-            highlightPreferenceValue="true"
-            icon="$nl$/icons/full/obj16/searchm_obj.gif"
-            includeOnPreferencePage="true"
-            isGoToNextNavigationTarget="false"
-            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
-            isGoToPreviousNavigationTarget="false"
-            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
-            label="Occurrences"
-            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="true"
-            presentationLayer="4"
-            showInNextPrevDropdownToolbarAction="true"
-            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
-            textPreferenceKey="occurrenceIndication"
-            textPreferenceValue="false"
-            textStylePreferenceKey="occurrenceTextStyle"
-            textStylePreferenceValue="NONE"
-            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
-            verticalRulerPreferenceValue="false">
-      </specification>
-   </extension>
    
   <!--
   <extension
@@ -686,40 +688,7 @@
       </menuContribution>
    </extension>
    
-<!--
-  <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%OpenActionSet.label"
-            description="%OpenActionSet.description"
-            visible="false"
-            id="net.certiv.dsl.ui.A_OpenActionSet">
-         <action
-               definitionId="net.certiv.dsl.ui.edit.text.open.call.hierarchy"
-               label="%OpenCallHierarchyAction.label"
-               retarget="true"
-               menubarPath="navigate/open.ext"
-               id="net.certiv.dsl.ui.actions.OpenCallHierarchy">
-         </action>
-         <action
-               definitionId="net.certiv.dsl.ui.edit.text.open.type.hierarchy"
-               label="%OpenTypeHierarchyAction.label"
-               retarget="true"
-               menubarPath="navigate/open.ext"
-               id="net.certiv.dsl.ui.actions.OpenTypeHierarchy">
-         </action> 
-         <action
-               definitionId="net.certiv.dsl.ui.edit.text.open.editor"
-               label="%OpenAction.label"
-               tooltip="%OpenAction.tooltip"
-               retarget="true"
-               menubarPath="navigate/open.ext"
-               allowLabelUpdate="true"
-               id="net.certiv.dsl.ui.actions.Open">
-         </action>
-      </actionSet>
-   </extension>
--->
+
    
    <extension point="org.eclipse.ui.menus">
       <menuContribution
@@ -745,28 +714,6 @@
                   </iterate>
                </visibleWhen>
             </command>
-            <!--
-            <command
-                  commandId="net.certiv.antlrdt.ui.removeNatureCommand"
-                  id="net.certiv.antlrdt.ui.popups.removeNatureCommand">
-               <visibleWhen
-                     checkEnabled="false">
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IProject">
-                        <and>
-                           <test
-                                 property="org.eclipse.core.resources.projectNature"
-                                 value="net.certiv.antlrdt.core.nature">
-                           </test>
-                        </and>
-                     </adapt>
-                  </iterate>
-               </visibleWhen>
-            </command>
-             -->
          </menu>
          
          <menu
@@ -796,4 +743,51 @@
       </menuContribution>
     </extension>
     
+
+   <!-- completions -->   
+   <extension
+         id="AntlrCodeCompletionComputer"
+         point="net.certiv.dsl.ui.dslCompletionProposalComputer">
+      <dslCompletionProposalComputer
+            categoryId="net.certiv.dsl.ui.codeProposalCategory"
+            class="net.certiv.antlrdt.ui.editor.completion.AntlrCodeCompletionComputer">
+         <partition
+               type="__dftl_partition_content_type">
+         </partition>
+         <partition
+               type="__action">
+         </partition>
+      </dslCompletionProposalComputer>
+   </extension>
+   
+	<extension
+		point="net.certiv.dsl.ui.dslCompletionProposalComputer"
+		id="HippieCompletionProposalComputer">
+		<dslCompletionProposalComputer
+        	categoryId="net.certiv.dsl.ui.defaultProposalCategory"
+        	class="net.certiv.dsl.ui.editor.text.completion.hippie.HippieProposalComputer">
+    		<partition
+        		type="__dftl_partition_content_type">
+    		</partition>
+    		<partition
+	        	type="__action">
+    		</partition>
+	  	</dslCompletionProposalComputer>
+	</extension>
+	
+	<extension
+       	id="AntlrTemplateCompletionComputer"
+       	point="net.certiv.dsl.ui.dslCompletionProposalComputer">
+    	<dslCompletionProposalComputer
+          	categoryId="net.certiv.dsl.ui.templateProposalCategory"
+          	class="net.certiv.antlrdt.ui.AntlrTemplateCompletionComputer">
+       	<partition
+        	type="__dftl_partition_content_type">
+       	</partition>
+		<partition
+			type="__action">
+		</partition>
+    	</dslCompletionProposalComputer>
+	</extension>
+   
 </plugin>

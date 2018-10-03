@@ -1,6 +1,6 @@
 package net.certiv.antlrdt.ui.preferences.page;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -12,18 +12,24 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.ui.preferences.page.AbstractFieldEditorPreferencePage;
-import net.certiv.dsl.ui.preferences.page.WorkspaceDirFieldEditor;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
+import net.certiv.dsl.ui.preferences.editors.WorkspaceDirFieldEditor;
+import net.certiv.dsl.ui.preferences.pages.AbstractFieldEditorPreferencePage;
 
-public class PrefPageAntlrDT extends AbstractFieldEditorPreferencePage {
+public class GeneralPage extends AbstractFieldEditorPreferencePage {
 
-	private LinkedHashMap<String, IProject> projects; 	// all open projects with antlrdt nature
-	private IProject active; 							// current has antlrdt nature or null
+	private Map<String, IProject> projects; 	// all open projects with antlrdt nature
+	private IProject active; 					// current has antlrdt nature or null
 
 	private Composite projComp;
 	private Combo projCombo;
@@ -31,22 +37,31 @@ public class PrefPageAntlrDT extends AbstractFieldEditorPreferencePage {
 	private WorkspaceDirFieldEditor testBase;
 	private boolean enabled;
 
-	public PrefPageAntlrDT() {
+	public GeneralPage() {
 		super(GRID);
-		DslPrefsManagerDelta delta = AntlrDTCore.getDefault().getPrefsManager().createDeltaManager();
-		delta.setDefaultProject(null);
-		setPreferenceStore(delta);
+	}
 
+	@Override
+	public DslUI getDslUI() {
+		return AntlrDTUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrDTCore.getDefault();
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
 		String natureId = AntlrDTCore.getDefault().getNatureId();
 		projects = CoreUtil.getActiveProjects(natureId);
 		active = CoreUtil.getActiveProject(natureId);
 	}
 
-	/** Creates the field editors. */
+	@Override
 	public void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
-
-		// ///////////////////////////////////////////////////////
 
 		Group projGroup = new Group(parent, SWT.NONE);
 		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(2, 1).applyTo(projGroup);
@@ -63,14 +78,11 @@ public class PrefPageAntlrDT extends AbstractFieldEditorPreferencePage {
 
 		projCombo.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int sel = projCombo.getSelectionIndex();
-				if (sel > 0) {
-					active = projects.get(projCombo.getItem(sel));
-				} else {
-					active = null;
-				}
-				getDeltaMgr().setDefaultProject(active);
+				active = sel > 0 ? projects.get(projCombo.getItem(sel)) : null;
+				delta.setDefaultProject(active);
 				initialize();
 				checkState();
 				updateEnables();
@@ -106,6 +118,13 @@ public class PrefPageAntlrDT extends AbstractFieldEditorPreferencePage {
 		updateEnables();
 	}
 
+	// Not used
+	@Override
+	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
+			DslPrefsManagerDelta delta, FormToolkit formkit, DslColorManager colorMgr) {
+		return null;
+	}
+
 	protected void updateEnables() {
 		enabled = projCombo.getSelectionIndex() != 0 ? true : false;
 		testBase.setEnabled(enabled, dirComp);
@@ -113,8 +132,11 @@ public class PrefPageAntlrDT extends AbstractFieldEditorPreferencePage {
 	}
 
 	@Override
-	protected void performDefaults() {
+	public void performDefaults() {
 		super.performDefaults();
 		updateEnables();
 	}
+
+	@Override
+	protected void adjustSubLayout() {}
 }

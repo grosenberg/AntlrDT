@@ -1,13 +1,13 @@
 xvisitor grammar Structure;
 
 options {
-	superClass = StructureAdaptor ;
+	superClass = StructureBuilder;
 	parserClass = AntlrDT4Parser ;
 }
 
 @header {
 	package net.certiv.antlrdt.core.parser.gen;
-	import net.certiv.antlrdt.core.parser.StructureAdaptor;
+	import net.certiv.antlrdt.core.parser.StructureBuilder;
 }
 
 structure

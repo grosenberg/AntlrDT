@@ -32,3 +32,4 @@ Bundle-Vendor: Certiv Analytics
 Bundle-Localization: plugin
 Bundle-ClassPath: .
 Eclipse-RegisterBuddy: net.certiv.dsl.lib
+Export-Package: net.certiv.antlrdt.ui

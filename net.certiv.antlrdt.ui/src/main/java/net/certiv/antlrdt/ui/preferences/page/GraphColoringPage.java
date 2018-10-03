@@ -3,7 +3,7 @@
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
+ * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package net.certiv.antlrdt.ui.preferences.page;
 
@@ -13,19 +13,32 @@ import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
-import net.certiv.dsl.ui.preferences.page.AbstractFieldEditorPreferencePage;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
+import net.certiv.dsl.ui.preferences.pages.AbstractFieldEditorPreferencePage;
 
-public class PrefsPageGraphColoring extends AbstractFieldEditorPreferencePage {
+public class GraphColoringPage extends AbstractFieldEditorPreferencePage {
 
-	public PrefsPageGraphColoring() {
+	public GraphColoringPage() {
 		super(GRID);
-		DslPrefsManagerDelta delta = AntlrDTCore.getDefault().getPrefsManager().createDeltaManager();
-		delta.setDefaultProject(null);
-		setPreferenceStore(delta);
+	}
+
+	@Override
+	public DslUI getDslUI() {
+		return AntlrDTUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrDTCore.getDefault();
 	}
 
 	/** Creates the field editors. */
@@ -73,4 +86,13 @@ public class PrefsPageGraphColoring extends AbstractFieldEditorPreferencePage {
 			}
 		}
 	}
+
+	@Override
+	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
+			DslPrefsManagerDelta delta, FormToolkit formkit, DslColorManager colorMgr) {
+		return null;
+	}
+
+	@Override
+	protected void adjustSubLayout() {}
 }

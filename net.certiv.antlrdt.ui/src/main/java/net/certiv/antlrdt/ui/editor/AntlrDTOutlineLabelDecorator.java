@@ -15,10 +15,6 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 		super();
 	}
 
-	private AntlrDTImages getImageProvider() {
-		return AntlrDTUI.getDefault().getImageProvider();
-	}
-
 	@Override
 	public String decorateText(String text) {
 		switch (getElementKind()) {
@@ -61,92 +57,73 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	@Override
 	public Image decorateImage(Image image) {
-		// create the base image
-		ImageDescriptor baseImage = createBaseImageDescriptor(image);
-		int type = 0;
+		AntlrDTImages provider = AntlrDTUI.getDefault().getImageProvider();
+		ImageDescriptor desc = null;
+
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
-				baseImage = getImageProvider().DESC_OBJ_MODULE;
-				type = 1;
+				desc = provider.DESC_OBJ_MODULE;
 				break;
+
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
-				baseImage = getImageProvider().DESC_OBJ_STATEMENT;
-				type = 2;
+				desc = provider.DESC_OBJ_STATEMENT;
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					switch (data.mType) {
 						case Options:
-							baseImage = getImageProvider().DESC_OBJ_OPTION;
-							type = 3;
+							desc = provider.DESC_OBJ_OPTION;
 							break;
 						case Option:
-							baseImage = getImageProvider().DESC_OBJ_ENUM;
-							type = 4;
+							desc = provider.DESC_OBJ_ENUM;
 							break;
 						case Tokens:
-							baseImage = getImageProvider().DESC_OBJ_PACKAGE;
-							type = 5;
+							desc = provider.DESC_OBJ_PACKAGE;
 							break;
 						case Token:
-							baseImage = getImageProvider().DESC_OBJ_MESSAGE;
-							type = 6;
+							desc = provider.DESC_OBJ_MESSAGE;
 							break;
 						case LexerRule:
-							baseImage = getImageProvider().DESC_OBJ_LEXER;
-							type = 8;
+							desc = provider.DESC_OBJ_LEXER;
 							if (addOverlay(data.decoration & ModelData.FRAGMENT)) {
-								baseImage = createOverlayImageDescriptor(baseImage,
-										getImageProvider().DESC_OVR_FRAGMENT, TOP_RIGHT);
-								type = 9;
+								desc = createOverlayImageDescriptor(desc, provider.DESC_OVR_FRAGMENT, TOP_RIGHT);
 							}
 							break;
 						case ParserRule:
-							baseImage = getImageProvider().DESC_OBJ_PARSER;
-							type = 10;
+							desc = provider.DESC_OBJ_PARSER;
 							if (addOverlay(data.decoration & ModelData.PROTECTED)) {
-								baseImage = createOverlayImageDescriptor(baseImage,
-										getImageProvider().DESC_OVR_PROTECTED, TOP_RIGHT);
-								type = 11;
+								desc = createOverlayImageDescriptor(desc, provider.DESC_OVR_PROTECTED, TOP_RIGHT);
 							} else if (addOverlay(data.decoration & ModelData.PRIVATE)) {
-								baseImage = createOverlayImageDescriptor(baseImage, getImageProvider().DESC_OVR_PRIVATE,
-										TOP_RIGHT);
-								type = 12;
+								desc = createOverlayImageDescriptor(desc, provider.DESC_OVR_PRIVATE, TOP_RIGHT);
 							}
 							break;
 						case Mode:
-							baseImage = getImageProvider().DESC_OBJ_MODE;
-							type = 13;
+							desc = provider.DESC_OBJ_MODE;
 							break;
 						case AtAction:
-							baseImage = getImageProvider().DESC_OBJ_ACTION;
-							type = 14;
+							desc = provider.DESC_OBJ_ACTION;
 							break;
 						case LabelId:
-							baseImage = getImageProvider().DESC_OBJ_LABEL;
-							type = 15;
+							desc = provider.DESC_OBJ_LABEL;
 							break;
 						default:
-							baseImage = getImageProvider().UNKNOWN_NODE;
-							type = 50;
+							desc = provider.UNKNOWN_NODE;
 							break;
 					}
 				}
 				break;
 
 			case IDslElement.BEG_BLOCK:
-				baseImage = getImageProvider().DESC_OBJ_EXTEND;
-				type = 20;
+				desc = provider.DESC_OBJ_EXTEND;
 				break;
 
 			case IDslElement.END_BLOCK:
 				break;
+
+			default:
+				desc = createMissingImageDescriptor(image);
+
 		}
-		Image img = fetchImage(type);
-		if (img == null) {
-			img = baseImage.createImage();
-			storeImage(type, img);
-		}
-		return img;
+		return findImage(desc);
 	}
 }

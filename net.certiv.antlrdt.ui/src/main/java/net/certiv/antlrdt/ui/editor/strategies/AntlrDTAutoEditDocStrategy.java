@@ -4,9 +4,9 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.strategies.AutoEditDocStrategy;
+import net.certiv.dsl.ui.editor.text.AbstractMultilineCommentEditStrategy;
 
-public class AntlrDTAutoEditDocStrategy extends AutoEditDocStrategy {
+public class AntlrDTAutoEditDocStrategy extends AbstractMultilineCommentEditStrategy {
 
 	public AntlrDTAutoEditDocStrategy(String partitioning) {
 		super(partitioning);

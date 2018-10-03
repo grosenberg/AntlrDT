@@ -1,32 +1,57 @@
 package net.certiv.antlrdt.ui.editor;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.dsl.core.IColorManager;
+import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 
 public class AntlrDTTextTools extends DslTextTools {
 
-	// all distinct pairing characters
-	public static final char[] PAIRS = new char[] { '{', '}', '(', ')', '[', ']', '<', '>' };
-
-	// used to identify indent blocks
-	public static final String[] INDENT_PAIRS = new String[] { "{", "}" };
-
-	// minimum distinctive pairs used to identify string style comments (no "/**", as not min)
-	public static final String[] COMMENT_PAIRS = new String[] { "/*", "*/" };
-
-	public static final char[] STRING_DELIMS = new char[] { '"', '\'' };
-
 	private PartitionScanner partitionScanner;
 
 	public AntlrDTTextTools(boolean autoDispose) {
-		super(Partitions.ANTLRDT_PARTITIONING, Partitions.getContentTypes(), autoDispose);
+		super(Partitions.PARTITIONING, Partitions.getContentTypes(), autoDispose);
+	}
+
+	@Override
+	public void createAutoClosePairs() {
+		for (String contentType : Partitions.getAllContentTypes()) {
+			addAutoClosePair(contentType, '{', '}');
+			addAutoClosePair(contentType, '(', ')');
+			addAutoClosePair(contentType, '[', ']');
+			addAutoClosePair(contentType, '<', '>');
+		}
+	}
+
+	@Override
+	public void createAutoIndentPairs() {
+		String[] contentTypes = { IDocument.DEFAULT_CONTENT_TYPE, Partitions.ACTION };
+		for (String contentType : contentTypes) {
+			addAutoIndentPair(contentType, '{', '}');
+		}
+	}
+
+	@Override
+	public void createAutoCommentPairs() {
+		String[] contentTypes = { IDocument.DEFAULT_CONTENT_TYPE, Partitions.ACTION };
+		for (String contentType : contentTypes) {
+			addAutoCommentPair(contentType, "/**", "*/");
+			addAutoCommentPair(contentType, "/*", "*/");
+		}
+	}
+
+	@Override
+	public void createStringDelimPairs() {
+		for (String contentType : Partitions.getAllContentTypes()) {
+			addStringDelimPairs(contentType, '\'');
+			addStringDelimPairs(contentType, '"');
+		}
 	}
 
 	@Override
@@ -66,25 +91,5 @@ public class AntlrDTTextTools extends DslTextTools {
 	@Override
 	public String[] getStringAndCommentContentPartitions() {
 		return Partitions.STRING_AND_COMMENT_TYPES;
-	}
-
-	@Override
-	public char[] getPairs() {
-		return PAIRS;
-	}
-
-	@Override
-	public char[] getStringDelimiters() {
-		return STRING_DELIMS;
-	}
-
-	@Override
-	public String[] getIndentPairs() {
-		return INDENT_PAIRS;
-	}
-
-	@Override
-	public String[] getCommentPairs() {
-		return COMMENT_PAIRS;
 	}
 }

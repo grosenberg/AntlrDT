@@ -5,6 +5,8 @@ import org.eclipse.swt.graphics.RGB;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsInit;
+import net.certiv.dsl.core.preferences.consts.Builder;
+import net.certiv.dsl.core.preferences.consts.Formatter;
 
 /**
  * Initializer for the preferences unique to this plugin.
@@ -41,72 +43,72 @@ public class PrefsInitializer extends DslPrefsInit {
 		setBool(PrefsKey.EDITOR_FOLDING_CATCH, false);
 		setBool(PrefsKey.EDITOR_FOLDING_FINALLY, false);
 
-		setString(PrefsKey.BUILDER_USE, PrefsKey.BUILDER_USE_GRAMMAR);
-		setString(PrefsKey.BUILDER_REL_PATH, "./gen/");
-		setString(PrefsKey.BUILDER_ABS_PATH, "");
+		setString(Builder.BUILDER_USE, Builder.BUILDER_USE_GRAMMAR);
+		setString(Builder.BUILDER_REL_PATH, "./gen/");
+		setString(Builder.BUILDER_ABS_PATH, "");
 
 		// Initialize formatter preferences
 
 		// header
-		setString(PrefsKey.SPACE_SEMI_HDR, PrefsKey.AROUND);
+		setString(PrefsKey.SPACE_SEMI_HDR, Formatter.AROUND);
 
 		// options
-		setString(PrefsKey.SPACE_EQ_OPT, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_SEMI_OPT, PrefsKey.BEFORE);
+		setString(PrefsKey.SPACE_EQ_OPT, Formatter.AROUND);
+		setString(PrefsKey.SPACE_SEMI_OPT, Formatter.BEFORE);
 
 		// tokens
-		setString(PrefsKey.SPACE_LBRACE_TOK, PrefsKey.BEFORE);
-		setString(PrefsKey.SPACE_RBRACE_TOK, PrefsKey.NONE);
-		setString(PrefsKey.SPACE_COMMA_TOK, PrefsKey.AFTER);
+		setString(PrefsKey.SPACE_LBRACE_TOK, Formatter.BEFORE);
+		setString(PrefsKey.SPACE_RBRACE_TOK, Formatter.NONE);
+		setString(PrefsKey.SPACE_COMMA_TOK, Formatter.AFTER);
 
-		setString(PrefsKey.WRAP_LBRACE_TOK, PrefsKey.AFTER);
-		setString(PrefsKey.WRAP_RBRACE_TOK, PrefsKey.BEFORE);
-		setString(PrefsKey.WRAP_ID_TOK, PrefsKey.BEFORE);
+		setString(PrefsKey.WRAP_LBRACE_TOK, Formatter.AFTER);
+		setString(PrefsKey.WRAP_RBRACE_TOK, Formatter.BEFORE);
+		setString(PrefsKey.WRAP_ID_TOK, Formatter.BEFORE);
 
 		// channels
-		setString(PrefsKey.SPACE_LBRACE_CHAN, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_RBRACE_CHAN, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_COMMA_CHAN, PrefsKey.AFTER);
+		setString(PrefsKey.SPACE_LBRACE_CHAN, Formatter.AROUND);
+		setString(PrefsKey.SPACE_RBRACE_CHAN, Formatter.AROUND);
+		setString(PrefsKey.SPACE_COMMA_CHAN, Formatter.AFTER);
 
-		setString(PrefsKey.WRAP_LBRACE_CHAN, PrefsKey.NONE);
-		setString(PrefsKey.WRAP_RBRACE_CHAN, PrefsKey.NONE);
-		setString(PrefsKey.WRAP_ID_CHAN, PrefsKey.NONE);
+		setString(PrefsKey.WRAP_LBRACE_CHAN, Formatter.NONE);
+		setString(PrefsKey.WRAP_RBRACE_CHAN, Formatter.NONE);
+		setString(PrefsKey.WRAP_ID_CHAN, Formatter.NONE);
 
 		// rules
 
-		setString(PrefsKey.WRAP_NAME_RULE, PrefsKey.AFTER);
-		setString(PrefsKey.WRAP_COLON_RULE, PrefsKey.BEFORE);
-		setString(PrefsKey.WRAP_ALT_OR, PrefsKey.BEFORE);
-		setString(PrefsKey.WRAP_SEMI_RULE, PrefsKey.AFTER);
+		setString(PrefsKey.WRAP_NAME_RULE, Formatter.AFTER);
+		setString(PrefsKey.WRAP_COLON_RULE, Formatter.BEFORE);
+		setString(PrefsKey.WRAP_ALT_OR, Formatter.BEFORE);
+		setString(PrefsKey.WRAP_SEMI_RULE, Formatter.AFTER);
 
-		setString(PrefsKey.SPACE_COLON_RULE, PrefsKey.AFTER);
-		setString(PrefsKey.SPACE_ALT_OR, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_SEMI_RULE, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_LBRACKET_RULE, PrefsKey.AFTER);
-		setString(PrefsKey.SPACE_RBRACKET_RULE, PrefsKey.BEFORE);
+		setString(PrefsKey.SPACE_COLON_RULE, Formatter.AFTER);
+		setString(PrefsKey.SPACE_ALT_OR, Formatter.AROUND);
+		setString(PrefsKey.SPACE_SEMI_RULE, Formatter.AROUND);
+		setString(PrefsKey.SPACE_LBRACKET_RULE, Formatter.AFTER);
+		setString(PrefsKey.SPACE_RBRACKET_RULE, Formatter.BEFORE);
 
 		// rule @id action
 
-		setString(PrefsKey.WRAP_LBRACE_AT, PrefsKey.AFTER);
-		setString(PrefsKey.WRAP_RBRACE_AT, PrefsKey.AROUND);
+		setString(PrefsKey.WRAP_LBRACE_AT, Formatter.AFTER);
+		setString(PrefsKey.WRAP_RBRACE_AT, Formatter.AROUND);
 
-		setString(PrefsKey.SPACE_LBRACE_AT, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_RBRACE_AT, PrefsKey.AROUND);
+		setString(PrefsKey.SPACE_LBRACE_AT, Formatter.AROUND);
+		setString(PrefsKey.SPACE_RBRACE_AT, Formatter.AROUND);
 
 		// rule action
 
-		setString(PrefsKey.WRAP_LBRACE_ACT, PrefsKey.AFTER);
-		setString(PrefsKey.WRAP_RBRACE_ACT, PrefsKey.AROUND);
+		setString(PrefsKey.WRAP_LBRACE_ACT, Formatter.AFTER);
+		setString(PrefsKey.WRAP_RBRACE_ACT, Formatter.AROUND);
 
-		setString(PrefsKey.SPACE_LBRACE_ACT, PrefsKey.AROUND);
-		setString(PrefsKey.SPACE_RBRACE_ACT, PrefsKey.AROUND);
+		setString(PrefsKey.SPACE_LBRACE_ACT, Formatter.AROUND);
+		setString(PrefsKey.SPACE_RBRACE_ACT, Formatter.AROUND);
 
 		// indent
 
-		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_MULTILINE, false);
-		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_SINGLELINE, false);
+		setBool(Formatter.FORMATTER_INDENT_COMMENT_MULTILINE, false);
+		setBool(Formatter.FORMATTER_INDENT_COMMENT_SINGLELINE, false);
 
-		setBool(PrefsKey.FORMATTER_NATIVE_ENABLE, false);
+		setBool(Formatter.FORMATTER_NATIVE_ENABLE, false);
 
 		// unused
 

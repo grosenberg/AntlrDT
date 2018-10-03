@@ -9,7 +9,7 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
 import net.certiv.dsl.ui.editor.text.rules.CharSequenceRule;
 import net.certiv.dsl.ui.editor.text.rules.CharsRule;
 import net.certiv.dsl.ui.editor.text.rules.DslWordRule;
