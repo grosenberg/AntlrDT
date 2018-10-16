@@ -25,9 +25,9 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorListener;
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
-import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.jdt.util.DynamicLoader;
+import net.certiv.dsl.core.util.eclipse.DynamicLoader;
+import net.certiv.dsl.core.util.eclipse.JdtUtil;
 
 class TargetUnit {
 
@@ -52,7 +52,7 @@ class TargetUnit {
 
 	/**
 	 * Loads and holds the classes that corresponding to the current editor content: the source grammar.
-	 * 
+	 *
 	 * @param record a data record describing the source grammar
 	 * @param srcGrammar the source grammar file
 	 * @param content the content of the source grammar file
@@ -133,7 +133,7 @@ class TargetUnit {
 	private Class<?> loadClass(DynamicLoader loader, String name) {
 		if (name.isEmpty()) return null;
 		IProject project = record.getProject();
-		String fqname = CoreUtil.determineFQName(project, name);
+		String fqname = JdtUtil.determineFQName(project, name);
 		return loadFqClass(loader, fqname);
 	}
 

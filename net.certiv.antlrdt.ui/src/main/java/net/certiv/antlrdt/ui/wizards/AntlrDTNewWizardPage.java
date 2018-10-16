@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.jdt.util.DialogUtil;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
@@ -81,11 +80,11 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 		public void buttonPressed(TextButtonField field, String id, SelectionEvent e) {
 			switch (id) {
 				case PACKAGE:
-					IPackageFragment result = DialogUtil.choosePackage();
+					IPackageFragment result = choosePackage();
 					pkgField.setText(result.getElementName());
 					break;
 				case SUPER:
-					IType sType = DialogUtil.chooseSuperClass();
+					IType sType = chooseSuperClass();
 					superField.setText(sType.getElementName());
 					importTxt = sType.getFullyQualifiedName();
 					break;

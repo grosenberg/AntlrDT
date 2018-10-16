@@ -52,7 +52,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 			case IDslElement.END_BLOCK:
 				return null;
 		}
-		return text + "[element kind=" + getElementKind() + "]";
+		return text + "[" + getElementKind() + "]";
 	}
 
 	@Override
@@ -61,6 +61,11 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 		ImageDescriptor desc = null;
 
 		switch (getElementKind()) {
+			case IDslElement.DSL_CONTAINER:
+			case IDslElement.DSL_UNIT:
+				desc = provider.DESC_OBJ_PACKAGE;
+				break;
+
 			case IDslElement.MODULE:
 				desc = provider.DESC_OBJ_MODULE;
 				break;

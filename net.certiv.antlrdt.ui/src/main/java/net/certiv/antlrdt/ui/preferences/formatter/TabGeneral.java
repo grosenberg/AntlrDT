@@ -1,5 +1,8 @@
 package net.certiv.antlrdt.ui.preferences.formatter;
 
+import static net.certiv.dsl.ui.preferences.IEditorConfig.TabPolicyLabels;
+import static net.certiv.dsl.ui.preferences.IEditorConfig.TabPolicyValues;
+
 import java.net.URL;
 
 import org.eclipse.jface.layout.GridDataFactory;
@@ -16,41 +19,29 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.core.util.eclipse.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
+import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.preferences.FormatterMessages;
 import net.certiv.dsl.ui.preferences.bind.IControlCreationManager;
 import net.certiv.dsl.ui.util.SWTFactory;
 
-public class TabPageGeneral extends FormatterModifyTabPage {
-
-	private static final String[] TabItems = new String[] { PrefsKey.SPACE, PrefsKey.TAB, PrefsKey.MIXED };
-	private static final String[] TabNames = new String[] {
-			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_SPACE,
-			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_TAB,
-			FormatterMessages.IndentationTabPage_general_group_option_tab_policy_MIXED };
-
-	// private static final FileFilter DirFilter = new FileFilter() {
-	//
-	// @Override
-	// public boolean accept(File pathname) {
-	// return pathname.isDirectory();
-	// }
-	// };
+public class TabGeneral extends FormatterModifyTabPage {
 
 	private Combo tabPolicy;
 	private Text indentSize;
 	private Text tabSize;
 	private TabPolicyListener tabPolicyListener;
+	private IDslFormatterFactory factory;
 
-	public TabPageGeneral(IFormatterModifyDialog dialog) {
+	public TabGeneral(IFormatterModifyDialog dialog, IDslFormatterFactory factory) {
 		super(dialog);
+		this.factory = factory;
 	}
 
 	@Override
@@ -75,14 +66,14 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 		public void widgetSelected(SelectionEvent e) {
 			int index = tabPolicy.getSelectionIndex();
 			if (index >= 0) {
-				final boolean tabMode = PrefsKey.TAB.equals(TabItems[index]);
+				final boolean tabMode = Formatter.TAB.equals(TabPolicyValues[index]);
 				manager.enableControl(indentSize, !tabMode);
 			}
 		}
 
 		@Override
 		public void initialize() {
-			final boolean tabMode = getDslUI().getFormatterFactory().getPrefsManager().getTabStyle() == TabStyle.TAB;
+			final boolean tabMode = factory.getPrefsManager().getTabStyle() == TabStyle.TAB;
 			manager.enableControl(indentSize, !tabMode);
 		}
 	}
@@ -91,15 +82,15 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 	protected void createOptions(final IControlCreationManager manager, Composite parent) {
 
 		Group tabPolicyGroup = SWTFactory.createGroup(parent, "General Settings", 2, 1, GridData.FILL_HORIZONTAL);
-		tabPolicy = manager.createCombo(tabPolicyGroup, bind(PrefsKey.FORMATTER_TAB_POLICY),
-				FormatterMessages.IndentationTabPage_general_group_option_tab_policy, TabItems, TabNames);
+		tabPolicy = manager.createCombo(tabPolicyGroup, bind(Formatter.FORMATTER_TAB_POLICY),
+				FormatterMessages.IndentationTabPage_general_group_option_tab_policy, TabPolicyValues, TabPolicyLabels);
 
 		tabPolicyListener = new TabPolicyListener(manager);
 		tabPolicy.addSelectionListener(tabPolicyListener);
 		manager.addInitializeListener(tabPolicyListener);
-		indentSize = manager.createNumber(tabPolicyGroup, bind(PrefsKey.FORMATTER_INDENT_SIZE),
+		indentSize = manager.createNumber(tabPolicyGroup, bind(Formatter.FORMATTER_INDENT_SIZE),
 				FormatterMessages.IndentationTabPage_general_group_option_indent_size);
-		tabSize = manager.createNumber(tabPolicyGroup, bind(PrefsKey.FORMATTER_TAB_SIZE),
+		tabSize = manager.createNumber(tabPolicyGroup, bind(Formatter.FORMATTER_TAB_SIZE),
 				FormatterMessages.IndentationTabPage_general_group_option_tab_size);
 		tabSize.addModifyListener(new ModifyListener() {
 
@@ -107,7 +98,7 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 			public void modifyText(ModifyEvent e) {
 				int index = tabPolicy.getSelectionIndex();
 				if (index >= 0) {
-					final boolean tabMode = PrefsKey.TAB.equals(TabItems[index]);
+					final boolean tabMode = Formatter.TAB.equals(TabPolicyValues[index]);
 					if (tabMode) {
 						indentSize.setText(tabSize.getText());
 					}
@@ -123,35 +114,9 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(dirComp);
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(dirComp);
 
-		manager.createDirSelect(dirComp, bind(PrefsKey.FORMATTER_CORPUS_BASEDIR), "Corpus root directory",
+		manager.createDirSelect(dirComp, bind(Formatter.FORMATTER_CORPUS_BASEDIR), "Corpus root directory",
 				getDslCore().getEnvManager());
-		manager.createCombo(dirComp, bind(PrefsKey.FORMATTER_CORPUS_LANGUAGE), "Language", Formatter.ADEPT_LANGS);
-
-		// dirText.addModifyListener(new ModifyListener() {
-		//
-		// @Override
-		// public void modifyText(ModifyEvent e) {
-		// String[] langs = resolve();
-		// langCombo.setItems(langs);
-		// }
-		//
-		// private String[] resolve() {
-		// IPath root = CoreUtil.getWorkspaceLocation();
-		// IPath path = root.append(dirText.getText());
-		// File file = path.toFile();
-		// File[] dirs = file.listFiles(DirFilter);
-		// List<String> langs = Arrays.asList(Langs);
-		// List<String> found = new ArrayList<>();
-		// for (File d : dirs) {
-		// String name = d.getName();
-		// if (langs.contains(name)) {
-		// found.add(name);
-		// }
-		// }
-		//
-		// return found.toArray(new String[found.size()]);
-		// }
-		// });
+		manager.createCombo(dirComp, bind(Formatter.FORMATTER_CORPUS_LANGUAGE), "Language", Formatter.ADEPT_LANGS);
 
 		// ///////////////////////////////////////////////////////
 
@@ -161,13 +126,13 @@ public class TabPageGeneral extends FormatterModifyTabPage {
 		GridDataFactory.fillDefaults().applyTo(fmtComp);
 		GridLayoutFactory.fillDefaults().margins(6, 6).numColumns(1).applyTo(fmtComp);
 
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_CODE_FORMAT), "Enable code formatting");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_COMMENT_FORMAT), "Enable comment formatting");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_HEADER_FORMAT), "Enable comment header formatting");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_ALIGN_FIELD), "Enable code field alignment");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_ALIGN_COMMENT), "Enable comment alignment");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_SPLIT_WRAP), "Enable line split/wrapping");
-		manager.createCheckbox(fmtComp, bind(PrefsKey.FORMATTER_NATIVE_ENABLE), "Enable native code formatting");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_CODE_FORMAT), "Enable code formatting");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_COMMENT_FORMAT), "Enable comment formatting");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_HEADER_FORMAT), "Enable comment header formatting");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_ALIGN_FIELD), "Enable code field alignment");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_ALIGN_COMMENT), "Enable comment alignment");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_SPLIT_WRAP), "Enable line split/wrapping");
+		manager.createCheckbox(fmtComp, bind(Formatter.FORMATTER_NATIVE_ENABLE), "Enable native code formatting");
 
 	}
 

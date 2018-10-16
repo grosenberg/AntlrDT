@@ -7,19 +7,14 @@ import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.editor.AntlrDTTextTools;
 import net.certiv.antlrdt.ui.graph.cst.CstEditor;
 import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
-import net.certiv.antlrdt.ui.preferences.formatter.FormatterFactory;
-import net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType;
+import net.certiv.antlrdt.ui.templates.AntlrContextType;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
-import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 
 public class AntlrDTUI extends DslUI {
-
-	// Should be unique, lower case, single word
-	private static final String DSL_NAME = "antlrdt";
 
 	public static final String PT_DIALOG_SEC = "secAntlrDT";
 	public static final String PA_DIALOG_SEC = "secAntlrDT_PA";
@@ -28,7 +23,6 @@ public class AntlrDTUI extends DslUI {
 
 	private AntlrDTImages imageProvider;
 	private DslTextTools textTools;
-	private IDslFormatterFactory factory;
 
 	private CstEditor cstEditor;
 	private PathsEditor pathsEditor;
@@ -72,7 +66,7 @@ public class AntlrDTUI extends DslUI {
 
 	@Override
 	public String getDslLanguageName() {
-		return DSL_NAME;
+		return AntlrDTCore.DSL_NAME;
 	}
 
 	/** Returns the image provider */
@@ -94,24 +88,16 @@ public class AntlrDTUI extends DslUI {
 	}
 
 	@Override
-	public IDslFormatterFactory getFormatterFactory() {
-		if (factory == null) {
-			factory = new FormatterFactory();
-		}
-		return factory;
-	}
-
-	@Override
 	protected String getEditorId() {
 		return AntlrDTEditor.EDITOR_ID;
 	}
 
+	@Deprecated
 	@Override
 	protected String[] getDslContextTypes() {
-		return new String[] { AntlrDTTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID,
-				AntlrDTTemplateContextType.OPTIONS_CONTEXT_TYPE_ID, //
-				AntlrDTTemplateContextType.ACTIONS_CONTEXT_TYPE_ID, //
-				AntlrDTTemplateContextType.JAVADOC_CONTEXT_TYPE_ID //
+		return new String[] { AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID, AntlrContextType.OPTIONS_CONTEXT_TYPE_ID, //
+				AntlrContextType.ACTIONS_CONTEXT_TYPE_ID, //
+				AntlrContextType.JAVADOC_CONTEXT_TYPE_ID //
 		};
 	}
 

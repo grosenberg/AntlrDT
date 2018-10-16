@@ -3,6 +3,7 @@ package net.certiv.antlrdt.ui.preferences.formatter;
 import java.net.URL;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.formatter.AntlrDTSourceFormatter;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.formatter.IDslCodeFormatter;
@@ -12,6 +13,8 @@ import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialogOwner;
 
 public class FormatterFactory extends DslFormatterFactory {
+
+	private IDslCodeFormatter formatter;
 
 	public FormatterFactory() {
 		super();
@@ -28,8 +31,8 @@ public class FormatterFactory extends DslFormatterFactory {
 	}
 
 	@Override
-	public IFormatterModifyDialog createDialog(IFormatterModifyDialogOwner dialogOwner) {
-		return new ModifyDialog(dialogOwner, this);
+	public IFormatterModifyDialog createDialog(IFormatterModifyDialogOwner owner) {
+		return new ModifyDialog(owner, this);
 	}
 
 	@Override
@@ -39,6 +42,9 @@ public class FormatterFactory extends DslFormatterFactory {
 
 	@Override
 	public IDslCodeFormatter createFormatter() {
-		return null;
+		if (formatter == null) {
+			formatter = new AntlrDTSourceFormatter();
+		}
+		return formatter;
 	}
 }

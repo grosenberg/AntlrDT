@@ -64,16 +64,13 @@ public class AntlrDTSourceParser extends DslSourceParser {
 		}
 	}
 
-	// /** Tree walker used to identify the code elements signficant in CodeAssist operations. */
-	// public void buildCodeAssist() {
-	// try {
-	// CodeAssistVisitor walker = new CodeAssistVisitor(record.tree);
-	// walker.setHelper(new AssistBuilder(this));
-	// walker.findAll();
-	// } catch (Exception e) {
-	// getDslErrorListener().generalError("CodeAssist: %s @%s:%s", e);
-	// }
-	// }
+	@Override
+	public void build() {}
+
+	@Override
+	public boolean modelContributor() {
+		return true;
+	}
 
 	public PathsData buildPathsData() {
 		PathsData data = new PathsData();
@@ -118,13 +115,5 @@ public class AntlrDTSourceParser extends DslSourceParser {
 		} catch (Exception e) {
 			Log.error(this, "ExtractPackage - Tree walk error", e);
 		}
-	}
-
-	@Override
-	public void build() {}
-
-	@Override
-	public boolean modelContributor() {
-		return false;
 	}
 }

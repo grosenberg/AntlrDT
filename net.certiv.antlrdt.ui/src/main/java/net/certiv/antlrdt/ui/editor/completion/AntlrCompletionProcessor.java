@@ -30,12 +30,4 @@ public class AntlrCompletionProcessor extends DslCompletionProcessor {
 	protected CompletionLabelProvider getProposalLabelProvider() {
 		return new AntlrCompletionLabelProvider();
 	}
-
-	// @Override
-	// public void createCategories() {
-	// addCategory(DslCompletionProposal.ID, DslCompletionProposal.NAME, new
-	// AntlrCodeCompletionComputer());
-	// addCategory(DslTemplateContext.ID, DslTemplateContext.NAME, new
-	// AntlrTemplateCompletionComputer());
-	// }
 }

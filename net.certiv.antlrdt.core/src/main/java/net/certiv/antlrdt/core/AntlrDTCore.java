@@ -12,8 +12,9 @@ public class AntlrDTCore extends DslCore {
 
 	public static final String[] EXTENSIONS = new String[] { "g4" };
 
-	// unique parser language types
-	public static final String ANTLR = "antlr";
+	// Should be unique, lower case, single word;
+	// also, unique parser language type
+	public static final String DSL_NAME = "antlr";
 
 	private static AntlrDTCore plugin;
 
@@ -49,17 +50,21 @@ public class AntlrDTCore extends DslCore {
 
 	@Override
 	public DslSourceParser createSourceParser(String type) {
-		switch (type) {
-			case ANTLR:
-				return new AntlrDTSourceParser();
-			default:
-				return null;
+		if (DSL_NAME.equals(type) || getContentTypeId().equals(type)) {
+			return new AntlrDTSourceParser();
 		}
+		return null;
 	}
 
 	@Override
 	public String getProblemMakerId(String type) {
 		return getPluginId() + String.format(".%s_marker", type);
+	}
+
+	/** Expected prefix for Maven located grammars. */
+	@Override
+	public String[] getSpecialSourceRoots() {
+		return new String[] { "src/main/antlr4" };
 	}
 
 	@Override

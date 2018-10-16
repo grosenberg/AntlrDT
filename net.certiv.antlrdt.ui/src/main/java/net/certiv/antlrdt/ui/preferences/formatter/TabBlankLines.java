@@ -13,9 +13,9 @@ import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.preferences.bind.IControlCreationManager;
 
-public class TabPageBlankLines extends FormatterModifyTabPage {
+public class TabBlankLines extends FormatterModifyTabPage {
 
-	public TabPageBlankLines(IFormatterModifyDialog dialog) {
+	public TabBlankLines(IFormatterModifyDialog dialog) {
 		super(dialog);
 	}
 

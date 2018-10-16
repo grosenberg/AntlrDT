@@ -8,6 +8,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
@@ -15,6 +16,7 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
 import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateCompletionProcessor;
+import net.certiv.dsl.ui.templates.CompletionManager;
 
 public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProcessor {
 
@@ -24,9 +26,13 @@ public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProce
 		super(AntlrDTUI.getDefault(), context);
 	}
 
+	private CompletionManager getCompletionMgr() {
+		return AntlrDTUI.getDefault().getCompletionMgr();
+	}
+
 	@Override
 	protected String getContextTypeId() {
-		return AntlrDTTemplateContextType.CONTEXT_TYPE_ID;
+		return AntlrContextType.CONTEXT_TYPE_ID;
 	}
 
 	@Override
@@ -35,23 +41,9 @@ public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProce
 	}
 
 	@Override
-	protected AntlrDTTemplateAccess getTemplateAccess() {
-		return AntlrDTTemplateAccess.getInstance();
-	}
-
-	// NOTE: this handles empty prefixes
-	// TODO: implement for globally enabling blank line template completions
-	protected boolean isValid(ITextViewer viewer, Region region, String prefix) {
-		if (prefix == null) return false;
-		if (prefix.length() == 0) {
-			TemplateContextType contextType = getContextType(viewer, region);
-			String cId = contextType.getId();
-			if (AntlrDTTemplateContextType.CONTEXT_TYPE_ID.equals(cId)) {
-				return true;
-			}
-			return false;
-		}
-		return true;
+	protected Template[] getTemplates(String contextTypeId) {
+		if (!isValidContextType(contextTypeId)) return new Template[0];
+		return getCompletionMgr().getTemplateStore().getTemplates(contextTypeId);
 	}
 
 	@Override
@@ -64,40 +56,38 @@ public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProce
 			e.printStackTrace();
 		}
 		if (typedRegion == null) return null;
+
+		ContextTypeRegistry registry = getCompletionMgr().getTemplateContextTypeRegistry();
 		String type = typedRegion.getType();
 
-		if (type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-			return getTemplateAccess().getContextTypeRegistry()
-					.getContextType(AntlrDTTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID);
-			// } else if (type.equals(Partitions.OPTIONS)) {
-			// return getTemplateAccess().getContextTypeRegistry().getContextType(
-			// AntlrDTTemplateContextType.OPTIONS_CONTEXT_TYPE_ID);
-		} else if (type.equals(Partitions.COMMENT_JD)) {
-			return getTemplateAccess().getContextTypeRegistry()
-					.getContextType(AntlrDTTemplateContextType.JAVADOC_CONTEXT_TYPE_ID);
-		} else if (isValidPartition(type)) {
-			return getTemplateAccess().getContextTypeRegistry()
-					.getContextType(AntlrDTTemplateContextType.ACTIONS_CONTEXT_TYPE_ID);
+		switch (type) {
+			case IDocument.DEFAULT_CONTENT_TYPE:
+				return registry.getContextType(AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID);
+			case Partitions.COMMENT_JD:
+				return registry.getContextType(AntlrContextType.JAVADOC_CONTEXT_TYPE_ID);
+			case Partitions.ACTION:
+				return registry.getContextType(AntlrContextType.ACTIONS_CONTEXT_TYPE_ID);
+			default:
+				return super.getContextType(viewer, region);
 		}
-
-		return super.getContextType(viewer, region);
 	}
 
-	private boolean isValidPartition(String type) {
-		for (String partition : Partitions.getContentTypes()) {
-			if (type.equals(partition)) return true;
+	// NOTE: this handles empty prefixes
+	// TODO: implement for globally enabling blank line template completions
+	protected boolean isValid(ITextViewer viewer, Region region, String prefix) {
+		if (prefix == null) return false;
+		if (prefix.length() == 0) {
+			TemplateContextType contextType = getContextType(viewer, region);
+			if (isValidContextType(contextType.getId())) return true;
+			return false;
+		}
+		return true;
+	}
+
+	private boolean isValidContextType(String id) {
+		for (String known : AntlrContextType.CONTEXT_TYPE_IDS) {
+			if (known.equals(id)) return true;
 		}
 		return false;
-	}
-
-	@Override
-	protected Template[] getTemplates(String contextTypeId) {
-		if (contextTypeId.equals(AntlrDTTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID)
-				|| contextTypeId.equals(AntlrDTTemplateContextType.OPTIONS_CONTEXT_TYPE_ID)
-				|| contextTypeId.equals(AntlrDTTemplateContextType.ACTIONS_CONTEXT_TYPE_ID)
-				|| contextTypeId.equals(AntlrDTTemplateContextType.JAVADOC_CONTEXT_TYPE_ID)) {
-			return getTemplateAccess().getTemplateStore().getTemplates(contextTypeId);
-		}
-		return new Template[0];
 	}
 }

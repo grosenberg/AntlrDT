@@ -12,11 +12,7 @@ public class ModifyDialog extends FormatterModifyDialog {
 
 	@Override
 	protected void addPages() {
-		addTabPage("General", new TabPageGeneral(this));
-		// addTabPage("General", new TabPageGeneral(this));
-		// addTabPage("Preamble", new TabPagePreamble(this));
-		// addTabPage("Rules", new TabPageRules(this));
-		// addTabPage("Actions", new TabPageActions(this));
-		addTabPage("Blank Lines", new TabPageBlankLines(this));
+		addTabPage("General", new TabGeneral(this, getFormatterFactory()));
+		addTabPage("Blank Lines", new TabBlankLines(this));
 	}
 }

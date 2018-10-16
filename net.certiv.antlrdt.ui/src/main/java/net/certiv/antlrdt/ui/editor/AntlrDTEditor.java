@@ -19,26 +19,21 @@ import net.certiv.dsl.ui.editor.text.folding.IFoldingStructureProvider;
 
 public class AntlrDTEditor extends DslEditor {
 
-	public static final String EDITOR_ID = "net.certiv.antlrdt.ui.editor.AntlrDTEditor";
-	public static final String EDITOR_CONTEXT = "#AntlrDTEditorContext";
-	public static final String RULER_CONTEXT = "#AntlrDTRulerContext";
+	public static final String EDITOR_ID = "net.certiv.antlrdt.ui.editor.AntlrDTEditor"; //$NON-NLS-1$
+	public static final String EDITOR_CONTEXT = "#AntlrDTEditorContext"; //$NON-NLS-1$
+	public static final String RULER_CONTEXT = "#AntlrDTRulerContext";  //$NON-NLS-1$
 
 	private static final String[] KEY_SCOPES = new String[] { "net.certiv.antlrdt.ui.antlrdtEditorScope" };
 	private static final String MARK_OCCURRENCES_ANNOTATION_TYPE = "net.certiv.antlrdt.ui.occurrences";
 
+	private final DslWordFinder finder = new DslWordFinder();
 	private final DefaultCharacterPairMatcher pairMatcher = new DefaultCharacterPairMatcher(STD_PAIRS,
 			Partitions.PARTITIONING);
-	private final DslWordFinder finder = new DslWordFinder();
 
 	private IFoldingStructureProvider foldingProvider;
 
 	public AntlrDTEditor() {
 		super();
-	}
-
-	@Override
-	public String getEditorId() {
-		return EDITOR_ID;
 	}
 
 	@Override
@@ -49,6 +44,11 @@ public class AntlrDTEditor extends DslEditor {
 	@Override
 	public DslCore getDslCore() {
 		return AntlrDTCore.getDefault();
+	}
+
+	@Override
+	public String getEditorId() {
+		return EDITOR_ID;
 	}
 
 	@Override

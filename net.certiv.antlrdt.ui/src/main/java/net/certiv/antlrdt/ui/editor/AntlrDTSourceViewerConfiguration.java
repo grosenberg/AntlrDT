@@ -32,7 +32,6 @@ import net.certiv.antlrdt.ui.editor.text.ScannerCommentSL;
 import net.certiv.antlrdt.ui.editor.text.ScannerKeyWord;
 import net.certiv.antlrdt.ui.editor.text.ScannerString;
 import net.certiv.antlrdt.ui.formatter.strategies.ActionCodeFormattingStrategy;
-import net.certiv.antlrdt.ui.formatter.strategies.GrammarCommentFormattingStrategy;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
@@ -133,11 +132,6 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 		reconciler.setRepairer(dr, token);
 	}
 
-	/**
-	 * Adapts the behavior of the contained components to the change encoded in the given event.
-	 *
-	 * @param event the event to which to adapt
-	 */
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (commentJDScanner.affectsBehavior(event)) commentJDScanner.adaptToPreferenceChange(event);
@@ -203,9 +197,9 @@ public class AntlrDTSourceViewerConfiguration extends DslSourceViewerConfigurati
 
 		if (getPrefsMgr().getBoolean(Formatter.FORMATTER_NATIVE_ENABLE)) {
 			formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
-			formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
-			formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
-			formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
+			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
+			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
+			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
 		}
 		return formatter;
 	}

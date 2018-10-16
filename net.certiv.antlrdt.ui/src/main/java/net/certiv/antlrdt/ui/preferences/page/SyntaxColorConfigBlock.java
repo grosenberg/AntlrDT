@@ -78,7 +78,7 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	}
 
 	@Override
-	protected InputStream getPreviewContentReader() {
+	protected InputStream getPreviewContentStream() {
 		return getClass().getResourceAsStream(PREVIEW_FILE_NAME);
 	}
 }

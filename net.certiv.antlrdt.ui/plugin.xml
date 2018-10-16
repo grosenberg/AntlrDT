@@ -180,40 +180,41 @@
    
   <extension
         point="org.eclipse.ui.editors.templates">
-     <include
-           file="src/main/resources/templates/templatesAntlrDT.xml"
-           translations="src/main/resources/templates/templates.properties">
-     </include>
-     <contextType
-           class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
-           id="net.certiv.antlrdt.ui.DefaultContext"
-           name="Default">
-     </contextType>
+     <contextTypeRegistry
+           id="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
+     </contextTypeRegistry>
       <contextType
-            class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
-            id="antlrGrammar"
-            name="Grammar">
+            class="net.certiv.antlrdt.ui.templates.AntlrContextType"
+            id="grammar"
+            name="Grammar"
+            registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
       <contextType
-            class="net.certiv.antlrdt.ui.templates.AntlrDTTemplateContextType"
+            class="net.certiv.antlrdt.ui.templates.AntlrContextType"
             id="antlrOptions"
-            name="Options">
+            name="Options"
+            registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
       <contextType
             class="org.eclipse.jdt.internal.corext.template.java.JavaContextType"
             id="java"
-            name="Actions">
+            name="Actions"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
       </contextType>
       <contextType
             class="org.eclipse.jdt.internal.corext.template.java.JavaDocContextType"
             id="javadoc"
-            name="Javadoc">
+            name="Javadoc"
+            registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
       </contextType>
+     <include
+           file="src/main/resources/templates/templates.xml"
+           translations="src/main/resources/templates/templates.properties">
+     </include>
       <resolver
             class="net.certiv.antlrdt.ui.templates.VocabName"
             contextTypeId="antlrOptions"
             description="Proper name of the Tokens Vocabulary file"
-            icon="icons/elcl16/templateprop_co.gif"
             name="Tokens Vocab Name"
             type="vocabName">
       </resolver>
@@ -261,7 +262,7 @@
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColor"
+            class="net.certiv.antlrdt.ui.preferences.page.EditorPage"
             id="net.certiv.antlrdt.preferences.page.PrefPageEditor"
             name="Editor">
       </page>
@@ -273,7 +274,7 @@
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColoring"
+            class="net.certiv.antlrdt.ui.preferences.page.SyntaxColorPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageSyntaxColoring"
             name="Syntax Coloring">
       </page>

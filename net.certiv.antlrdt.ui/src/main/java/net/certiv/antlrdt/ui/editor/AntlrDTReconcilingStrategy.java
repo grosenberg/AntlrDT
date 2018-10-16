@@ -16,7 +16,7 @@ public class AntlrDTReconcilingStrategy extends DslReconcilingStrategy {
 	private static final String[] TargetContentTypes = {}; // parse entire document
 
 	public AntlrDTReconcilingStrategy(ITextEditor editor, ISourceViewer viewer) {
-		super(editor, viewer, TargetContentTypes, AntlrDTCore.ANTLR);
+		super(editor, viewer, TargetContentTypes, AntlrDTCore.DSL_NAME);
 	}
 
 	@Override

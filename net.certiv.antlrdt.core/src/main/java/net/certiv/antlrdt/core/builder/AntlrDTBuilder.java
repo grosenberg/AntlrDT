@@ -51,7 +51,7 @@ public class AntlrDTBuilder extends DslBuilder {
 	public AntlrDTBuilder() {
 		super();
 
-		prefix = getDslCore().getProblemMakerId(AntlrDTCore.ANTLR);
+		prefix = getDslCore().getProblemMakerId(AntlrDTCore.DSL_NAME);
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class AntlrDTBuilder extends DslBuilder {
 
 			try {
 				String srcFile = file.getLocation().toPortableString();
-				String outputDirectory = determineBuildFolder(file).toString();
+				String outputDirectory = determineBuildPath(file).toString();
 				Log.info(this, "Build  [" + srcFile + "]");
 				Log.info(this, "Output [" + outputDirectory + "]");
 				monitor.worked(1);
@@ -169,7 +169,7 @@ public class AntlrDTBuilder extends DslBuilder {
 					String ext = name.substring(dot + 1);
 					for (IResource res : folder.members()) {
 						if (res.getType() == IResource.FILE) {
-							if (res.getFileExtension().startsWith("g4")) {
+							if (res.getFileExtension().equals("g4")) {
 								continue;
 							} else if (res.getName().equals(name + ".tokens")) {
 								res.setDerived(true, monitor);
@@ -258,7 +258,7 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	private IContainer getBuildFolder(IFile file) {
-		IPath path = determineBuildFolder(file);
+		IPath path = determineBuildPath(file);
 		return containerOfPath(path);
 	}
 
@@ -272,7 +272,7 @@ public class AntlrDTBuilder extends DslBuilder {
 	 * @param resource typically the grammar IFile
 	 * @return a filesystem absolute path to the build folder
 	 */
-	private IPath determineBuildFolder(IFile file) {
+	private IPath determineBuildPath(IFile file) {
 		IPath grammarPath = determineGeneratedSourcePath(file);
 		IPath outputPath = file.getProject().getLocation().append(grammarPath);
 		return outputPath;
