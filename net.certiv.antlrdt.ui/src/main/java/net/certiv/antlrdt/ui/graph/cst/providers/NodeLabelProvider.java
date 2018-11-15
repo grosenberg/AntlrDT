@@ -10,8 +10,8 @@ package net.certiv.antlrdt.ui.graph.cst.providers;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -47,13 +47,13 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 
 	public NodeLabelProvider(GraphViewer viewer) {
 		super(viewer);
-		this.RuleNode = getImageProvider().RULE_NODE.createImage();
-		this.TerminalNode = getImageProvider().TERMINAL_NODE.createImage();
+		this.RuleNode = getImageProvider().DESC_OBJ_RULE.createImage();
+		this.TerminalNode = getImageProvider().DESC_OBJ_TERMINAL.createImage();
 		this.ErrorNode = getImageProvider().ERROR_NODE.createImage();
 	}
 
 	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
+		return AntlrDTUI.getDefault().getImageProvider();
 	}
 
 	public void setNames(String[] rules, String[] tokens) {
@@ -115,8 +115,15 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof TerminalNode) {
-			String value = ((TerminalNode) element).getText();
-			return Strings.displyEscape(value, 40);
+			TerminalNode node = (TerminalNode) element;
+			try {
+				String value = node.toString();
+				return Strings.displyEscape(value, 40);
+			} catch (Exception e) {
+				int ttype = node.getSymbol().getType();
+				ttype = tokenNames != null && ttype >= 0 && ttype < tokenNames.length ? ttype : -1;
+				return ttype > -1 ? tokenNames[ttype] : "<unknown>";
+			}
 		}
 		if (element instanceof RuleNode) {
 			RuleContext node = (RuleContext) element;
@@ -161,8 +168,9 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 		StringBuilder sb = new StringBuilder();
 		if (element instanceof TerminalNode) {
 			sb.append("Token type" + Strings.EOL);
-			sb.append("Token (l:c)" + Strings.EOL);
-			sb.append("Token Length" + Strings.EOL);
+			sb.append("  line:col" + Strings.EOL);
+			sb.append("  length" + Strings.EOL);
+			sb.append("  spec" + Strings.EOL);
 
 		} else if (element instanceof RuleNode) {
 			sb.append("Rule Index" + Strings.EOL);
@@ -179,15 +187,16 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 			TerminalNode node = (TerminalNode) element;
 			int ttype = node.getSymbol().getType();
 			String name;
-			if (ttype == Lexer.EOF) {
+			if (ttype == Recognizer.EOF) {
 				name = "EOF";
 			} else {
 				ttype = tokenNames != null && ttype > 0 && ttype < tokenNames.length ? ttype : -1;
 				name = ttype > -1 ? tokenNames[ttype] : "<Unknown>";
 			}
-			sb.append(name + " (" + ttype + ")" + Strings.EOL);
+			sb.append(String.format("%s (%s)", name, ttype) + Strings.EOL);
 			sb.append(at(node.getSymbol()) + Strings.EOL);
 			sb.append(node.getSourceInterval().length() + Strings.EOL);
+			sb.append(node.getSymbol().toString() + Strings.EOL);
 
 		} else if (element instanceof RuleNode) {
 			ParserRuleContext node = (ParserRuleContext) element;

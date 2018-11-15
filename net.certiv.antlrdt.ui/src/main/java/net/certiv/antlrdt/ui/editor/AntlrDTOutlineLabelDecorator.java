@@ -25,6 +25,9 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				}
 				return text;
 
+			case IDslElement.DECLARATION:
+				return text;
+
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
 				if (hasData()) {
@@ -32,27 +35,41 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 					switch (data.mType) {
 						case Option:
 							return data.key + " = " + data.value.getText();
+
+						case Options:
 						case Channel:
+						case Import:
 						case Token:
 							return data.key;
+
 						case AtAction:
 							if (!data.key.isEmpty()) {
 								return data.key + "::" + data.value.getText();
 							}
 							return data.value.getText();
-						default:
+
+						case ParserRule:
+						case LexerRule:
+						case Value:
 							return data.key;
+
+						case LabelId:
+							return data.key + " (label)";
+
+						default:
+							return data.key + " (literal)";
 					}
 				}
 				return text;
 
 			case IDslElement.BEG_BLOCK:
-				return "(Alt Group)";
+				if (text.equals(":")) return "Rule elements";
+				return "Alt group";
 
 			case IDslElement.END_BLOCK:
 				return null;
 		}
-		return text + "[" + getElementKind() + "]";
+		return text + " [" + getElementKind() + "]";
 	}
 
 	@Override
@@ -67,12 +84,16 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				break;
 
 			case IDslElement.MODULE:
-				desc = provider.DESC_OBJ_MODULE;
+				desc = provider.DESC_OBJS_MODULE;
+				break;
+
+			case IDslElement.DECLARATION:
+				desc = provider.DESC_OBJS_CORE;
 				break;
 
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
-				desc = provider.DESC_OBJ_STATEMENT;
+				desc = provider.DESC_OBJS_STATEMENT;
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					switch (data.mType) {
@@ -111,6 +132,9 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 						case LabelId:
 							desc = provider.DESC_OBJ_LABEL;
 							break;
+						case Value:
+							desc = provider.DESC_OBJS_PROTECTED_METHOD;
+							break;
 						default:
 							desc = provider.UNKNOWN_NODE;
 							break;
@@ -119,7 +143,11 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				break;
 
 			case IDslElement.BEG_BLOCK:
-				desc = provider.DESC_OBJ_EXTEND;
+				if (getStatement().getElementName().equals(":")) {
+					desc = provider.DESC_OBJ_RULE_COLON;
+				} else {
+					desc = provider.DESC_OBJ_EXTEND;
+				}
 				break;
 
 			case IDslElement.END_BLOCK:

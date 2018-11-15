@@ -1,7 +1,8 @@
 package net.certiv.antlrdt.core.parser;
 
 public enum ModelType {
-	GrammarDef,
+	GrammarRoot,
+	Definition,
 	Options,
 	Option,
 	Tokens,

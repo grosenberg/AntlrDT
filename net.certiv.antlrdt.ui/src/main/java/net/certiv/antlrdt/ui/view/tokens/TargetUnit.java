@@ -114,8 +114,8 @@ class TargetUnit {
 	private boolean buildClasses(DynamicLoader loader) {
 		parserClass = loadFqClass(loader, record.getParserFQName());
 		lexerClass = loadFqClass(loader, record.getLexerFQName());
-		factoryClass = loadClass(loader, record.getTokenFactory().getName());
-		errorClass = loadClass(loader, record.getErrorStrategy().getName());
+		factoryClass = loadClass(loader, record.getTokenFactory().getPathname());
+		errorClass = loadClass(loader, record.getErrorStrategy().getPathname());
 		return parserClass != null && lexerClass != null;
 	}
 
@@ -134,6 +134,7 @@ class TargetUnit {
 		if (name.isEmpty()) return null;
 		IProject project = record.getProject();
 		String fqname = JdtUtil.determineFQName(project, name);
+		if (fqname == null) return null;
 		return loadFqClass(loader, fqname);
 	}
 

@@ -40,8 +40,8 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 
 	public NodeLabelProvider(GraphViewer viewer) {
 		super(viewer);
-		this.RuleNode = getImageProvider().RULE_NODE.createImage();
-		this.TerminalNode = getImageProvider().TERMINAL_NODE.createImage();
+		this.RuleNode = getImageProvider().DESC_OBJ_RULE.createImage();
+		this.TerminalNode = getImageProvider().DESC_OBJ_TERMINAL.createImage();
 		this.ErrorNode = getImageProvider().ERROR_NODE.createImage();
 	}
 

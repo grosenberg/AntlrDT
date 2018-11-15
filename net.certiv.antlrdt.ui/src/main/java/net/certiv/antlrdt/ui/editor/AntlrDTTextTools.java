@@ -57,7 +57,7 @@ public class AntlrDTTextTools extends DslTextTools {
 	@Override
 	public DslSourceViewerConfiguration createSourceViewerConfiguraton(IDslPrefsManager store, ITextEditor editor,
 			String partitioning) {
-		return new AntlrDTSourceViewerConfiguration(getColorManager(), store, editor, partitioning);
+		return new AntlrSourceViewerConfiguration(getColorManager(), store, editor, partitioning);
 	}
 
 	@Override

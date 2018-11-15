@@ -276,7 +276,7 @@ public class PathsEditor extends EditorPart implements IZoomableEditor, ISelecti
 				for (Object elem : selection.toList()) {
 					if (elem instanceof Statement && !(elem instanceof IModuleStmt)) {
 						IStatement statement = (IStatement) elem;
-						IResource res = statement.getUnderlyingResource();
+						IResource res = statement.getResource();
 						String name = statement.getElementName();
 						setInput(res, name, Kind.FULL);
 					}

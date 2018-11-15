@@ -68,15 +68,15 @@ public class GrammarDialog extends StatusDialog {
 		snippetExt.setText(rec.getSnippetsExt());
 		snippetExt.addContentChangedListener(listener);
 
-		String defDir = rec.getProject().getLocation().toString();
+		String defaultDir = rec.getProject().getLocation().toString();
 
 		tokenFactory = new FileField(getShell(), grammarComp, SWT.NONE, TOKEN_FACTORY, "Token factory *", 3,
-				rec.getTokenFactory(), defDir);
+				rec.getTokenFactory(), defaultDir);
 		tokenFactory.setSource(rec.getTokenFactory());
 		tokenFactory.addContentChangedListener(listener);
 
 		errorStrategy = new FileField(getShell(), grammarComp, SWT.NONE, PARSER_STRATEGY, "Parser error strategy *", 3,
-				rec.getErrorStrategy(), defDir);
+				rec.getErrorStrategy(), defaultDir);
 		errorStrategy.setSource(rec.getErrorStrategy());
 		errorStrategy.addContentChangedListener(listener);
 

@@ -1,8 +1,6 @@
 /*
  * [The "BSD license"]
- *  Copyright (c) 2012-2014 Terence Parr
- *  Copyright (c) 2012-2014 Sam Harwell
- *  Copyright (c) 2015 Gerald Rosenberg
+ *  Copyright (c) 2012-2018 Antlr Grammar Authors
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -29,8 +27,6 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*	A grammar for ANTLR v4 suitable for use in an IDE */
-
 parser grammar AntlrDT4Parser;
 
 options {
@@ -45,18 +41,20 @@ options {
 // The main entry point for parsing a v4 grammar.
 grammarSpec
 	:	DOC_COMMENT?
-		grammarType id SEMI
+		declaration
 		prequelConstruct*
 		rules
 		EOF
 	;
 
+declaration
+	: grammarType id SEMI
+	;
+
 grammarType
-	:	(	LEXER GRAMMAR
-		|	PARSER GRAMMAR
-		|	XVISITOR GRAMMAR
-		|	GRAMMAR
-		)
+	:	LEXER GRAMMAR
+	|	PARSER GRAMMAR
+	|	GRAMMAR
 	;
 
 // This is the list of all constructs that can be declared before

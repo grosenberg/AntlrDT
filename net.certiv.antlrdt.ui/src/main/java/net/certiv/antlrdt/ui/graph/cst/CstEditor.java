@@ -182,7 +182,9 @@ public class CstEditor extends EditorPart implements IZoomableEditor {
 
 			@Override
 			public boolean preShutdown(IWorkbench workbench, boolean forced) {
-				getEditorSite().getPage().closeEditor(CstEditor.this, false);
+				try {
+					getEditorSite().getPage().closeEditor(CstEditor.this, false);
+				} catch (Exception e) {}
 				return true;
 			}
 
@@ -246,6 +248,7 @@ public class CstEditor extends EditorPart implements IZoomableEditor {
 		setConnectionRouter(router);
 	}
 
+	@Override
 	public void setConnectionRouter(Router router) {
 		this.router = router;
 		dialogSettings.put(KEY_ROUTER, router.getName());
@@ -259,6 +262,7 @@ public class CstEditor extends EditorPart implements IZoomableEditor {
 		viewer.update(helper.getModel(), null);
 	}
 
+	@Override
 	public void setLayoutAlgorithm(Layout layout) {
 		dialogSettings.put(KEY_LAYOUT, layout.getName());
 	}
@@ -339,8 +343,8 @@ public class CstEditor extends EditorPart implements IZoomableEditor {
 	}
 
 	/**
-	 * Handle selection changes in the viewer. This will update the view whenever a selection
-	 * occurs. All selectable nodes in the graph should resolve to ParseTree.
+	 * Handle selection changes in the viewer. This will update the view whenever a selection occurs.
+	 * All selectable nodes in the graph should resolve to ParseTree.
 	 */
 	@SuppressWarnings("unchecked")
 	private void handleSelectionChanged(Object selectedElement, IStructuredSelection selections) {
@@ -384,9 +388,9 @@ public class CstEditor extends EditorPart implements IZoomableEditor {
 
 	/*
 	 * Graph#scrollTo(horz - hDelta, vert - vDelta) is the normal way to adjust the view port.
-	 * Performance is quite bad where the number of nodes exceeds about 500. Each call results in a
-	 * full traversal of the graph connections! Graph#scrollToX and Graph#scrollToY are optimized
-	 * for use by the scroll-bars - very big performance gain with no observable downside.
+	 * Performance is quite bad where the number of nodes exceeds about 500. Each call results in a full
+	 * traversal of the graph connections! Graph#scrollToX and Graph#scrollToY are optimized for use by
+	 * the scroll-bars - very big performance gain with no observable downside.
 	 */
 	protected void dragSurface(MouseEvent e) {
 		if (surfaceDragging && lastLocation != null) {

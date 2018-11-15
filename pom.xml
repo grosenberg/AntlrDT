@@ -8,7 +8,7 @@
 
 	<groupId>net.certiv</groupId>
 	<artifactId>net.certiv.antlrdt</artifactId>
-	<version>4.8.0-SNAPSHOT</version>
+	<version>4.9.0-SNAPSHOT</version>
 
 	<name>net.certiv.antlrdt :: parent</name>
 	<description>net.certiv.antlrdt parent</description>
@@ -24,13 +24,14 @@
 		<tycho.extras.version>1.2.0</tycho.extras.version>
 		<tycho.test.platformArgs />
 		<tycho.test.jvmArgs>-Xmx512m</tycho.test.jvmArgs>
+		<java.version>1.8</java.version>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>eclipse-oxygen</id>
+			<id>eclipse</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/photon</url>
+			<url>http://download.eclipse.org/releases/latest</url>
 		</repository>
 		<repository>
 			<id>dsl</id>
@@ -51,6 +52,11 @@
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
 			</plugin>
 
 			<plugin>

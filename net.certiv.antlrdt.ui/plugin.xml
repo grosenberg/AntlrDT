@@ -11,16 +11,6 @@
             extensions="g4">
       </participant>
    </extension>
-   <extension
-         id="nature"
-         name="AntlrDT Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="net.certiv.antlrdt.core.AntlrDTNature">
-         </run>
-      </runtime>
-   </extension>
    
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -61,7 +51,7 @@
             class="net.certiv.antlrdt.ui.search.AntlrSearchPage"
             enabled="true"
             extensions="g:90"
-            icon="icons/obj16/search_obj.gif"
+            icon="icons/obj16/search_obj.png"
             id="net.certiv.antlrdt.ui.AntlrSearchPage"
             label="AntlrSearchPage"
             showScopeSection="true"
@@ -98,14 +88,14 @@
       <editor
             class="net.certiv.antlrdt.ui.graph.cst.CstEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            icon="icons/obj16/call_hierarchy.gif"
+            icon="icons/obj16/call_hierarchy.png"
             id="net.certiv.antlrdt.ui.graph.cst.CstEditor"
             name="ParseTree">
       </editor>
       <editor
             class="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            icon="icons/obj16/hierarchy_co.gif"
+            icon="icons/obj16/hierarchy_co.png"
             id="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
             name="Paths">
       </editor>
@@ -157,8 +147,7 @@
             contributesToHeader="false"
             highlightPreferenceKey="occurrenceHighlighting"
             highlightPreferenceValue="true"
-            icon="$nl$/icons/full/obj16/searchm_obj.gif"
-            includeOnPreferencePage="true"
+            icon="$nl$/icons/full/obj16/searchm_obj.png"
             isGoToNextNavigationTarget="false"
             isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
             isGoToPreviousNavigationTarget="false"
@@ -239,7 +228,7 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.ui.view.tokens.TokensView"
-            icon="icons/obj16/grammarAst.gif"
+            icon="icons/obj16/grammarAst.png"
             id="net.certiv.antlrdt.ui.view.tokens"
             name="Tokens View"
             restorable="false">
@@ -600,7 +589,7 @@
         name="Template Proposals"
         point="net.certiv.dsl.ui.completionProposalComputer">
      <proposalCategory
-           icon="icons/elcl16/templateprop_co.gif"></proposalCategory>
+           icon="icons/elcl16/templateprop_co.png"></proposalCategory>
   </extension>
   <extension
         id="TemplateCompletionProposalComputer"
@@ -639,7 +628,7 @@
                id="net.certiv.antlrdt.ui.toolbars.dslToolbar">
             <command
                   commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
-                  icon="icons/etool16/mark_occurrences.gif"
+                  icon="icons/etool16/mark_occurrences.png"
                   style="toggle"
                   tooltip="Toggle Mark Occcurrences">
 	            <visibleWhen
@@ -651,7 +640,7 @@
             </command>
             <command
                   commandId="net.certiv.antlrdt.ui.build"
-                  icon="icons/etool16/build_exec.gif"
+                  icon="icons/etool16/build_exec.png"
                   style="push"
                   tooltip="Build Antlr grammars">
 	            <visibleWhen
@@ -663,7 +652,7 @@
             </command>
             <command
                   commandId="net.certiv.antlrdt.ui.openTokensViewCommand"
-                  icon="icons/obj16/view.gif"
+                  icon="icons/obj16/view.png"
                   style="push"
                   tooltip="Open Tokens View">
 	            <visibleWhen
@@ -675,7 +664,7 @@
             </command>
             <command
                   commandId="net.certiv.antlrdt.ui.openPathsEditorCommand"
-                  icon="icons/obj16/hierarchy_co.gif"
+                  icon="icons/obj16/hierarchy_co.png"
                   style="push"
                   tooltip="Open Paths View">
 	            <visibleWhen

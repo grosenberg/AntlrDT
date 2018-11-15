@@ -6,15 +6,15 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
 
-public class AntlrDTSimpleSourceViewerConfiguration extends AntlrDTSourceViewerConfiguration {
+public class AntlrDTSimpleSourceViewerConfiguration extends AntlrSourceViewerConfiguration {
 
 	public AntlrDTSimpleSourceViewerConfiguration(IDslPrefsManager store, ITextEditor editor, String partitioning) {
 		super(null, store, editor, partitioning);
@@ -84,7 +84,7 @@ public class AntlrDTSimpleSourceViewerConfiguration extends AntlrDTSourceViewerC
 	}
 
 	@Override
-	public IReconciler getReconciler(ISourceViewer viewer) {
+	public DslReconciler getReconciler(ISourceViewer viewer) {
 		return null;
 	}
 }

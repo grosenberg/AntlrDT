@@ -12,106 +12,94 @@ options {
 
 structure
 	: grammarSpec
+	| declaration
 	| atAction
 	| importStatement
-	| channelsBlock
 	| channelsStatement
-	| optionsBlock
 	| optionStatement
-	| tokensBlock
 	| tokenStatement
-	| parserRuleBlock
-	| parserBlock
-	| labelRef
-	| ruleRef
-	| lexerRuleBlock
-	| fragmentRuleBlock
-	| modeBlock
+
+	| channelsBlock
+	| optionsBlock
+	| tokensBlock
+
+	| ruleBlock
 	| lexerBlock
+
+	| parserRule
+	| lexerRule
+	| fragmentRule
+	| modeRule
+
+	| ruleRef
+	| labelRef
 	| terminalRef
+	| rangeRef
+	| setRef
 	;
 
-grammarSpec			: /grammarSpec
-							{ onEntry: grammarModule(); }
-					;
+grammarSpec			: /grammarSpec 							{ onEntry: doModule(); } 	;
+declaration			: /grammarSpec/declaration				{ doDeclaration(); } 		;
+atAction			: /grammarSpec/prequelConstruct/action	{ doAction(); }				;
+importStatement		: //delegateGrammars//id				{ doImportStatement(); }	;
+channelsStatement	: //channelsSpec//id					{ doChannelsStatement(); }	;
+optionStatement		: //prequelConstruct/optionsSpec/option	{ doOptionStatement(); }	;
+tokenStatement		: //tokensSpec//id						{ doTokenStatement(); }		;
 
-atAction			: /grammarSpec/prequelConstruct/action
-							{ processAction(); }
-					;
+channelsBlock	: //channelsSpec
+						{ onEntry: doChannelsBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
 
-importStatement		: //prequelConstruct/delegateGrammars//id
-							{ processImportStatement(); }
-					;
+optionsBlock	: //prequelConstruct/optionsSpec
+						{ onEntry: doOptionsBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
 
-channelsBlock		: //channelsSpec
-							{ onEntry: begChannelsBlock(); }
-							{ onExit:  endBlock(); }
-					;
+tokensBlock		: //tokensSpec
+						{ onEntry: doTokensBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
 
-channelsStatement	: //channelsSpec//id
-							{ processChannelsStatement(); }
-					;
+# parentheticals
 
-optionsBlock		: //prequelConstruct/optionsSpec			
-							{ onEntry: begOptionsBlock(); } 	
-							{ onExit:  endBlock(); }	
-					;
+ruleBlock		: //block
+						{ onEntry: doBegBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
 
-optionStatement		: //prequelConstruct/optionsSpec/option
-							{ processOptionStatement(); }
-					;
+lexerBlock		: //lexerBlock
+						{ onEntry: doBegBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
 
-tokensBlock			: //tokensSpec
-							{ onEntry: begTokensBlock(); }
-							{ onExit:  endBlock(); }
-					;
+# rules
 
-tokenStatement		: //tokensSpec//id
-							{ processTokenStatement(); }
-					;
+parserRule		: //parserRuleSpec
+						{ onEntry: begParserRule(); }
+						{ onExit:  endParserRule(); }
+				;
 
-# --
+lexerRule		: //lexerRuleSpec
+						{ onEntry: begLexerRule(); }
+						{ onExit:  endLexerRule(); }
+				;
 
-parserRuleBlock		: //parserRuleSpec
-							{ onEntry: begParserRule(); }
-							{ onExit:  endBlock(); }	
-					;
+fragmentRule	: //fragmentRuleSpec
+						{ onEntry: begFragmentRule(); }
+						{ onExit:  endFragmentRule(); }
+				;
 
-parserBlock			: //block
-							{ onEntry: begParserBlock(); }
-							{ onExit:  endBlock(); }
-					;
+modeRule		: //modeRuleSpec
+						{ onEntry: begModeRule(); }
+						{ onExit:  endModeRule(); }
+				;
 
-labelRef			: //labeledElement/id
-							{ addLabelRef(); }
-					;
+atomRef			: //atom				{ doAtomRef(); } 		;
+lexerAtomRef	: //lexerAtom			{ doLexerAtomRef(); } 	;
 
-ruleRef				: //ruleref
-							{ addRuleRef(); }
-					;
-
-# --
-
-lexerRuleBlock		: //lexerRuleSpec
-							{ onEntry: begLexerRule(); }
-							{ onExit:  endBlock(); }
-					;
-
-fragmentRuleBlock	: //fragmentRuleSpec
-							{ onEntry: begFragmentRule(); }
-							{ onExit:  endBlock(); }
-					;
-
-modeBlock			: //modeRuleSpec
-							{ onEntry: begModeBlock(); }
-							{ onExit:  endBlock(); }	
-					;
-
-lexerBlock			: //lexerBlock
-							{ onEntry: begLexerBlock(); }
-							{ onExit:  endBlock(); }
-					;
-
-terminalRef			: //terminal
-							{ addTerminalRef(); }
-					;
+ruleRef			: //ruleref				{ doRuleRef(); }		;
+labelRef		: //labeledElement/id	{ doLabelRef(); }		;
+terminalRef		: //terminal			{ doTerminalRef(); }	;
+rangeRef		: //range				{ doRangeRef(); }		;
+setRef			: //setElement			{ doSetRef(); }			;

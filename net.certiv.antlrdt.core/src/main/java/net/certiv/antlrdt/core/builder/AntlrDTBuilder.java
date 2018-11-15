@@ -1,6 +1,7 @@
 package net.certiv.antlrdt.core.builder;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,11 +17,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -36,22 +37,27 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
-import net.certiv.dsl.core.model.DslModelManager;
+import net.certiv.dsl.core.model.DslSourceRoot;
 import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.parser.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
-import net.certiv.dsl.core.util.eclipse.JdtUtil;
 
 public class AntlrDTBuilder extends DslBuilder {
 
-	private final String prefix;
+	private static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
+
+		@Override
+		public int compare(ICodeUnit u1, ICodeUnit u2) {
+			return u1.getElementName().compareTo(u2.getElementName());
+		}
+
+	};
 
 	public AntlrDTBuilder() {
 		super();
-
-		prefix = getDslCore().getProblemMakerId(AntlrDTCore.DSL_NAME);
 	}
 
 	@Override
@@ -60,40 +66,18 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	@Override
-	public boolean isBuildAllowed(IProject project, IResource res) {
-		if (requireCurrentProject() && !inCurrentProject(res)) return false;
-
-		boolean inSrc = requireSourcePath() && inJavaSourceFolder(res);
-		boolean inSpc = requireSpecialPath() && inSpecialFolder(res);
-
-		if (inSrc || inSpc) return true;
-		return false;
-	}
-
-	/** whether in a Java source folder */
-	protected boolean inJavaSourceFolder(IResource res) {
-		List<IPackageFragmentRoot> folders = JdtUtil.getJavaSourceFolders(res.getProject());
-		for (IPackageFragmentRoot folder : folders) {
-			if (folder.getPath().isPrefixOf(res.getFullPath())) return true;
-		}
-		return false;
-	}
-
-	// allow non-source path grammars?
-	private boolean inSpecialFolder(IResource res) {
-		return false;
-	}
-
-	@Override
-	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> modules) throws CoreException {
-		if (modules.isEmpty()) return Status.OK_STATUS;
+	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<ICodeUnit> units) throws CoreException {
+		if (units.isEmpty()) return Status.OK_STATUS;
 
 		try {
 			monitor.beginTask("AntlrDT Build", WORK_BUILD);
-			for (IFile module : modules) {
-				compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
+			units.sort(NameComp);
+			for (ICodeUnit unit : units) {
+				DslProblemCollector collector = unit.getParseRecord().collector;
+				if (collector != null) collector.beginCollecting();
+				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
+				if (collector != null) collector.endCollecting();
 			}
-			Log.debug(this, "Build done");
 			return Status.OK_STATUS;
 
 		} finally {
@@ -101,69 +85,96 @@ public class AntlrDTBuilder extends DslBuilder {
 		}
 	}
 
-	private void compileGrammar(IResource resource, IProgressMonitor monitor) {
-		if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".g4"))) {
-			IFile file = (IFile) resource;
+	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) {
+		try {
+			String srcFile = unit.getLocation().toString();
+			IPath output = determineBuildPath(unit);
+			if (output == null) return;
 
-			try {
-				String srcFile = file.getLocation().toPortableString();
-				String outputDirectory = determineBuildPath(file).toString();
-				Log.info(this, "Build  [" + srcFile + "]");
-				Log.info(this, "Output [" + outputDirectory + "]");
-				monitor.worked(1);
+			// Log.info(this, "Build [" + srcFile + "]");
+			// Log.info(this, "Output [" + output + "]");
+			monitor.worked(1);
 
-				Tool tool = new Tool(new String[] { "-visitor", "-o", outputDirectory });
-				tool.removeListeners();
-				tool.addListener(new ToolErrorListener(file, prefix));
-				monitor.worked(1);
+			Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
+			tool.removeListeners();
+			tool.addListener(new ToolErrorListener(unit.getParseRecord()));
+			monitor.worked(1);
 
-				// Prep and process the grammar file
-				Grammar g = tool.loadGrammar(srcFile);
-				tool.process(g, true); // NOTE: can throw execeptions based on grammar eval
-				monitor.worked(1);
+			// Prep and process the grammar file
+			Grammar g = tool.loadGrammar(srcFile);
+			tool.process(g, true); // NOTE: can throw execeptions based on grammar eval
+			monitor.worked(1);
 
-				postCompileCleanup(file, monitor);
-				monitor.worked(1);
-			} catch (Exception | Error e) {
-				Log.error(this, "Build failed.", e);
-			}
+			postCompileCleanup(unit, output, monitor);
+			monitor.worked(1);
+
+		} catch (Exception | Error e) {
+			Log.error(this, "Build failed.", e);
 		}
 	}
 
-	private void postCompileCleanup(IFile file, IProgressMonitor monitor) {
-		if (!file.exists()) {
-			Log.info(this, "Compile produced no file[file=" + file.getFullPath() + "]");
+	/**
+	 * Determine the output build folder for a given grammar file.
+	 *
+	 * @param file the grammar IFile
+	 * @return a filesystem absolute path to the build folder
+	 */
+	private IPath determineBuildPath(ICodeUnit unit) {
+		if (unit != null) {
+			DslSourceRoot srcRoot = unit.getSourceRoot();
+			String pkg = AntlrUtil.resolvePackageName(unit);
+
+			if (srcRoot.isNativeSourceRoot()) {
+				if (pkg != null && !pkg.isEmpty()) {
+					Path path = new Path(pkg.replaceAll("\\.", "/"));
+					return srcRoot.getLocation().append(path);
+				}
+				return null;
+
+			} else if (srcRoot.isExtraSourceRoot()) {
+				IPath output = unit.getDslProject().getLocation().append("target/generated-sources/antlr4/");
+				if (pkg != null && !pkg.isEmpty()) {
+					Path path = new Path(pkg.replaceAll("\\.", "/"));
+					return output.append(path);
+
+				} else {
+					IPath path = unit.getParent().getLocation().makeRelativeTo(srcRoot.getLocation());
+					return output.append(path);
+				}
+			}
+		}
+		return null;
+	}
+
+	private void postCompileCleanup(ICodeUnit unit, IPath output, IProgressMonitor monitor) {
+		if (!unit.exists()) {
+			Log.info(this, "Compile produced no file[file=" + unit.getPath() + "]");
 			return;
 		}
-		IProject project = file.getProject();
+		IProject project = unit.getProject();
+		IContainer folder = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(output);
 
 		// refresh directory
 		if (getPrefs().getBoolean(project, Builder.BUILDER_REFRESH)) {
 			boolean markDerived = getPrefs().getBoolean(project, Builder.BUILDER_MARK_DERIVED);
-			doBuilderRefresh(file, markDerived, monitor);
+			doBuilderRefresh(unit, folder, markDerived, monitor);
 		}
 		// format all
 		if (getPrefs().getBoolean(project, Builder.BUILDER_FORMAT)) {
-			doBuilderFormat(file, monitor);
+			doBuilderFormat(unit, folder, monitor);
 		}
 		// organize imports
 		if (getPrefs().getBoolean(project, Builder.BUILDER_ORGANIZE)) {
-			doBuilderOrganizeImports(file, monitor);
+			doBuilderOrganizeImports(unit, folder, monitor);
 		}
 	}
 
-	// ///////////////////////////////////////////////////////////////////////////////
-
-	private void doBuilderRefresh(IFile file, boolean markDerived, IProgressMonitor monitor) {
-		Log.info(this, "Refreshing...");
-		IContainer folder = getBuildFolder(file);
+	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived, IProgressMonitor monitor) {
 		try {
 			if (folder != null) {
-				// refresh files
 				folder.refreshLocal(IResource.DEPTH_ONE, monitor);
 				if (markDerived) {
-					// and set generated files as derived resources
-					String name = file.getName();
+					String name = unit.getElementName();
 					int dot = name.lastIndexOf('.');
 					name = name.substring(0, dot);
 					String ext = name.substring(dot + 1);
@@ -185,7 +196,7 @@ public class AntlrDTBuilder extends DslBuilder {
 				}
 			} else {
 				Log.error(this, "Failed to determine build folder; refreshing all");
-				IProject project = file.getProject();
+				IProject project = unit.getProject();
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
 		} catch (CoreException e) {
@@ -194,16 +205,14 @@ public class AntlrDTBuilder extends DslBuilder {
 		monitor.worked(1);
 	}
 
-	private void doBuilderFormat(IFile file, IProgressMonitor monitor) {
-		Log.info(this, "Formatting...");
-		IContainer folder = getBuildFolder(file);
-		IProject project = file.getProject();
+	private void doBuilderFormat(ICodeUnit unit, IContainer folder, IProgressMonitor monitor) {
+		IProject project = unit.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		Map<String, String> options = javaProject.getOptions(true);
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(file, folder);
+			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
 			for (ICompilationUnit cu : cus) {
 				monitor.worked(1);
 				String content = cu.getSource();
@@ -226,8 +235,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		monitor.worked(1);
 	}
 
-	private void doBuilderOrganizeImports(IFile file, IProgressMonitor monitor) {
-		IContainer folder = getBuildFolder(file);
+	private void doBuilderOrganizeImports(ICodeUnit unit, IContainer folder, IProgressMonitor monitor) {
 		IChooseImportQuery query = new IChooseImportQuery() {
 
 			@Override
@@ -237,7 +245,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		};
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(file, folder);
+			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
 			for (ICompilationUnit cu : cus) {
 				OrganizeImportsOperation op = new OrganizeImportsOperation(cu, null, true, true, true, query);
 				op.run(monitor);
@@ -250,67 +258,21 @@ public class AntlrDTBuilder extends DslBuilder {
 		monitor.worked(1);
 	}
 
-	@SuppressWarnings("unused")
-	private IPath getProjectPath(IResource res) {
-		IPath workspacePath = res.getProject().getWorkspace().getRoot().getLocation();
-		IPath projectPath = res.getProject().getFullPath();
-		return workspacePath.append(projectPath);
-	}
-
-	private IContainer getBuildFolder(IFile file) {
-		IPath path = determineBuildPath(file);
-		return containerOfPath(path);
-	}
-
-	private IContainer containerOfPath(IPath path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
-	}
-
-	/**
-	 * Determine the build folder for a given a resource representing a grammar file.
-	 *
-	 * @param resource typically the grammar IFile
-	 * @return a filesystem absolute path to the build folder
-	 */
-	private IPath determineBuildPath(IFile file) {
-		IPath grammarPath = determineGeneratedSourcePath(file);
-		IPath outputPath = file.getProject().getLocation().append(grammarPath);
-		return outputPath;
-	}
-
-	private IPath determineGeneratedSourcePath(IFile file) {
-		IPath workingPath = JdtUtil.determineSourceFolder(file);
-		if (workingPath == null) return null;
-		String pkg = resolvePackageName(file);
-		if (pkg != null && !pkg.isEmpty()) {
-			workingPath = workingPath.append(pkg.replaceAll("\\.", "/"));
-		}
-		return workingPath;
-	}
-
-	private String resolvePackageName(IFile file) {
-		DslModelManager mgr = getDslCore().getModelManager();
-		ICodeUnit unit = mgr.create(file);
-		return AntlrUtil.resolvePackageName(unit);
-	}
-
 	private ICompilationUnit[] getCompilationUnits(IResource resource, IContainer folder) {
-		ArrayList<ICompilationUnit> cuList = new ArrayList<>();
+		ArrayList<ICompilationUnit> units = new ArrayList<>();
 		IResource[] children = null;
 		try {
 			children = folder.members();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		} catch (CoreException e) {}
 
 		for (IResource child : children) {
 			try {
 				if (child instanceof IFile) {
 					ICompilationUnit cu = JavaCore.createCompilationUnitFrom((IFile) child);
-					if (cu != null) cuList.add(cu);
+					if (cu != null) units.add(cu);
 				}
 			} catch (IllegalArgumentException e) {}
 		}
-		return cuList.toArray(new ICompilationUnit[cuList.size()]);
+		return units.toArray(new ICompilationUnit[units.size()]);
 	}
 }

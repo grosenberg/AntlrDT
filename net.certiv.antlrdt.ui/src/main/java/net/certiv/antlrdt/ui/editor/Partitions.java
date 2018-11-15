@@ -4,8 +4,10 @@ import org.eclipse.jface.text.IDocument;
 
 public class Partitions {
 
+	// partitioning identifier
 	public final static String PARTITIONING = "__antlrdt_partitioning";
 
+	// specialized content (partition) types
 	public static final String COMMENT_JD = "__comment_java_doc";
 	public static final String COMMENT_ML = "__comment_multi_line";
 	public static final String COMMENT_SL = "__comment_single_line";

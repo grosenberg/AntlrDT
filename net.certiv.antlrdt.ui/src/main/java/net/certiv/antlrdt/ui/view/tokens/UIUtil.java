@@ -340,8 +340,8 @@ public class UIUtil {
 
 	/**
 	 * Returns a String from an InputStream that is aware of its encoding. If the encoding is
-	 * <code>null</code> it sets the platforms default encoding (
-	 * <code>ResourcesPlugin.getEncoding()</code>).
+	 * {@code null} it sets the platforms default encoding (
+	 * {@code ResourcesPlugin.getEncoding()}).
 	 * 
 	 * @param stream
 	 * @return the content

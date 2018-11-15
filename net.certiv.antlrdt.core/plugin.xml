@@ -8,8 +8,8 @@
             describer="net.certiv.antlrdt.core.AntlrDTContentDescriber"
             file-extensions="g4"
             id="net.certiv.antlrdt.core.contentType"
-            name="AntlrDT Content Type"
-            priority="normal">
+            name="Antlr"
+            priority="high">
       </content-type>
    </extension>
    <extension
@@ -29,15 +29,15 @@
          id="net.certiv.antlrdt.core.builder"
          name="AntlrDT Builder"
          point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
+      <builder>
          <run
                class="net.certiv.antlrdt.core.builder.AntlrDTBuilder">
          </run>
       </builder>
    </extension>
+
    <extension
-         id="problem"
+         id="net.certiv.antlrdt.core.problem"
          name="AntlrDT Problem"
          point="org.eclipse.core.resources.markers">
       <super
@@ -49,10 +49,8 @@
       <persistent
             value="true">
       </persistent>
-      <attribute
-            name="externalLocation">
-      </attribute>
    </extension>
+   
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
