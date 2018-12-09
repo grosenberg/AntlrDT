@@ -14,14 +14,14 @@ import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
 
-public class AntlrDTSimpleSourceViewerConfiguration extends AntlrSourceViewerConfiguration {
+public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfiguration {
 
-	public AntlrDTSimpleSourceViewerConfiguration(IDslPrefsManager store, ITextEditor editor, String partitioning) {
+	public AntlrSimpleSourceViewerConfiguration(IDslPrefsManager store, ITextEditor editor, String partitioning) {
 		super(null, store, editor, partitioning);
 	}
 
-	public AntlrDTSimpleSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store,
-			ITextEditor editor, String partitioning, boolean configureFormatter) {
+	public AntlrSimpleSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store, ITextEditor editor,
+			String partitioning, boolean configureFormatter) {
 		super(colorManager, store, editor, partitioning);
 	}
 

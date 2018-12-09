@@ -4,7 +4,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.completion.CompletionProposal;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
 
 public class AntlrCompletionLabelProvider extends CompletionLabelProvider {
@@ -46,20 +46,18 @@ public class AntlrCompletionLabelProvider extends CompletionLabelProvider {
 			case CompletionProposal.METHOD_NAME_REFERENCE:
 			case CompletionProposal.METHOD_REF:
 			case CompletionProposal.POTENTIAL_METHOD_DECLARATION:
-				// descriptor =
-				// DslElementImageProvider.getStatementImageDescriptor(proposal.getFlags());
-				descriptor = dslUI.getImageProvider().DESC_OBJS_PUBLIC_METHOD;
+				descriptor = imgMgr.getDescriptor(imgMgr.IMG_OBJS_PUBLIC_METHOD);
 				break;
 			case CompletionProposal.LOCAL_VARIABLE_REF:
 			case CompletionProposal.VARIABLE_DECLARATION:
 			case CompletionProposal.FIELD_REF:
-				descriptor = dslUI.getImageProvider().DESC_OBJS_LOCAL_VARIABLE;
+				descriptor = imgMgr.getDescriptor(imgMgr.IMG_OBJS_LOCAL_VARIABLE);
 				break;
 			case CompletionProposal.KEYWORD:
-				descriptor = dslUI.getImageProvider().DESC_OBJS_KEYWORD;
+				descriptor = imgMgr.getDescriptor(imgMgr.IMG_OBJS_KEYWORD);
 				break;
 			case CompletionProposal.LABEL_REF:
-				descriptor = dslUI.getImageProvider().DESC_OBJS_LABEL;
+				descriptor = imgMgr.getDescriptor(imgMgr.IMG_OBJS_LABEL);
 				break;
 			default:
 				descriptor = null;

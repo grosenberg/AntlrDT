@@ -17,6 +17,7 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Strings;
+import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.wizards.DslBaseWizard;
 
@@ -41,7 +42,8 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 
 	@Override
 	public ImageDescriptor getPageImageDescriptor() {
-		return getDslUI().getImageProvider().DESC_WIZBAN_NEW_FILE;
+		DslImageManager imgMgr = getDslUI().getImageManager();
+		return imgMgr.getDescriptor(imgMgr.IMG_WIZBAN_NEW_FILE);
 	}
 
 	@Override
@@ -49,6 +51,7 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 		return "New Antlr grammar";
 	}
 
+	@Override
 	public void addPages() {
 		page = new AntlrDTNewWizardPage(getSelection());
 		page.setTitle("Grammar");
@@ -56,6 +59,7 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 		addPage(page);
 	}
 
+	@Override
 	public boolean performFinish() {
 		final String filename = page.getFileName();
 		final IPath container = page.getContainerFullPath();
@@ -67,6 +71,7 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					doFinish(filename, container, packageName, superclass, importTxt, fragments, unicode, monitor);

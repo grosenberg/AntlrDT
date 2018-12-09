@@ -29,13 +29,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 
 /**
  * An image preview pane to show a preview of the screenshot and allow the user to save the image to
  * a file.
- * 
+ *
  * @author Ian Bull
  */
 public class ScreenShotPreviewPane extends Dialog {
@@ -43,9 +43,11 @@ public class ScreenShotPreviewPane extends Dialog {
 	private Shell shell;
 	private Point size;
 	private Image image;
+	private AntlrImageManager imgMgr;
 
 	public ScreenShotPreviewPane(Shell parent) {
 		super(parent);
+		imgMgr = AntlrDTUI.getDefault().getImageManager();
 	}
 
 	private void createImagePreviewPane() {
@@ -55,7 +57,7 @@ public class ScreenShotPreviewPane extends Dialog {
 		toolBar.setLayoutData(data);
 
 		ToolItem saveItem = new ToolItem(toolBar, SWT.NONE);
-		saveItem.setImage(getImageProvider().IMG_SAVEEDIT.createImage());
+		saveItem.setImage(imgMgr.get(imgMgr.IMG_SAVEEDIT));
 		saveItem.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -163,7 +165,7 @@ public class ScreenShotPreviewPane extends Dialog {
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.MAX);
 		shell.setText(getText());
-		shell.setImage(getImageProvider().IMG_SNAPSHOT.createImage());
+		shell.setImage(imgMgr.get(imgMgr.IMG_SNAPSHOT));
 		this.image = image;
 		this.size = size;
 
@@ -182,9 +184,5 @@ public class ScreenShotPreviewPane extends Dialog {
 				display.sleep();
 			}
 		}
-	}
-
-	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
 	}
 }

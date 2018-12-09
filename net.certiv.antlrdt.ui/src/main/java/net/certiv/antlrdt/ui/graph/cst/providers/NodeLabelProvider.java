@@ -27,8 +27,8 @@ import org.eclipse.zest.core.viewers.GraphViewer;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 import net.certiv.antlrdt.ui.graph.EnhTipHelper;
 import net.certiv.antlrdt.ui.graph.IDslGraphViewer;
 import net.certiv.antlrdt.ui.graph.figures.InfoLabel;
@@ -47,13 +47,10 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 
 	public NodeLabelProvider(GraphViewer viewer) {
 		super(viewer);
-		this.RuleNode = getImageProvider().DESC_OBJ_RULE.createImage();
-		this.TerminalNode = getImageProvider().DESC_OBJ_TERMINAL.createImage();
-		this.ErrorNode = getImageProvider().ERROR_NODE.createImage();
-	}
-
-	private AntlrDTImages getImageProvider() {
-		return AntlrDTUI.getDefault().getImageProvider();
+		AntlrImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		this.RuleNode = imgMgr.get(imgMgr.IMG_OBJ_RULE);
+		this.TerminalNode = imgMgr.get(imgMgr.IMG_OBJ_TERMINAL);
+		this.ErrorNode = imgMgr.get(imgMgr.ERROR_NODE);
 	}
 
 	public void setNames(String[] rules, String[] tokens) {
@@ -76,7 +73,7 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 
 	@Override
 	public Color getBackgroundColour(Object entity) {
-		if (entity == this.rootNode) return LIGHT_GREEN;
+		if (entity == this.rootNode) return colorMgr.getColor(NC.CST_LIGHT_GREEN.name());
 		if (entity == this.selected || this.pinnedNode == entity) {
 			// NOTE: nodes handle their own selection highlighting; highlight color is set
 			// on node creation and GraphViewer#update; so, do not manage highlights here.
@@ -224,7 +221,7 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 	protected void calculateInterestingDependencies(HashSet<EntityConnectionData> interestingRels,
 			HashSet<EntityConnectionData> interestingEntities) {
 		if (getSelected() != null) {
-			// TODO: compute relations
+			// // Compute relations:
 			// Object[] descriptions = AnalysisUtil.getDependencies(this.getSelected());
 			// for (int i = 0; i < descriptions.length; i++) {
 			// EntityConnectionData entityConnectionData = new
@@ -243,5 +240,4 @@ public class NodeLabelProvider extends AbstractNodeLabelProvider {
 		this.TerminalNode.dispose();
 		this.ErrorNode.dispose();
 	}
-
 }

@@ -11,8 +11,8 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.ui.IActionBars;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
 import net.certiv.antlrdt.ui.editor.filter.RuleFilter;
@@ -86,7 +86,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 
 	// order defines the order in toolbar
 	private List<DslFilterAction> buildActions(DslFilterActionGroup group) {
-		AntlrDTImages imgProvider = AntlrDTUI.getDefault().getImageProvider();
+		AntlrImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
 		List<DslFilterAction> actions = new ArrayList<>();
 		String title, helpContext;
 
@@ -96,7 +96,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction hideRules = new DslFilterAction(group, title, new RuleFilter(), helpContext, true);
 		hideRules.setDescription(ActionMessages.MemberFilterActionGroup_hide_rules_description);
 		hideRules.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_rules_tooltip);
-		ImageDescriptor ruleDesc = imgProvider.DESC_OBJ_PARSER_FILTER;
+		ImageDescriptor ruleDesc = imgMgr.getDescriptor(imgMgr.IMG_OBJ_PARSER_FILTER);
 		hideRules.setHoverImageDescriptor(ruleDesc);
 		hideRules.setImageDescriptor(ruleDesc);
 		actions.add(hideRules);
@@ -107,7 +107,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction hideTokens = new DslFilterAction(group, title, new TokenFilter(), helpContext, true);
 		hideTokens.setDescription(ActionMessages.MemberFilterActionGroup_hide_tokens_description);
 		hideTokens.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_tokens_tooltip);
-		ImageDescriptor tokenDesc = imgProvider.DESC_OBJ_LEXER_FILTER;
+		ImageDescriptor tokenDesc = imgMgr.getDescriptor(imgMgr.IMG_OBJ_LEXER_FILTER);
 		hideTokens.setHoverImageDescriptor(tokenDesc);
 		hideTokens.setImageDescriptor(tokenDesc);
 		actions.add(hideTokens);
@@ -118,7 +118,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction hideOptions = new DslFilterAction(group, title, new OptionsFilter(), helpContext, true);
 		hideOptions.setDescription(ActionMessages.MemberFilterActionGroup_hide_options_description);
 		hideOptions.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_options_tooltip);
-		ImageDescriptor optDesc = imgProvider.DESC_OBJ_OPTIONS_FILTER;
+		ImageDescriptor optDesc = imgMgr.getDescriptor(imgMgr.IMG_OBJ_OPTIONS_FILTER);
 		hideOptions.setHoverImageDescriptor(optDesc);
 		hideOptions.setImageDescriptor(optDesc);
 		actions.add(hideOptions);
@@ -129,7 +129,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 		DslFilterAction atElements = new DslFilterAction(group, title, new AtFilter(), helpContext, true);
 		atElements.setDescription(ActionMessages.MemberFilterActionGroup_hide_at_description);
 		atElements.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_at_tooltip);
-		ImageDescriptor atDesc = imgProvider.DESC_OBJ_ACTIONS_FILTER;
+		ImageDescriptor atDesc = imgMgr.getDescriptor(imgMgr.IMG_OBJ_ACTIONS_FILTER);
 		atElements.setHoverImageDescriptor(atDesc);
 		atElements.setImageDescriptor(atDesc);
 		actions.add(atElements);

@@ -6,9 +6,10 @@ import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
 
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
+import net.certiv.dsl.core.parser.IDslToken;
 import net.certiv.dsl.core.util.Strings;
 
-public class AntlrToken extends CommonToken {
+public class AntlrToken extends CommonToken implements IDslToken {
 
 	private int _mode;
 
@@ -20,6 +21,7 @@ public class AntlrToken extends CommonToken {
 		super(source, type, channel, start, stop);
 	}
 
+	@Override
 	public int getMode() {
 		return _mode;
 	}

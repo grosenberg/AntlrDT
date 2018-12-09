@@ -12,8 +12,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.preferences.PrefsKey;
-import net.certiv.antlrdt.ui.editor.AntlrDTDocumentSetupParticipant;
-import net.certiv.antlrdt.ui.editor.AntlrDTSimpleSourceViewerConfiguration;
+import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.color.IColorManager;
@@ -67,14 +67,13 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	@Override
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorMgr,
 			IDslPrefsManager store, ITextEditor editor, boolean configFormatter) {
-		return new AntlrDTSimpleSourceViewerConfiguration(colorMgr, store, editor, Partitions.PARTITIONING,
+		return new AntlrSimpleSourceViewerConfiguration(colorMgr, store, editor, Partitions.PARTITIONING,
 				configFormatter);
 	}
 
 	@Override
 	protected void setDocumentPartitioning(IDocument document) {
-		AntlrDTDocumentSetupParticipant participant = new AntlrDTDocumentSetupParticipant();
-		participant.setup(document);
+		AntlrDTUI.getDefault().getTextTools().setupDocument(document);
 	}
 
 	@Override

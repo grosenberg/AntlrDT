@@ -10,7 +10,7 @@ import org.eclipse.ui.ide.IDE;
 
 import net.certiv.antlrdt.ui.graph.NullEditorInput;
 import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 
 public class OpenPathsEditorHandler extends AbstractHandler {
 

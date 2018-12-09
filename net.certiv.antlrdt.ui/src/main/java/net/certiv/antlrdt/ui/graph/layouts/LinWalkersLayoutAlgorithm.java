@@ -16,9 +16,9 @@ import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
 
 /**
  * TreeLayout that computes a tidy layout of a node-link tree diagram. This algorithm lays out a
@@ -37,7 +37,7 @@ import net.certiv.dsl.core.util.Log.LogLevel;
  * License). Modifications include adaption for use with Zest, consistent handling of cyclic
  * relations, and proper support for multiple real root nodes.
  * </p>
- * 
+ *
  * @author <a href="http://jheer.org">jeffrey heer</a>
  * @author <a href="http://www.certiv.net">Gerald Rosenberg</a>
  */
@@ -86,7 +86,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 	/**
 	 * Set the orientation of the tree layout.
-	 * 
+	 *
 	 * @param orientation the orientation value. One of
 	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT} ,
 	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT} ,
@@ -102,7 +102,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 	/**
 	 * Get the orientation of the tree layout.
-	 * 
+	 *
 	 * @return the orientation value. One of
 	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT} ,
 	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT} ,
@@ -130,9 +130,9 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		m_dspace = getPrefs().getInt(PrefsKey.PT_DEPTH_SPACING); // between depth levels
 		m_offset = getPrefs().getInt(PrefsKey.PT_ROOT_OFFSET); // offset for root node
 
-		int eCnt = entitiesToLayout.length;
-		int rCnt = relationshipsToConsider.length;
-		Log.info(this, "Layout [entities=" + eCnt + ", relations=" + rCnt + "]");
+		// int eCnt = entitiesToLayout.length;
+		// int rCnt = relationshipsToConsider.length;
+		// Log.info(this, "Layout [entities=" + eCnt + ", relations=" + rCnt + "]");
 
 		ArrayList<InternalNode> entitiesList = convert(entitiesToLayout);
 		ArrayList<InternalRelationship> relationshipList = convert(relationshipsToConsider);
@@ -169,7 +169,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		// start with a copy of all entities as potential roots
 		// roots are nodes without any parent
-		LinkedHashSet<InternalNode> roots = new LinkedHashSet<InternalNode>(entitiesList);
+		LinkedHashSet<InternalNode> roots = new LinkedHashSet<>(entitiesList);
 		// omitted are the excess parenting connections to nodes
 		ArrayList<InternalRelationship> omitted = new ArrayList<>();
 
@@ -519,7 +519,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		InternalNode self = null; // the containing entity
 		InternalNode parent = null; // immediate parent node
-		private ArrayList<InternalNode> childList = new ArrayList<InternalNode>();
+		private ArrayList<InternalNode> childList = new ArrayList<>();
 
 		public Params(InternalNode item) {
 			this.self = item;
@@ -622,6 +622,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			return null;
 		}
 
+		@Override
 		public String toString() {
 			return parent.toString() + " -> " + childList.toString();
 		}
@@ -642,7 +643,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	}
 
 	private <E> ArrayList<E> convert(E[] elements) {
-		return new ArrayList<E>(Arrays.asList(elements));
+		return new ArrayList<>(Arrays.asList(elements));
 	}
 
 	/** Resize the given array as needed to meet a target size. */
@@ -700,7 +701,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			this.y = 0;
 			this.width = 0;
 			this.height = 0;
-			this.attributes = new HashMap<Object, Object>();
+			this.attributes = new HashMap<>();
 		}
 
 		@Override

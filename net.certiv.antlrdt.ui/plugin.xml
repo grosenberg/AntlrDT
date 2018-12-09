@@ -60,17 +60,6 @@
    </extension>
 -->
 
-
-   <extension
-         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
-      <hyperlinkDetector
-            class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
-            id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
-            name="Antlr grammar element hyperlink"
-            targetId="net.certiv.dsl.ui.codeUnit">
-      </hyperlinkDetector>
-   </extension>
-
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -165,6 +154,27 @@
             verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
             verticalRulerPreferenceValue="false">
       </specification>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+            id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+            name="Antlr grammar element hyperlink"
+            targetId="net.certiv.dsl.ui.codeUnit">
+      </hyperlinkDetector>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="AntlrDTEditor Context"
+            id="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            name="AntlrDTEditor Content"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
    </extension>
    
   <extension
@@ -303,16 +313,6 @@
             id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
             name="Tool Tips">
       </page>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            description="AntlrDTEditor Context"
-            id="net.certiv.antlrdt.ui.antlrdtEditorScope"
-            name="AntlrDTEditor Content"
-            parentId="org.eclipse.ui.textEditorScope">
-      </context>
    </extension>
    
    <extension

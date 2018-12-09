@@ -5,7 +5,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
-import net.certiv.antlrdt.ui.editor.AntlrDTSimpleSourceViewerConfiguration;
+import net.certiv.antlrdt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.antlrdt.ui.preferences.formatter.FormatterFactory;
 import net.certiv.dsl.core.DslCore;
@@ -40,7 +40,7 @@ public class FormatterPage extends DslFormatterPreferencePage {
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
 			IPreferenceStore store, ITextEditor editor, boolean configureFormatter) {
 
-		return new AntlrDTSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) store, editor,
+		return new AntlrSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) store, editor,
 				Partitions.PARTITIONING, configureFormatter);
 	}
 

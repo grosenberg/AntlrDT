@@ -17,7 +17,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.ui.view.tokens.Source;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 
 public class AntlrDTUtil {
 

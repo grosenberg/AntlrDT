@@ -9,8 +9,8 @@ import net.certiv.antlrdt.ui.graph.cst.CstEditor;
 import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
 import net.certiv.antlrdt.ui.templates.AntlrContextType;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 
@@ -21,7 +21,7 @@ public class AntlrDTUI extends DslUI {
 
 	private static AntlrDTUI plugin;
 
-	private AntlrDTImages imageProvider;
+	private AntlrImageManager imageMgr;
 	private DslTextTools textTools;
 
 	private CstEditor cstEditor;
@@ -69,13 +69,12 @@ public class AntlrDTUI extends DslUI {
 		return AntlrDTCore.DSL_NAME;
 	}
 
-	/** Returns the image provider */
 	@Override
-	public AntlrDTImages getImageProvider() {
-		if (imageProvider == null) {
-			imageProvider = new AntlrDTImages();
+	public AntlrImageManager getImageManager() {
+		if (imageMgr == null) {
+			imageMgr = new AntlrImageManager();
 		}
-		return imageProvider;
+		return imageMgr;
 	}
 
 	/** Returns the text tools */

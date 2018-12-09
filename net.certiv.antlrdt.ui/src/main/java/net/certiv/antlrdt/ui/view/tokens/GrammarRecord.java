@@ -6,10 +6,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class GrammarRecord {
@@ -23,11 +23,14 @@ public class GrammarRecord {
 	public static final String SNIPPET_EXT = ".snippetExt";
 
 	public static final String TOKEN_FACTORY = ".tokenFactory";
+	public static final String TOKEN = ".token";
 	public static final String PARSER_STRATEGY = ".parserStrategy";
+	public static final String PARSER_TRACE = ".parserTrace";
 
 	private static final String PATH = ".path";
 	private static final String NAME = ".name";
 
+	private DslPrefsManager store;
 	private IProject project;
 	private IFile grammar;
 
@@ -35,7 +38,9 @@ public class GrammarRecord {
 	private String snippetsExt = "*";
 
 	private Source tokenFactory;
+	private Source token;
 	private Source errorStrategy;
+	private boolean traceParser;
 
 	private String snippetDir; // defines the source data directory
 
@@ -52,9 +57,11 @@ public class GrammarRecord {
 	}
 
 	private void init() {
+		store = AntlrDTCore.getDefault().getPrefsManager();
+
 		genPackageNames();
 		genID();
-		this.snippetDir = "";
+		snippetDir = "";
 		if (project.exists()) {
 			IPath path = CoreUtil.getWorkspaceLocation().append(project.getFullPath());
 			if (project.exists(DEF_SNIPPETS_DIR)) {
@@ -94,65 +101,82 @@ public class GrammarRecord {
 	// id encodes project relative grammar name
 	private void genID() {
 		String ext = grammar.getFileExtension();
-		this.recId = "{DSL_ID}." + basePathame.replaceAll("/", ".") + "." + ext;
+		this.recId = store.bind("{DSL_ID}." + basePathame.replaceAll("/", ".") + "." + ext);
 	}
 
 	public void load() {
-		String path = getPrefs().getString(null, recId + SNIPPET_DIR + PATH, snippetDir);
-		String name = getPrefs().getString(null, recId + SNIPPET_DIR + NAME, "");
+		String path = store.getString(null, recId + SNIPPET_DIR + PATH, snippetDir);
+		String name = store.getString(null, recId + SNIPPET_DIR + NAME, "");
 		snippetsDir = new Source(path, name);
 
-		snippetsExt = getPrefs().getString(null, recId + SNIPPET_EXT + NAME, "*");
+		snippetsExt = store.getString(null, recId + SNIPPET_EXT + NAME, "*");
 
-		String path1 = getPrefs().getString(null, recId + TOKEN_FACTORY + PATH, "");
-		String name1 = getPrefs().getString(null, recId + TOKEN_FACTORY + NAME, "");
-		tokenFactory = new Source(path1, name1);
+		String pathFac = store.getString(null, recId + TOKEN_FACTORY + PATH, "");
+		String nameFac = store.getString(null, recId + TOKEN_FACTORY + NAME, "");
+		tokenFactory = new Source(pathFac, nameFac);
 
-		String path2 = getPrefs().getString(null, recId + PARSER_STRATEGY + PATH, "");
-		String name2 = getPrefs().getString(null, recId + PARSER_STRATEGY + NAME, "");
-		errorStrategy = new Source(path2, name2);
+		String pathTok = store.getString(null, recId + TOKEN + PATH, "");
+		String nameTok = store.getString(null, recId + TOKEN + NAME, "");
+		token = new Source(pathTok, nameTok);
+
+		String pathErr = store.getString(null, recId + PARSER_STRATEGY + PATH, "");
+		String nameErr = store.getString(null, recId + PARSER_STRATEGY + NAME, "");
+		errorStrategy = new Source(pathErr, nameErr);
+
+		traceParser = store.getBoolean(null, recId + PARSER_TRACE + NAME, false);
 	}
 
 	public void validate() {
-		getPrefs().setValue(null, recId + SNIPPET_DIR + PATH, snippetsDir.getPath());
+		store.setValue(null, recId + SNIPPET_DIR + PATH, snippetsDir.getPath());
 		if (snippetsDir.getName().trim().isEmpty()) {}
 
-		getPrefs().setValue(null, recId + SNIPPET_EXT + NAME, snippetsExt);
+		store.setValue(null, recId + SNIPPET_EXT + NAME, snippetsExt);
 
-		getPrefs().setValue(null, recId + TOKEN_FACTORY + PATH, tokenFactory.getPath());
-		getPrefs().setValue(null, recId + TOKEN_FACTORY + NAME, tokenFactory.getName());
+		store.setValue(null, recId + TOKEN_FACTORY + PATH, tokenFactory.getPath());
+		store.setValue(null, recId + TOKEN_FACTORY + NAME, tokenFactory.getName());
 
-		getPrefs().setValue(null, recId + PARSER_STRATEGY + PATH, errorStrategy.getPath());
-		getPrefs().setValue(null, recId + PARSER_STRATEGY + NAME, errorStrategy.getName());
+		store.setValue(null, recId + TOKEN + PATH, token.getPath());
+		store.setValue(null, recId + TOKEN + NAME, token.getName());
+
+		store.setValue(null, recId + PARSER_STRATEGY + PATH, errorStrategy.getPath());
+		store.setValue(null, recId + PARSER_STRATEGY + NAME, errorStrategy.getName());
+
+		store.setValue(null, recId + PARSER_TRACE + NAME, traceParser);
 	}
 
 	public void save() {
-		getPrefs().setValue(null, recId + SNIPPET_DIR + PATH, snippetsDir.getPath());
-		getPrefs().setValue(null, recId + SNIPPET_DIR + NAME, snippetsDir.getName());
+		store.setValue(null, recId + SNIPPET_DIR + PATH, snippetsDir.getPath());
+		store.setValue(null, recId + SNIPPET_DIR + NAME, snippetsDir.getName());
 
-		getPrefs().setValue(null, recId + SNIPPET_EXT + NAME, snippetsExt);
+		store.setValue(null, recId + SNIPPET_EXT + NAME, snippetsExt);
 
 		if (tokenFactory.isEmpty()) {
-			getPrefs().setToDefault(recId + TOKEN_FACTORY + PATH);
-			getPrefs().setToDefault(recId + TOKEN_FACTORY + NAME);
+			store.setToDefault(recId + TOKEN_FACTORY + PATH);
+			store.setToDefault(recId + TOKEN_FACTORY + NAME);
 		} else {
-			getPrefs().setValue(null, recId + TOKEN_FACTORY + PATH, tokenFactory.getPath());
-			getPrefs().setValue(null, recId + TOKEN_FACTORY + NAME, tokenFactory.getName());
+			store.setValue(null, recId + TOKEN_FACTORY + PATH, tokenFactory.getPath());
+			store.setValue(null, recId + TOKEN_FACTORY + NAME, tokenFactory.getName());
+		}
+
+		if (token.isEmpty()) {
+			store.setToDefault(recId + TOKEN + PATH);
+			store.setToDefault(recId + TOKEN + NAME);
+		} else {
+			store.setValue(null, recId + TOKEN + PATH, token.getPath());
+			store.setValue(null, recId + TOKEN + NAME, token.getName());
 		}
 
 		if (errorStrategy.isEmpty()) {
-			getPrefs().setToDefault(recId + PARSER_STRATEGY + PATH);
-			getPrefs().setToDefault(recId + PARSER_STRATEGY + NAME);
+			store.setToDefault(recId + PARSER_STRATEGY + PATH);
+			store.setToDefault(recId + PARSER_STRATEGY + NAME);
 		} else {
-			getPrefs().setValue(null, recId + PARSER_STRATEGY + PATH, errorStrategy.getPath());
-			getPrefs().setValue(null, recId + PARSER_STRATEGY + NAME, errorStrategy.getName());
+			store.setValue(null, recId + PARSER_STRATEGY + PATH, errorStrategy.getPath());
+			store.setValue(null, recId + PARSER_STRATEGY + NAME, errorStrategy.getName());
 		}
 
-		getPrefs().save();
-	}
+		store.setValue(null, recId + PARSER_TRACE + NAME, traceParser);
 
-	private IDslPrefsManager getPrefs() {
-		return AntlrDTCore.getDefault().getPrefsManager();
+		store.save();
 	}
 
 	public IProject getProject() {
@@ -195,11 +219,27 @@ public class GrammarRecord {
 		this.tokenFactory = tokenFactory;
 	}
 
+	public Source getCustomToken() {
+		return token;
+	}
+
+	public void setCustomToken(Source token) {
+		this.token = token;
+	}
+
 	public Source getErrorStrategy() {
 		return errorStrategy;
 	}
 
 	public void setErrorStrategy(Source errorStrategy) {
 		this.errorStrategy = errorStrategy;
+	}
+
+	public boolean getTraceParser() {
+		return traceParser;
+	}
+
+	public void setTraceParser(boolean selected) {
+		this.traceParser = selected;
 	}
 }

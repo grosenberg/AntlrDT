@@ -16,17 +16,19 @@ import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 import net.certiv.antlrdt.ui.graph.IZoomableEditor;
 import net.certiv.antlrdt.ui.graph.cst.CstEditor;
 
 public class LayoutToolbarGroup extends ActionGroup {
 
 	private IZoomableEditor editor;
+	private AntlrImageManager imgMgr;
 
 	public LayoutToolbarGroup(IZoomableEditor editor) {
 		this.editor = editor;
+		this.imgMgr = AntlrDTUI.getDefault().getImageManager();
 	}
 
 	@Override
@@ -37,38 +39,38 @@ public class LayoutToolbarGroup extends ActionGroup {
 		Action action = null;
 
 		action = new LayoutAction(Layout.HTREE);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE_HORIZ);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE_HORIZ));
 		subMenu.add(action);
 
 		action = new LayoutAction(Layout.VTREE);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE));
 		subMenu.add(action);
 
 		action = new LayoutAction(Layout.HFLOW);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_CALL);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_CALL));
 		subMenu.add(action);
 
 		action = new LayoutAction(Layout.CALL);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_GRAPHFLOW);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_GRAPHFLOW));
 		subMenu.add(action);
 
 		subMenu.add(new Separator());
 
 		action = new LayoutAction(Layout.SPRING);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_SPRING);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_SPRING));
 		subMenu.add(action);
 
 		action = new LayoutAction(Layout.RADIAL);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_RADIAL);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_RADIAL));
 		subMenu.add(action);
 
 		action = new LayoutAction(Layout.GRID);
-		action.setImageDescriptor(getImageProvider().IMG_LAYOUT_GRID);
+		action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_GRID));
 		subMenu.add(action);
 
 		// action = new LayoutAction("Walker Layout", new
 		// GXTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE));
 		// subMenu.add(action);
 
 		// action = new LayoutAction("Directed Graph Layout", new
@@ -76,21 +78,21 @@ public class LayoutToolbarGroup extends ActionGroup {
 		// LayoutStyles.NO_LAYOUT_NODE_RESIZING, new LayoutAlgorithm[] {
 		// new DirectedGraphLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),
 		// new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING) }));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE));
 		// subMenu.add(action);
 
 		// SpringLayoutAlgorithm layoutAlgorithm = new
 		// SpringLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING);
-		// layoutAlgorithm.setIterations(200); // TODO: make preference
+		// layoutAlgorithm.setIterations(200);
 		// action = new LayoutAction("Spring", layoutAlgorithm);
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_SPRING);
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_SPRING);
 		// subMenu.add(action);
 
 		// action = new LayoutAction("Vertical Tree Layout", new CompositeLayoutAlgorithm(
 		// LayoutStyles.NO_LAYOUT_NODE_RESIZING, new LayoutAlgorithm[] {
 		// new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),
 		// new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING) }));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE));
 		// subMenu.add(action);
 		//
 		// action = new LayoutAction("Horizontal Tree Layout", new
@@ -98,26 +100,22 @@ public class LayoutToolbarGroup extends ActionGroup {
 		// LayoutStyles.NO_LAYOUT_NODE_RESIZING, new LayoutAlgorithm[] {
 		// new HorizontalTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),
 		// new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING) }));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_TREE_HORIZ));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_TREE_HORIZ));
 		// subMenu.add(action);
 		//
 		// action = new LayoutAction("Horizontal Layout", new CompositeLayoutAlgorithm(
 		// LayoutStyles.NO_LAYOUT_NODE_RESIZING, new LayoutAlgorithm[] {
 		// new HorizontalLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),
 		// new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING) }));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_HORIZONTAL));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_HORIZONTAL));
 		// subMenu.add(action);
 		//
 		// action = new LayoutAction("Vertical Layout", new CompositeLayoutAlgorithm(
 		// LayoutStyles.NO_LAYOUT_NODE_RESIZING, new LayoutAlgorithm[] {
 		// new VerticalLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING),
 		// new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING) }));
-		// action.setImageDescriptor(getImageProvider().IMG_LAYOUT_GRAPHFLOW));
+		// action.setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_LAYOUT_GRAPHFLOW));
 		// subMenu.add(action);
-	}
-
-	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
 	}
 
 	private class LayoutAction extends Action {

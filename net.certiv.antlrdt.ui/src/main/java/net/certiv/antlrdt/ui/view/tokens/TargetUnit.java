@@ -1,8 +1,8 @@
 package net.certiv.antlrdt.ui.view.tokens;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +13,16 @@ import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenFactory;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -25,7 +31,7 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorListener;
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.eclipse.DynamicLoader;
 import net.certiv.dsl.core.util.eclipse.JdtUtil;
 
@@ -39,6 +45,7 @@ class TargetUnit {
 	private Class<?> lexerClass;
 
 	private Class<?> factoryClass;
+	@SuppressWarnings("unused") private Class<?> tokenClass;
 	private Class<?> errorClass; // parser error handler
 
 	private CstModel model;
@@ -48,7 +55,68 @@ class TargetUnit {
 	private ArrayList<ErrorRecord> errors;
 	private String[] ruleNames;
 	private String[] tokenNames;
+	private String[] modeNames;
 	private String mainRuleName;
+	private List<String[]> trace = new ArrayList<>();
+
+	private Thread thread;
+	private boolean terminate;
+	private String content;
+
+	private class ParseTerminator implements ParseTreeListener {
+
+		@Override
+		public void enterEveryRule(ParserRuleContext ctx) {
+			if (terminate) terminate(ctx);
+		}
+
+		@Override
+		public void visitTerminal(TerminalNode node) {
+			if (terminate) terminate((ParserRuleContext) node.getParent());
+		}
+
+		@Override
+		public void visitErrorNode(ErrorNode node) {
+			if (terminate) terminate((ParserRuleContext) node.getParent());
+		}
+
+		@Override
+		public void exitEveryRule(ParserRuleContext ctx) {
+			if (terminate) terminate(ctx);
+		}
+
+		private void terminate(ParserRuleContext ctx) {
+			Lexer recognizer = (Lexer) ctx.start.getTokenSource();
+			RecognitionException e = new RecognitionException("Terminated", recognizer, input, ctx);
+			for (ParserRuleContext context = ctx; context != null; context = context.getParent()) {
+				context.exception = e;
+			}
+			throw new ParseCancellationException("Parser execution timeout", e);
+		}
+	};
+
+	public class TraceListener implements ParseTreeListener {
+
+		@Override
+		public void enterEveryRule(ParserRuleContext ctx) {
+			addTrace(Trace.ENTRY, ctx);
+		}
+
+		@Override
+		public void visitTerminal(TerminalNode node) {
+			addTrace(Trace.TERMINAL, node);
+		}
+
+		@Override
+		public void visitErrorNode(ErrorNode node) {
+			addTrace(Trace.ERROR, node);
+		}
+
+		@Override
+		public void exitEveryRule(ParserRuleContext ctx) {
+			addTrace(Trace.EXIT, ctx);
+		}
+	}
 
 	/**
 	 * Loads and holds the classes that corresponding to the current editor content: the source grammar.
@@ -57,34 +125,51 @@ class TargetUnit {
 	 * @param srcGrammar the source grammar file
 	 * @param content the content of the source grammar file
 	 */
-	public TargetUnit(GrammarRecord record, IFile srcGrammar, String content) {
-		Log.setLevel(this, Log.LogLevel.Debug);
+	public TargetUnit(GrammarRecord record, IFile grammar, String content) {
 		this.record = record;
+		this.content = content;
+	}
 
-		Thread thread = Thread.currentThread();
+	public void exec() {
+		thread = Thread.currentThread();
 		ClassLoader parent = thread.getContextClassLoader();
 		IProject project = record.getProject();
 
-		DynamicLoader loader;
-		try {
-			loader = DynamicLoader.create(project, parent);
+		try (DynamicLoader loader = DynamicLoader.create(project, parent)) {
 			thread.setContextClassLoader(loader);
-		} catch (MalformedURLException e) {
-			Log.info(this, "Restoring classloader after failure");
-			thread.setContextClassLoader(parent);
-			return;
-		}
-
-		try {
 			if (buildClasses(loader)) generate(content);
+		} catch (IOException e) {
+			Log.info(this, "Restoring classloader after failure");
 		} finally {
-			Log.info(this, "Restoring classloader after generate");
 			thread.setContextClassLoader(parent);
 		}
 	}
 
+	public void terminate() {
+		Log.warn(this, "Terminating Parse.");
+		terminate = true;
+	}
+
+	public void addTrace(Trace kind, ParserRuleContext ctx) {
+		String rulename = ruleNames[ctx.getRuleIndex()];
+		String tokenmsg = kind == Trace.ENTRY ? ctx.getStart().toString() : ctx.getStop().toString();
+		String desc = String.format("%sing rule '%s' on token %s", kind.toString(), rulename, tokenmsg);
+		trace.add(new String[] { String.valueOf(trace.size() + 1), desc });
+		Log.info(this, desc);
+	}
+
+	public void addTrace(Trace kind, TerminalNode node) {
+		String desc = String.format(" - %s: token %s", kind.toString(), node.getSymbol().toString());
+		trace.add(new String[] { String.valueOf(trace.size() + 1), desc });
+		Log.info(this, desc);
+	}
+
 	public CstModel getModel() {
 		return model;
+	}
+
+	public List<String[]> getTrace() {
+		return trace;
 	}
 
 	public ParseTree getTree() {
@@ -111,10 +196,15 @@ class TargetUnit {
 		return tokenNames;
 	}
 
+	public String[] getModeNames() {
+		return modeNames;
+	}
+
 	private boolean buildClasses(DynamicLoader loader) {
 		parserClass = loadFqClass(loader, record.getParserFQName());
 		lexerClass = loadFqClass(loader, record.getLexerFQName());
 		factoryClass = loadClass(loader, record.getTokenFactory().getPathname());
+		tokenClass = loadClass(loader, record.getCustomToken().getPathname());
 		errorClass = loadClass(loader, record.getErrorStrategy().getPathname());
 		return parserClass != null && lexerClass != null;
 	}
@@ -150,6 +240,9 @@ class TargetUnit {
 		try {
 			Constructor<?> lexerConstructor = lexerClass.getConstructor(lexParams);
 			lexer = (Lexer) lexerConstructor.newInstance(lexInput);
+			tokenNames = lexer.getTokenNames();
+			modeNames = lexer.getModeNames();
+
 			Log.info(this, "Lexer constructed ...");
 		} catch (Exception e) {
 			Log.error(this, "Failed to instantiate lexer (" + e.getMessage() + ")");
@@ -187,13 +280,14 @@ class TargetUnit {
 		try {
 			Constructor<?> parserConstructor = parserClass.getConstructor(parserParams);
 			parser = (Parser) parserConstructor.newInstance(parserInput);
+			ruleNames = parser.getRuleNames();
 
 			parser.removeErrorListeners();
 			parser.addErrorListener(new ErrorListener(ErrorSrc.PARSER, errors));
 			if (factoryClass != null) parser.setTokenFactory(tokenFactory);
 
-			ruleNames = parser.getRuleNames();
-			tokenNames = parser.getTokenNames();
+			parser.addParseListener(new ParseTerminator());
+			if (record.getTraceParser()) parser.addParseListener(new TraceListener());
 
 			Log.info(this, "Parser constructed ...");
 		} catch (Exception e) {
@@ -234,23 +328,20 @@ class TargetUnit {
 		}
 		Log.info(this, "Main rule selected (" + mainRuleName + ") ...");
 
-		// generate the parse tree
-
 		try {
+			Log.info(this, "Building tree ...");
 			tree = (ParseTree) mainRule.invoke(parser);
-			Log.info(this, "Tree generated [exists=" + (tree != null) + "] ...");
-			if (tree == null) return;
+			Log.info(this, "Tree generated.");
 		} catch (Exception e) {
 			Log.error(this, "Failed generating parse tree (" + e.getMessage() + ")", e);
-			return;
 		}
 
-		// generate model by walking the tree
-
-		CstProcessor walker = new CstProcessor(new CstModel());
-		walker.walk(walker, tree);
-		model = walker.getModel();
-
-		Log.info(this, "Graph model generated [nodes=" + (model.getNodeList().size() + "]."));
+		if (tree != null) {
+			Log.info(this, "Generating graph model...");
+			CstProcessor walker = new CstProcessor(new CstModel());
+			walker.walk(walker, tree);
+			model = walker.getModel();
+			Log.info(this, "Graph model generated [nodes=" + (model.getNodeList().size() + "]."));
+		}
 	}
 }

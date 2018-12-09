@@ -6,70 +6,48 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.GraphViewer;
 import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.zest.core.widgets.ZestStyles;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
+import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
+import net.certiv.dsl.core.color.DslColorManager;
 
 /** Colors for labels and connections. */
 public abstract class AbstractNodeLabelProvider
 		implements INodeLabelProvider, IConnectionStyleProvider, IEntityStyleProvider {
 
-	public Color LIGHT_BLUE = new Color(Display.getDefault(), 216, 228, 248);
-	public Color DARK_BLUE = new Color(Display.getDefault(), 1, 70, 122);
-	public Color GREY_BLUE = new Color(Display.getDefault(), 139, 150, 171);
-	public Color LIGHT_BLUE_CYAN = new Color(Display.getDefault(), 213, 243, 255);
-	public Color LIGHT_YELLOW = new Color(Display.getDefault(), 255, 255, 206);
-	public Color GRAY = new Color(Display.getDefault(), 128, 128, 128);
-	public Color LIGHT_GRAY = new Color(Display.getDefault(), 220, 220, 220);
-	public Color BLACK = new Color(Display.getDefault(), 0, 0, 0);
-	public Color RED = new Color(Display.getDefault(), 255, 0, 0);
-	public Color DARK_RED = new Color(Display.getDefault(), 127, 0, 0);
-	public Color ORANGE = new Color(Display.getDefault(), 255, 196, 0);
-	public Color YELLOW = new Color(Display.getDefault(), 255, 255, 0);
-	public Color GREEN = new Color(Display.getDefault(), 0, 255, 0);
-	public Color DARK_GREEN = new Color(Display.getDefault(), 0, 127, 0);
-	public Color LIGHT_GREEN = new Color(Display.getDefault(), 96, 255, 96);
-	public Color CYAN = new Color(Display.getDefault(), 0, 255, 255);
-	public Color BLUE = new Color(Display.getDefault(), 0, 0, 255);
-	public Color WHITE = new Color(Display.getDefault(), 255, 255, 255);
-	public Color EDGE_WEIGHT_0 = new Color(Display.getDefault(), 192, 192, 255);
-	public Color EDGE_WEIGHT_01 = new Color(Display.getDefault(), 64, 128, 225);
-	public Color EDGE_WEIGHT_02 = new Color(Display.getDefault(), 32, 32, 128);
-	public Color EDGE_WEIGHT_03 = new Color(Display.getDefault(), 0, 0, 128);
-	public Color EDGE_DEFAULT = new Color(Display.getDefault(), 64, 64, 128);
-	public Color EDGE_HIGHLIGHT = new Color(Display.getDefault(), 192, 32, 32);
-	public Color DISABLED = new Color(Display.getDefault(), 230, 240, 250);
-
 	protected GraphViewer viewer;
+	protected DslColorManager colorMgr;
+
 	protected Object rootNode = null;
 	protected Object selected = null;
 	protected Object pinnedNode = null;
-
 	private Image UnknownNode;
 
-	private HashSet<EntityConnectionData> interestingRelationships = new HashSet<EntityConnectionData>();
-	private HashSet<EntityConnectionData> interestingDependencies = new HashSet<EntityConnectionData>();
+	private final HashSet<EntityConnectionData> interestingRelationships = new HashSet<>();
+	private final HashSet<EntityConnectionData> interestingDependencies = new HashSet<>();
 
 	/** Create a new Abstract Visualization Label Provider */
 	public AbstractNodeLabelProvider(GraphViewer viewer) {
 		this.viewer = viewer;
-		this.UnknownNode = getImageProvider().UNKNOWN_NODE.createImage();
-	}
+		AntlrImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		this.UnknownNode = imgMgr.get(imgMgr.UNKNOWN_NODE);
 
-	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
+		colorMgr = AntlrDTCore.getDefault().getColorManager();
+		for (NC nc : NC.values()) {
+			colorMgr.bindColor(nc.name(), nc.rgb());
+		}
 	}
 
 	@Override
 	public Color getColor(Object rel) {
-		if (interestingRelationships.contains(rel)) return DARK_RED;
-		return LIGHT_GRAY;
+		if (interestingRelationships.contains(rel)) return colorMgr.getColor(NC.CST_DARK_RED.name());
+		return colorMgr.getColor(NC.CST_LIGHT_GRAY.name());
 	}
 
 	@Override
@@ -82,7 +60,7 @@ public abstract class AbstractNodeLabelProvider
 
 	@Override
 	public Color getHighlightColor(Object rel) {
-		return DARK_RED;
+		return colorMgr.getColor(NC.CST_DARK_RED.name());
 	}
 
 	@Override
@@ -106,14 +84,14 @@ public abstract class AbstractNodeLabelProvider
 	public Color getBorderColor(Object entity) {
 		if (this.selected != null || this.pinnedNode != null) {
 			if (entity == this.selected || entity == this.pinnedNode) {
-				return BLACK;
+				return colorMgr.getColor(NC.CST_BLACK.name());
 			} else if (interestingDependencies.contains(entity)) {
-				return BLACK;
+				return colorMgr.getColor(NC.CST_BLACK.name());
 			} else {
-				return LIGHT_GRAY;
+				return colorMgr.getColor(NC.CST_LIGHT_GRAY.name());
 			}
 		}
-		return BLACK;
+		return colorMgr.getColor(NC.CST_BLACK.name());
 	}
 
 	@Override
@@ -128,13 +106,13 @@ public abstract class AbstractNodeLabelProvider
 
 	@Override
 	public Color getBackgroundColour(Object entity) {
-		if (entity == this.rootNode) return LIGHT_GREEN;
+		if (entity == this.rootNode) return colorMgr.getColor(NC.CST_LIGHT_GREEN.name());
 		if (entity == this.selected || this.pinnedNode == entity) {
 			return viewer.getGraphControl().DEFAULT_NODE_COLOR;
 		} else if (interestingDependencies.contains(entity)) {
 			return viewer.getGraphControl().HIGHLIGHT_ADJACENT_COLOR;
 		} else {
-			return LIGHT_GRAY;
+			return colorMgr.getColor(NC.CST_LIGHT_GRAY.name());
 		}
 	}
 
@@ -142,14 +120,14 @@ public abstract class AbstractNodeLabelProvider
 	public Color getForegroundColour(Object entity) {
 		if (this.selected != null || this.pinnedNode != null) {
 			if (entity == this.selected || this.pinnedNode == entity) {
-				return BLACK;
+				return colorMgr.getColor(NC.CST_BLACK.name());
 			} else if (interestingDependencies.contains(entity)) {
-				return BLACK;
+				return colorMgr.getColor(NC.CST_BLACK.name());
 			} else {
-				return GRAY;
+				return colorMgr.getColor(NC.CST_GRAY.name());
 			}
 		}
-		return BLACK;
+		return colorMgr.getColor(NC.CST_BLACK.name());
 	}
 
 	@Override

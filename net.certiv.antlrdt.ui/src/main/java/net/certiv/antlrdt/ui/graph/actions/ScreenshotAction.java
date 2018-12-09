@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.zest.core.widgets.Graph;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 
 public class ScreenshotAction extends Action {
 
@@ -19,14 +19,12 @@ public class ScreenshotAction extends Action {
 
 	public ScreenshotAction(IZoomableWorkbenchPart view) {
 		this.view = view;
+		AntlrImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+
 		setText("Graph Screenshot");
-		setImageDescriptor(getImageProvider().IMG_SNAPSHOT);
+		setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_SNAPSHOT));
 		setToolTipText("Graph screenshot");
 		setEnabled(true);
-	}
-
-	private AntlrDTImages getImageProvider() {
-		return (AntlrDTImages) AntlrDTUI.getDefault().getImageProvider();
 	}
 
 	@Override

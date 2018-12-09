@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 
 /**
  * RemoveNature handler extends AbstractHandler, an IHandler base class.

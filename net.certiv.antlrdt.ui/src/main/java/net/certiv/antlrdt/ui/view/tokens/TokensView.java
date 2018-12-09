@@ -47,16 +47,16 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
-import net.certiv.antlrdt.ui.AntlrDTImages;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.AntlrDTUtil;
+import net.certiv.antlrdt.ui.AntlrImageManager;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.graph.NullEditorInput;
 import net.certiv.antlrdt.ui.graph.cst.CstEditor;
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.util.WorkbenchListener;
 
 public class TokensView extends ViewPart {
@@ -95,6 +95,7 @@ public class TokensView extends ViewPart {
 	private boolean showHidden;
 
 	private Action buildAction;
+	private Action traceAction;
 	private Action linkAction;
 	private Action hiddenAction;
 
@@ -102,8 +103,11 @@ public class TokensView extends ViewPart {
 	protected IJobChangeEvent lastBuildEvent;
 	private boolean validControls;
 
+	private AntlrImageManager imgMgr;
+
 	public TokensView() {
 		super();
+		imgMgr = AntlrDTUI.getDefault().getImageManager();
 	}
 
 	@Override
@@ -350,9 +354,22 @@ public class TokensView extends ViewPart {
 		};
 
 		buildAction.setText("Build");
-		buildAction.setToolTipText("Build Gen AST");
+		buildAction.setToolTipText("Build Model");
 		buildAction.setEnabled(true);
-		buildAction.setImageDescriptor(getImageProvider().BUILD);
+		buildAction.setImageDescriptor(imgMgr.getDescriptor(imgMgr.BUILD));
+
+		traceAction = new Action() {
+
+			@Override
+			public void run() {
+				showTrace();
+			}
+		};
+
+		traceAction.setText("Show Trace");
+		traceAction.setToolTipText("Show Trace");
+		traceAction.setEnabled(true);
+		traceAction.setImageDescriptor(imgMgr.getDescriptor(imgMgr.HISTORY));
 
 		hiddenAction = new Action() {
 
@@ -365,7 +382,7 @@ public class TokensView extends ViewPart {
 		hiddenAction.setText("Toggle Hidden");
 		hiddenAction.setToolTipText("Toggle display of hidden tokens");
 		hiddenAction.setChecked(showHidden);
-		hiddenAction.setImageDescriptor(getImageProvider().HIDDEN);
+		hiddenAction.setImageDescriptor(imgMgr.getDescriptor(imgMgr.HIDDEN));
 
 		linkAction = new Action() {
 
@@ -378,7 +395,7 @@ public class TokensView extends ViewPart {
 		linkAction.setText("Link with Editor");
 		linkAction.setToolTipText("Link with Editor");
 		linkAction.setChecked(linkEditorState);
-		linkAction.setImageDescriptor(getImageProvider().LINK);
+		linkAction.setImageDescriptor(imgMgr.getDescriptor(imgMgr.LINK));
 	}
 
 	private void contributeToActionBars() {
@@ -391,6 +408,7 @@ public class TokensView extends ViewPart {
 		manager.add(buildAction);
 		manager.add(linkAction);
 		manager.add(hiddenAction);
+		manager.add(traceAction);
 		manager.add(new Separator());
 	}
 
@@ -398,10 +416,7 @@ public class TokensView extends ViewPart {
 		manager.add(buildAction);
 		manager.add(linkAction);
 		manager.add(hiddenAction);
-	}
-
-	private AntlrDTImages getImageProvider() {
-		return AntlrDTUI.getDefault().getImageProvider();
+		manager.add(traceAction);
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -415,6 +430,12 @@ public class TokensView extends ViewPart {
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
+
+	protected void showTrace() {
+
+		ShowTraceDialog traceDialog = new ShowTraceDialog(getSite().getShell(), target.getTrace());
+		traceDialog.open();
+	}
 
 	// update link state and conditionally populate
 	protected void performLink() {
@@ -440,6 +461,7 @@ public class TokensView extends ViewPart {
 	}
 
 	private void performBuild(AntlrDTEditor editor) {
+		if (source == null) return;
 		if (!editor.isEditable() || !editor.getEditorInput().exists() || editor.isDirty()) return;
 		lastEditorUsed = editor;
 
@@ -470,7 +492,8 @@ public class TokensView extends ViewPart {
 				if (event.getResult().isOK()) {
 					List<Token> tokens = target.getTokens();
 					if (tokens != null) {
-						ArrayList<String[]> data = ListProcessor.extract(tokens, target.getTokenNames(), showHidden);
+						ArrayList<String[]> data = ListProcessor.extract(tokens, target.getTokenNames(),
+								target.getModeNames(), showHidden);
 						tokBlock.getTokensViewer().setInput(data);
 					}
 
@@ -499,9 +522,12 @@ public class TokensView extends ViewPart {
 		if (editor != null) return editor;
 		try {
 			IWorkbenchPage page = getSite().getWorkbenchWindow().getActivePage();
-			return (CstEditor) IDE.openEditor(page, new NullEditorInput(""), CstEditor.ID);
+			if (page != null) {
+				IEditorPart ed = IDE.openEditor(page, new NullEditorInput(""), CstEditor.ID);
+				if (ed instanceof CstEditor) return (CstEditor) ed;
+			}
 		} catch (Exception e) {
-			Log.error(this, "Failed to open CstEditor", e);
+			Log.error(this, "Failed opening CstEditor", e);
 		}
 		return null;
 	}
@@ -545,7 +571,6 @@ public class TokensView extends ViewPart {
 				viewVisible = true;
 			} else if (part instanceof AntlrDTEditor && viewVisible) {
 				((AntlrDTEditor) part).getDocumentProvider().addElementStateListener(documentAdaptor);
-				Log.debug(this, "AntlrDTEditor activated");
 				validateControls();
 			}
 		}
@@ -578,7 +603,9 @@ public class TokensView extends ViewPart {
 		/** On grammar editor save events, the view content is rebuilt. */
 		@Override
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			if (!isDirty) view.performBuild();
+			if (!isDirty && view.workbenchAdapter.viewVisible) {
+				// view.performBuild();
+			}
 		}
 	}
 }

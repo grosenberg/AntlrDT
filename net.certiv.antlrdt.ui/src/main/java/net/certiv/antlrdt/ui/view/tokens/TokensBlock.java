@@ -20,8 +20,8 @@ import net.certiv.antlrdt.ui.view.providers.TokensViewerLabelProvider;
 public class TokensBlock {
 
 	private static final int flags = SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL;
-	private static final String[] tokTitles = { "Idx", "Token", "Line", "Col", "Text" };
-	private static final int[] tokWidths = { 40, 100, 40, 40, 240 };
+	private static final String[] tokTitles = { "Idx", "Token", "Line", "Col", "Mode", "Text" };
+	private static final int[] tokWidths = { 30, 100, 30, 30, 40, 280 };
 	private static final String[] errTitles = { "Idx", "Line", "Col", "Message" };
 	private static final int[] errWidths = { 40, 40, 40, 340 };
 
@@ -45,7 +45,7 @@ public class TokensBlock {
 
 			tokViewer = new TableViewer(tokGroup, flags);
 			tokViewer.setContentProvider(new ListViewerContentProvider());
-			tokViewer.setLabelProvider(new TokensViewerLabelProvider());
+			tokViewer.setLabelProvider(new TokensViewerLabelProvider(parent.getDisplay()));
 			tokViewer.getTable().setHeaderVisible(true);
 			tokViewer.getTable().setLinesVisible(true);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(tokViewer.getControl());
@@ -80,7 +80,7 @@ public class TokensBlock {
 
 			errViewer = new TableViewer(errGroup, flags);
 			errViewer.setContentProvider(new ListViewerContentProvider());
-			errViewer.setLabelProvider(new ErrorsViewerLabelProvider());
+			errViewer.setLabelProvider(new ErrorsViewerLabelProvider(parent.getDisplay()));
 			errViewer.getTable().setHeaderVisible(true);
 			errViewer.getTable().setLinesVisible(true);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(errViewer.getControl());

@@ -7,11 +7,13 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
+import net.certiv.dsl.core.parser.IDslToken;
 import net.certiv.dsl.core.util.Strings;
 
 public class ListProcessor {
 
-	public static ArrayList<String[]> extract(List<Token> tokensList, String[] tokenNames, boolean nodesOnly) {
+	public static ArrayList<String[]> extract(List<Token> tokensList, String[] tokenNames, String[] modeNames,
+			boolean nodesOnly) {
 		ArrayList<String[]> tokens = new ArrayList<>();
 		for (Token token : tokensList) {
 			if (nodesOnly && token.getChannel() == Lexer.HIDDEN) continue;
@@ -22,9 +24,18 @@ public class ListProcessor {
 			String col = String.valueOf(token.getCharPositionInLine() + 1);
 			String text = Strings.escape(token.getText());
 			String chan = String.valueOf(token.getChannel());
-			tokens.add(new String[] { idx, ttype, line, col, text, chan });
+			String mode = modeName(token, modeNames);
+			tokens.add(new String[] { idx, ttype, line, col, text, chan, mode });
 		}
 		return tokens;
+	}
+
+	private static String modeName(Token token, String[] modeNames) {
+		if (token instanceof IDslToken) {
+			int mode = ((IDslToken) token).getMode();
+			if (mode > 0) return modeNames[mode];
+		}
+		return "";
 	}
 
 	public static ArrayList<String[]> extract(List<ErrorRecord> errorList, String[] tokenNames) {

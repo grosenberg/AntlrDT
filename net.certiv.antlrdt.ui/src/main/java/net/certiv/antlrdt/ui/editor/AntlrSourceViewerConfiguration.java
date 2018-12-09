@@ -20,7 +20,6 @@ import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.completion.AntlrCompletionProcessor;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
 import net.certiv.antlrdt.ui.editor.strategies.SmartAutoEditStrategy;
-import net.certiv.antlrdt.ui.editor.strategies.SmartIndentStrategy;
 import net.certiv.antlrdt.ui.editor.text.EnhDamagerRepairer;
 import net.certiv.antlrdt.ui.editor.text.ScannerAction;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentJD;
@@ -175,10 +174,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 			case Partitions.COMMENT_ML:
 				strategies = new IAutoEditStrategy[] { new AntlrDTAutoEditDocStrategy(partitioning) };
 				break;
-			case Partitions.ACTION:
-				strategies = new IAutoEditStrategy[] { new SmartIndentStrategy(partitioning, Partitions.ACTION) };
-				break;
-			case Partitions.STRING:
 			default:
 				strategies = new IAutoEditStrategy[] { new SmartAutoEditStrategy(partitioning) };
 		}

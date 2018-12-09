@@ -35,13 +35,11 @@ options {
 
 @header {
 	package net.certiv.antlrdt.core.parser.gen;
-
 }
 
 // The main entry point for parsing a v4 grammar.
 grammarSpec
-	:	DOC_COMMENT?
-		declaration
+	:	declaration
 		prequelConstruct*
 		rules
 		EOF
@@ -142,8 +140,7 @@ ruleSpec
 	;
 
 parserRuleSpec
-	:	DOC_COMMENT?
-		ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec?
+	:	ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec?
 		localsSpec?
 		rulePrequel*
 		COLON
@@ -218,19 +215,16 @@ labeledAlt
 // Lexer rules
 
 modeRuleSpec
-	:	DOC_COMMENT?
-		MODE id SEMI
+	:	MODE id SEMI
 		lexerRuleSpec+
 	;
 
 lexerRuleSpec
-	:	DOC_COMMENT?
-		TOKEN_REF COLON lexerRuleBlock SEMI
+	:	TOKEN_REF COLON lexerRuleBlock SEMI
 	;
 
 fragmentRuleSpec
-	:	DOC_COMMENT?
-		FRAGMENT TOKEN_REF COLON lexerRuleBlock SEMI
+	:	FRAGMENT TOKEN_REF COLON lexerRuleBlock SEMI
 	;
 
 lexerRuleBlock

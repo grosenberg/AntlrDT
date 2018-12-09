@@ -16,6 +16,7 @@ import net.certiv.antlrdt.ui.fields.DirField;
 import net.certiv.antlrdt.ui.fields.FileField;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
+import net.certiv.dsl.ui.fields.SelectionField;
 import net.certiv.dsl.ui.fields.TextField;
 
 public class GrammarDialog extends StatusDialog {
@@ -27,7 +28,9 @@ public class GrammarDialog extends StatusDialog {
 	private DirField snippetDir;
 	private TextField snippetExt;
 	private FileField tokenFactory;
+	private FileField customToken;
 	private FileField errorStrategy;
+	private SelectionField traceParser;
 
 	private ContentChangedListener listener;
 
@@ -75,10 +78,19 @@ public class GrammarDialog extends StatusDialog {
 		tokenFactory.setSource(rec.getTokenFactory());
 		tokenFactory.addContentChangedListener(listener);
 
+		customToken = new FileField(getShell(), grammarComp, SWT.NONE, TOKEN, "Custom token *", 3, rec.getCustomToken(),
+				defaultDir);
+		customToken.setSource(rec.getCustomToken());
+		customToken.addContentChangedListener(listener);
+
 		errorStrategy = new FileField(getShell(), grammarComp, SWT.NONE, PARSER_STRATEGY, "Parser error strategy *", 3,
 				rec.getErrorStrategy(), defaultDir);
 		errorStrategy.setSource(rec.getErrorStrategy());
 		errorStrategy.addContentChangedListener(listener);
+
+		traceParser = new SelectionField(grammarComp, SWT.CHECK, PARSER_TRACE, "Trace parser execution", 3);
+		traceParser.setSelected(rec.getTraceParser());
+		traceParser.addContentChangedListener(listener);
 
 		Label note = new Label(grammarComp, SWT.NONE);
 		note.setText("* Required only when custom classes have been defined for the grammar.");
@@ -96,14 +108,21 @@ public class GrammarDialog extends StatusDialog {
 					rec.setSnippetsDir(snippetDir.getSource());
 					break;
 				case SNIPPET_EXT:
-					rec.setSnippetsExt(snippetExt.getText());
+					String ext = snippetExt.getText();
+					if (ext.startsWith(".")) ext = ext.substring(1);
+					rec.setSnippetsExt(ext);
 					break;
 				case TOKEN_FACTORY:
 					rec.setTokenFactory(tokenFactory.getSource());
 					break;
+				case TOKEN:
+					rec.setCustomToken(customToken.getSource());
+					break;
 				case PARSER_STRATEGY:
 					rec.setErrorStrategy(errorStrategy.getSource());
 					break;
+				case PARSER_TRACE:
+					rec.setTraceParser(traceParser.isSelected());
 				default:
 			}
 		}

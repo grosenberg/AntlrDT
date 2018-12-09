@@ -8,18 +8,26 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-public class TokensViewerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+import net.certiv.antlrdt.ui.view.tokens.Trace;
 
-	private Color gray;
+public class TraceViewerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
-	public TokensViewerLabelProvider(Display display) {
+	private final Color blue;
+	private final Color green;
+	private final Color red;
+
+	public TraceViewerLabelProvider(Display display) {
 		super();
-		gray = display.getSystemColor(SWT.COLOR_GRAY);
+		blue = display.getSystemColor(SWT.COLOR_DARK_BLUE);
+		green = display.getSystemColor(SWT.COLOR_DARK_GREEN);
+		red = display.getSystemColor(SWT.COLOR_DARK_RED);
 	}
 
 	@Override
 	public void dispose() {
-		if (!gray.isDisposed()) gray.dispose();
+		if (!blue.isDisposed()) blue.dispose();
+		if (!green.isDisposed()) green.dispose();
+		if (!red.isDisposed()) red.dispose();
 		super.dispose();
 	}
 
@@ -30,15 +38,7 @@ public class TokensViewerLabelProvider extends LabelProvider implements ITableLa
 			case 0:
 				return rec[0]; // idx
 			case 1:
-				return rec[1]; // token name
-			case 2:
-				return rec[2]; // line
-			case 3:
-				return rec[3]; // col
-			case 4:
-				return rec[6]; // mode
-			case 5:
-				return rec[4]; // text
+				return rec[1]; // trace step description
 		}
 		return "<<??>>";
 	}
@@ -56,7 +56,8 @@ public class TokensViewerLabelProvider extends LabelProvider implements ITableLa
 	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		String[] rec = (String[]) element;
-		if (!rec[5].equals("0")) return gray; // hidden
-		return null;
+		if (rec[1].startsWith(" - " + Trace.TERMINAL.toString())) return green;
+		if (rec[1].startsWith(" - " + Trace.ERROR.toString())) return red;
+		return blue;
 	}
 }

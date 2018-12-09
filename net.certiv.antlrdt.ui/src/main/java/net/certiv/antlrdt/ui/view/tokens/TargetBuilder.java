@@ -1,5 +1,6 @@
 package net.certiv.antlrdt.ui.view.tokens;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,27 +14,32 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.graph.cst.ErrorRecord;
 import net.certiv.antlrdt.ui.graph.cst.model.CstModel;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.ui.DslUI;
 
 public class TargetBuilder {
+
+	// time in ms to allow for parser execution and tree walk
+	private static final long LIMIT = 3000;
+	private final BuildJob buildJob = new BuildJob("Parse Tree Builder");
 
 	private AntlrDTEditor editor;
 	private GrammarRecord record;
 	private Source source;
 
 	private TargetUnit target;
-	private Job buildJob;
 
 	public TargetBuilder(AntlrDTEditor editor, GrammarRecord record, Source source) {
 		this.editor = editor;
 		this.record = record;
 		this.source = source;
-		createJob();
+
+		buildJob.setPriority(Job.BUILD);
+		buildJob.setSystem(true);
 	}
 
 	public AntlrDTEditor getEditor() {
@@ -56,6 +62,10 @@ public class TargetBuilder {
 		return target != null ? target.getErrors() : null;
 	}
 
+	public List<String[]> getTrace() {
+		return target != null ? target.getTrace() : Collections.emptyList();
+	}
+
 	public String getMainRuleName() {
 		return target != null ? target.getMainRuleName() : "";
 	}
@@ -68,6 +78,10 @@ public class TargetBuilder {
 		return target != null ? target.getTokenNames() : null;
 	}
 
+	public String[] getModeNames() {
+		return target != null ? target.getModeNames() : null;
+	}
+
 	protected void addJobChangeListener(JobChangeAdapter jobChangeAdapter) {
 		buildJob.addJobChangeListener(jobChangeAdapter);
 	}
@@ -76,52 +90,44 @@ public class TargetBuilder {
 		buildJob.schedule();
 	}
 
-	private void createJob() {
-		buildJob = new Job("Parse Tree Builder") {
+	private class BuildJob extends Job {
 
-			private Timer timer;
+		public BuildJob(String name) {
+			super(name);
+		}
 
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					timer = startTimer(monitor, getThread());
-					buildTarget();
-				} finally {
-					timer.cancel();
+		private Timer startTimer(final IProgressMonitor monitor, final Thread thread) {
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					Log.warn(this, "Target parser generation timer expired " + (target != null));
+					if (target != null) target.terminate();
 				}
-				if (getTree() == null) {
-					IStatus status = new Status(IStatus.CANCEL, AntlrDTUI.PLUGIN_ID, "No tree generated");
-					return status;
-				}
-				return Status.OK_STATUS;
+			}, LIMIT);
+			return timer;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+
+			Timer timer = null;
+			try {
+				timer = startTimer(monitor, getThread());
+				IFile grammar = CoreUtil.getInputFile(editor);
+				String sourceText = source.getContent();
+				target = new TargetUnit(record, grammar, sourceText);
+				target.exec();
+			} finally {
+				if (timer != null) timer.cancel();
 			}
-		};
-		buildJob.setPriority(Job.SHORT);
-		buildJob.setSystem(true);
-	}
-
-	private Timer startTimer(final IProgressMonitor monitor, final Thread thread) {
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				Log.error(this, "Target parser generation timer expired");
-				if (monitor != null) {
-					monitor.setCanceled(true);
-					monitor.done();
-				}
-				if (thread != null)
-					thread.interrupt();
+			if (getTree() == null) {
+				IStatus status = new Status(IStatus.CANCEL, DslUI.PLUGIN_ID, "No tree generated");
+				return status;
 			}
-		}, 20000000);
-		return timer;
+			return Status.OK_STATUS;
+		}
 	}
-
-	private void buildTarget() {
-		IFile srcGrammar = CoreUtil.getInputFile(editor);
-		String sourceText = source.getContent();
-		target = new TargetUnit(record, srcGrammar, sourceText);
-	}
-
 }

@@ -11,12 +11,12 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.builder.DslModelMaker;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
 
 public class AntlrSourceParser extends DslSourceParser {
 

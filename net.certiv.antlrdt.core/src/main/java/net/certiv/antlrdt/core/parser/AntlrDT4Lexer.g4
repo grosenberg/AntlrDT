@@ -53,7 +53,6 @@
  *	-- removed LexerHelper
  *	Modified 2015.06.14 gbr
  *	-- begin update for compatibility with Antlr v4.5
- *
  */
 
 lexer grammar AntlrDT4Lexer;
@@ -91,7 +90,7 @@ channels {
 // Comments
 
 DOC_COMMENT
-	:	DocComment
+	:	DocComment -> channel(HIDDEN)
 	;
 
 BLOCK_COMMENT

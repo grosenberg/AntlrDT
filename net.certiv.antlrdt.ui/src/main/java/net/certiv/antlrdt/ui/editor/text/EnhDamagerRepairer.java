@@ -11,7 +11,7 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.ITokenScanner;
 
 import net.certiv.antlrdt.ui.editor.Partitions;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 
 public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 

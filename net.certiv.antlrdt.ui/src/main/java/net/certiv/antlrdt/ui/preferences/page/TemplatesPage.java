@@ -4,7 +4,7 @@ import org.eclipse.jface.text.IDocument;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.AntlrDTUI;
-import net.certiv.antlrdt.ui.editor.AntlrDTSimpleSourceViewerConfiguration;
+import net.certiv.antlrdt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.AntlrSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.core.DslCore;
@@ -37,7 +37,7 @@ public class TemplatesPage extends DslTemplatePreferencePage {
 
 	@Override
 	protected AntlrSourceViewerConfiguration createSourceViewerConfiguration() {
-		return new AntlrDTSimpleSourceViewerConfiguration(getColorManager(), (IDslPrefsManager) getPreferenceStore(),
+		return new AntlrSimpleSourceViewerConfiguration(getColorManager(), (IDslPrefsManager) getPreferenceStore(),
 				null, Partitions.PARTITIONING, false);
 	}
 

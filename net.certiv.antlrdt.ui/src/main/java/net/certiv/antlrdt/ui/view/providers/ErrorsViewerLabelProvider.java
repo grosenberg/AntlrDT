@@ -12,7 +12,21 @@ import net.certiv.antlrdt.ui.graph.cst.ErrorSrc;
 
 public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
-	private static final Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE);
+	private Color blue;
+	private Color green;
+
+	public ErrorsViewerLabelProvider(Display display) {
+		super();
+		blue = display.getSystemColor(SWT.COLOR_DARK_BLUE);
+		green = display.getSystemColor(SWT.COLOR_DARK_GREEN);
+	}
+
+	@Override
+	public void dispose() {
+		if (!blue.isDisposed()) blue.dispose();
+		if (!green.isDisposed()) green.dispose();
+		super.dispose();
+	}
 
 	@Override
 	public String getColumnText(Object obj, int index) {
@@ -24,12 +38,11 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 				return rec[1]; // line
 			case 2:
 				return rec[2]; // col
-			case 3:
-				// source & message
-				if (rec[4].equals(ErrorSrc.PARSER.toString())) {
-					return String.format("%s: %s is %s", rec[3], rec[4], rec[5]);
+			case 3:			   // source & message
+				if (rec[3].equals(ErrorSrc.PARSER.toString())) {
+					return String.format("%s is %s", rec[4], rec[5]);
 				}
-				return rec[3] + ": " + rec[5];
+				return rec[5];
 		}
 		return "<<??>>";
 	}
@@ -47,7 +60,8 @@ public class ErrorsViewerLabelProvider extends LabelProvider implements ITableLa
 	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		String[] rec = (String[]) element;
-		if (rec[3].equals(ErrorSrc.PARSER.toString())) return blue; // parser
+		if (rec[3].equals(ErrorSrc.PARSER.toString())) return blue;
+		if (rec[3].equals(ErrorSrc.LEXER.toString())) return green;
 		return null;
 	}
 }

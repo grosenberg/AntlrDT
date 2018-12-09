@@ -2,15 +2,12 @@ package net.certiv.antlrdt.ui.view.tokens;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
@@ -37,14 +34,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.ui.DslUI;
 
 @SuppressWarnings("restriction")
 public class UIUtil {
-
-	// TODO: need to reorganize these utility routines
 
 	/** sets the platform line separator */
 	public static final String eol = System.getProperty("line.separator");
@@ -56,53 +51,12 @@ public class UIUtil {
 
 	// ///////////////////////////////////////////////////////////////////////
 
-	// /**
-	// * Formats the JavaDoc text using the platform comment formatter. The platform
-	// options
-	// * map does not carry the relevant option values for formatting (yet), so we force a
-	// * set of static options for now.
-	// *
-	// * @param content The javadoc content to format
-	// * @param indent The indent level to be applied to the comment
-	// * @return The formatted JavaDoc comment string
-	// */
-	// @SuppressWarnings( { "unchecked" })
-	// public static String format(String content, int indent) {
-	//
-	// IJavaProject proj = Type.getSelectedProject(null);
-	// Map<String, String> options;
-	// if (proj != null) {
-	// options = proj.getOptions(true);
-	// } else {
-	// options = JavaCore.getOptions();
-	// }
-	// DefaultCodeFormatter formatter = new DefaultCodeFormatter(options);
-	// int kind = AbstractCodeFormatEditor.K_JAVA_DOC;
-	// if (!content.trim().startsWith("/**")) {
-	// kind = AbstractCodeFormatEditor.K_MULTI_LINE_COMMENT;
-	// }
-	// Document jdoc = new Document(content);
-	// TextEdit edits = formatter.format(kind, content, 0, content.length(), indent, EOL);
-	//
-	// if (edits != null) {
-	// try {
-	// edits.apply(jdoc);
-	// } catch (BadLocationException e) {
-	// e.printStackTrace();
-	// }
-	// return jdoc.get();
-	// } else {
-	// Log.error(UIUtil.class, "Failed to format the JavaDoc comment.");
-	// return content;
-	// }
-	// }
-
 	/**
 	 * Why not use?:<br />
 	 * int lnNum = doc.getLineOfOffset(offset); <br />
 	 * int lnBeg = doc.getLineOffset(lnNum); <br />
 	 * String prefix = doc.get(lnBeg, offset - lnBeg);
-	 * 
+	 *
 	 * @param doc
 	 * @param offset
 	 * @return
@@ -127,7 +81,7 @@ public class UIUtil {
 
 	/**
 	 * Detect the (apparent) indentation level of the JavaDoc comment body.
-	 * 
+	 *
 	 * @param prefix the leading text on the first line of the conment
 	 * @return the determined indentation level
 	 */
@@ -236,7 +190,7 @@ public class UIUtil {
 
 	/**
 	 * Determines the fully qualified name for a given type signature.
-	 * 
+	 *
 	 * @param javaSel the java element context
 	 * @param refTypeSig an unqualified type signature
 	 * @return the fully qualified name for the given type signature
@@ -257,7 +211,7 @@ public class UIUtil {
 
 	/**
 	 * Determine the element selected in the Outline View.
-	 * 
+	 *
 	 * @param selection a structured selection
 	 * @return the IJavaElement selected
 	 */
@@ -291,48 +245,40 @@ public class UIUtil {
 	}
 
 	public static String[] linesFromFile(File file) throws CoreException {
-		ArrayList<String> lines = new ArrayList<String>();
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new FileReader(file));
+		ArrayList<String> lines = new ArrayList<>();
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 			for (String str = in.readLine(); str != null; str = in.readLine()) {
 				lines.add(str);
 			}
 		} catch (Exception e) {
-			Status status = new Status(IStatus.ERROR, AntlrDTUI.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			Status status = new Status(IStatus.ERROR, DslUI.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 			throw new CoreException(status);
-		} finally {
-			close(in);
 		}
 		return lines.toArray(new String[lines.size()]);
 	}
 
 	/**
 	 * Retrieve the contents of a flat file.
-	 * 
+	 *
 	 * @param file
 	 * @return file contents or and empty string
 	 */
 	public static String stringFromFile(IFile file) throws CoreException {
-		InputStream is = null;
-		try {
-			is = file.getContents();
+		try (InputStream is = file.getContents()) {
 			return stringFromInputStream(is, null);
-		} catch (CoreException e) {}
+		} catch (CoreException | IOException e) {}
 		return "";
 	}
 
 	/**
 	 * Retrieve the contents of a flat file.
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 * @throws CoreException
 	 */
 	public static String stringFromFile(File file) throws CoreException {
-		FileInputStream is = null;
-		try {
-			is = new FileInputStream(file);
+		try (FileInputStream is = new FileInputStream(file)) {
 			return stringFromInputStream(is, null);
 		} catch (Exception e) {}
 		return "";
@@ -340,19 +286,16 @@ public class UIUtil {
 
 	/**
 	 * Returns a String from an InputStream that is aware of its encoding. If the encoding is
-	 * {@code null} it sets the platforms default encoding (
-	 * {@code ResourcesPlugin.getEncoding()}).
-	 * 
+	 * {@code null} it sets the platforms default encoding ( {@code ResourcesPlugin.getEncoding()}).
+	 *
 	 * @param stream
 	 * @return the content
 	 */
 	public static String stringFromInputStream(InputStream stream, String encoding) throws CoreException {
 		StringBuilder sb = new StringBuilder(2048);
-		InputStreamReader in = null;
-		BufferedInputStream is = null;
-		try {
-			is = new BufferedInputStream(stream);
-			in = new InputStreamReader(is, encoding == null ? ResourcesPlugin.getEncoding() : encoding);
+		try (BufferedInputStream is = new BufferedInputStream(stream);
+				InputStreamReader in = new InputStreamReader(is,
+						encoding == null ? ResourcesPlugin.getEncoding() : encoding);) {
 			char[] readBuffer = new char[START_VALUE];
 			int n = in.read(readBuffer);
 			while (n > 0) {
@@ -360,57 +303,9 @@ public class UIUtil {
 				n = in.read(readBuffer);
 			}
 		} catch (Exception e) {
-			Status status = new Status(IStatus.ERROR, AntlrDTUI.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			Status status = new Status(IStatus.ERROR, DslUI.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 			throw new CoreException(status);
-		} finally {
-			close(in);
-			close(is);
 		}
 		return sb.toString();
 	}
-
-	/**
-	 * Closes the given input stream.
-	 * 
-	 * @param is
-	 */
-	public static void close(InputStream is) {
-		try {
-			if (is != null) is.close();
-		} catch (IOException e) {}
-	}
-
-	/**
-	 * Closes the given output stream.
-	 * 
-	 * @param os
-	 */
-	public static void close(OutputStream os) {
-		try {
-			if (os != null) os.close();
-		} catch (IOException e) {}
-	}
-
-	/**
-	 * Closes the given reader.
-	 * 
-	 * @param reader
-	 */
-	public static void close(Reader reader) {
-		try {
-			if (reader != null) reader.close();
-		} catch (IOException e) {}
-	}
-
-	/**
-	 * Closes the given writer.
-	 * 
-	 * @param writer
-	 */
-	public static void close(BufferedWriter writer) {
-		try {
-			if (writer != null) writer.close();
-		} catch (IOException e) {}
-	}
-
 }

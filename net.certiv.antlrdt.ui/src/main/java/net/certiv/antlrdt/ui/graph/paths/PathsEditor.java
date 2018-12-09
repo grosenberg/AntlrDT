@@ -82,13 +82,13 @@ import net.certiv.antlrdt.ui.graph.figures.ZoomContributionViewItemFix;
 import net.certiv.antlrdt.ui.graph.paths.model.PathsModel;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeContentProvider;
 import net.certiv.antlrdt.ui.graph.paths.providers.NodeLabelProvider;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IModuleStmt;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.core.util.Log;
 
 public class PathsEditor extends EditorPart implements IZoomableEditor, ISelectionListener {
 

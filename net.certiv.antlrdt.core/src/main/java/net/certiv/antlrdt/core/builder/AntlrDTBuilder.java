@@ -37,12 +37,12 @@ import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.DslSourceRoot;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class AntlrDTBuilder extends DslBuilder {
@@ -53,7 +53,6 @@ public class AntlrDTBuilder extends DslBuilder {
 		public int compare(ICodeUnit u1, ICodeUnit u2) {
 			return u1.getElementName().compareTo(u2.getElementName());
 		}
-
 	};
 
 	public AntlrDTBuilder() {
