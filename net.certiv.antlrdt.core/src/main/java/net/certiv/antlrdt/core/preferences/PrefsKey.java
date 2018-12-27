@@ -164,4 +164,6 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_ANIMATION_LIMIT = "{DSL_ID}" + ".ptAnimationLimit";
 
 	public static final String PT_DEPTH_LIMIT = "{DSL_ID}" + ".ptDepthLimit";
+
+	public static final String PT_SHOW_GRID = "{DSL_ID}" + ".ptShowGrid";
 }

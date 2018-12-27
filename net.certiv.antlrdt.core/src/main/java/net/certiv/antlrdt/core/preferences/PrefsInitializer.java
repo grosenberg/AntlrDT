@@ -129,6 +129,8 @@ public class PrefsInitializer extends DslPrefsInit {
 		// ------------------------------------------------------------------------------
 		// Paths View
 
+		setBool(PrefsKey.PT_SHOW_GRID, false);
+
 		setInt(PrefsKey.PT_DEPTH_LIMIT, 2);
 
 		setRGB(PrefsKey.PT_CONN_COLOR, new RGB(128, 128, 128));

@@ -5,8 +5,6 @@ import org.osgi.framework.BundleContext;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.editor.AntlrDTTextTools;
-import net.certiv.antlrdt.ui.graph.cst.CstEditor;
-import net.certiv.antlrdt.ui.graph.paths.PathsEditor;
 import net.certiv.antlrdt.ui.templates.AntlrContextType;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
@@ -21,11 +19,8 @@ public class AntlrDTUI extends DslUI {
 
 	private static AntlrDTUI plugin;
 
-	private AntlrImageManager imageMgr;
+	private ImageManager imageMgr;
 	private DslTextTools textTools;
-
-	private CstEditor cstEditor;
-	private PathsEditor pathsEditor;
 
 	public AntlrDTUI() {
 		super();
@@ -70,9 +65,9 @@ public class AntlrDTUI extends DslUI {
 	}
 
 	@Override
-	public AntlrImageManager getImageManager() {
+	public ImageManager getImageManager() {
 		if (imageMgr == null) {
-			imageMgr = new AntlrImageManager();
+			imageMgr = new ImageManager();
 		}
 		return imageMgr;
 	}
@@ -98,21 +93,5 @@ public class AntlrDTUI extends DslUI {
 				AntlrContextType.ACTIONS_CONTEXT_TYPE_ID, //
 				AntlrContextType.JAVADOC_CONTEXT_TYPE_ID //
 		};
-	}
-
-	public CstEditor getCstEditor() {
-		return cstEditor;
-	}
-
-	public void setCstEditor(CstEditor editor) {
-		this.cstEditor = editor;
-	}
-
-	public PathsEditor getPathsEditor() {
-		return pathsEditor;
-	}
-
-	public void setPathsEditor(PathsEditor editor) {
-		this.pathsEditor = editor;
 	}
 }

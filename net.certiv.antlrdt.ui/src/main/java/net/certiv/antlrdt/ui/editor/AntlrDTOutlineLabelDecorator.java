@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Image;
 
 import net.certiv.antlrdt.core.parser.ModelData;
 import net.certiv.antlrdt.ui.AntlrDTUI;
-import net.certiv.antlrdt.ui.AntlrImageManager;
+import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.DslImageDescriptor;
 import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
@@ -75,7 +75,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	@Override
 	public Image decorateImage(Image image) {
-		AntlrImageManager aImgMgr = (AntlrImageManager) imgMgr;
+		ImageManager aImgMgr = (ImageManager) imgMgr;
 		ImageDescriptor desc = null;
 
 		switch (getElementKind()) {

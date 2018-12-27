@@ -1,0 +1,34 @@
+/*
+ * classes:
+ * .node: node visual
+ * .node .shape: background rectangle of the node
+ * .node .label: label of the node
+ * .node .icon: icon of the node
+ * .edge: connection visual
+ * .edge .curve: connection line
+ * .edge .label: connection label
+ * .edge .decoration: start/end arrow of a connection
+ */
+.node .shape {
+	-fx-fill: white;
+	-fx-stroke: black;
+}
+
+.node .label {
+	-fx-fill: black;
+}
+
+.edge .curve {
+	-fx-stroke: black;
+	-fx-stroke-width: 1px;
+}
+
+.edge .label {
+	-fx-fill: black;
+}
+
+.edge .decoration {
+	-fx-stroke: black;
+	-fx-stroke-width: 1px;
+	-fx-fill: black;
+}

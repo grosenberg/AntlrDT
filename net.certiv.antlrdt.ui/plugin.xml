@@ -74,20 +74,6 @@
                contentTypeId="net.certiv.antlrdt.core.contentType">
          </contentTypeBinding>
       </editor>
-      <editor
-            class="net.certiv.antlrdt.ui.graph.cst.CstEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            icon="icons/obj16/call_hierarchy.png"
-            id="net.certiv.antlrdt.ui.graph.cst.CstEditor"
-            name="ParseTree">
-      </editor>
-      <editor
-            class="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            icon="icons/obj16/hierarchy_co.png"
-            id="net.certiv.antlrdt.ui.graph.paths.PathsEditor"
-            name="Paths">
-      </editor>
    </extension>
    
    <extension
@@ -233,19 +219,6 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="net.certiv.certivtools"
-            class="net.certiv.antlrdt.ui.view.tokens.TokensView"
-            icon="icons/obj16/grammarAst.png"
-            id="net.certiv.antlrdt.ui.view.tokens"
-            name="Tokens View"
-            restorable="false">
-      </view>
-   </extension>
-
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="net.certiv.certivtools.prefs.TopLevelPage"
@@ -294,24 +267,6 @@
             class="net.certiv.antlrdt.ui.preferences.page.BuilderPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageBuilder"
             name="Builder">
-      </page>
-      <page
-            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.GraphPage"
-            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
-            name="ParseTree Display">
-      </page>
-      <page
-            category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
-            class="net.certiv.antlrdt.ui.preferences.page.GraphColoringPage"
-            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphColoring"
-            name="Graph Coloring">
-      </page>
-      <page
-            category="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraph"
-            class="net.certiv.antlrdt.ui.preferences.page.GraphToolTipsPage"
-            id="net.certiv.antlrdt.ui.preferences.page.PrefsPageGraphToolTips"
-            name="Tool Tips">
       </page>
    </extension>
    
@@ -396,6 +351,7 @@
      </command>
   </extension>
 -->
+
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -411,16 +367,6 @@
             categoryId="net.certiv.antlrdt.ui.commands.category"
             id="net.certiv.antlrdt.ui.cleanGrammarCommand"
             name="Clean Grammar Problems">
-      </command>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.openTokensViewCommand"
-            name="Open Tokens View">
-      </command>
-      <command
-            categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.openPathsEditorCommand"
-            name="Open Paths View">
       </command>
    </extension>
 
@@ -469,26 +415,6 @@
       <handler
             class="net.certiv.dsl.ui.handlers.BuildHandler"
             commandId="net.certiv.antlrdt.ui.build">
-			<activeWhen>
-				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
-			</activeWhen>
-			<enabledWhen>
-				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
-			</enabledWhen>
-      </handler>
-      <handler
-            class="net.certiv.antlrdt.ui.handlers.OpenTokensViewHandler"
-            commandId="net.certiv.antlrdt.ui.openTokensViewCommand">
-			<activeWhen>
-				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
-			</activeWhen>
-			<enabledWhen>
-				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
-			</enabledWhen>
-      </handler>
-      <handler
-            class="net.certiv.antlrdt.ui.handlers.OpenPathsEditorHandler"
-            commandId="net.certiv.antlrdt.ui.openPathsEditorCommand">
 			<activeWhen>
 				<reference definitionId="net.certiv.antlrdt.activeContexts.definition" />
 			</activeWhen>
@@ -643,30 +569,6 @@
                   icon="icons/etool16/build_exec.png"
                   style="push"
                   tooltip="Build Antlr grammars">
-	            <visibleWhen
-    	              checkEnabled="false">
-        	       <reference
-            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
-	               </reference>
-    	        </visibleWhen>
-            </command>
-            <command
-                  commandId="net.certiv.antlrdt.ui.openTokensViewCommand"
-                  icon="icons/obj16/view.png"
-                  style="push"
-                  tooltip="Open Tokens View">
-	            <visibleWhen
-    	              checkEnabled="false">
-        	       <reference
-            	         definitionId="net.certiv.antlrdt.activeContexts.definition">
-	               </reference>
-    	        </visibleWhen>
-            </command>
-            <command
-                  commandId="net.certiv.antlrdt.ui.openPathsEditorCommand"
-                  icon="icons/obj16/hierarchy_co.png"
-                  style="push"
-                  tooltip="Open Paths View">
 	            <visibleWhen
     	              checkEnabled="false">
         	       <reference

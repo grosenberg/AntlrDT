@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="net.certiv.antlrdt.activeEditor">
+			<with variable="activePartId">
+				<equals value="net.certiv.antlrdt.ui.editor.AntlrDTEditor"/>
+			</with>
+		</definition>
+	</extension>
+   
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlrdt.graph.preferences.page.GraphPage"
+            id="net.certiv.antlrdt.graph.preferences.page.PrefsPageGraph"
+            name="ParseTree Display">
+      </page>
+      <page
+            category="net.certiv.antlrdt.graph.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlrdt.graph.preferences.page.GraphColoringPage"
+            id="net.certiv.antlrdt.graph.preferences.page.PrefsPageGraphColoring"
+            name="Graph Coloring">
+      </page>
+      <page
+            category="net.certiv.antlrdt.graph.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlrdt.graph.preferences.page.GraphToolTipsPage"
+            id="net.certiv.antlrdt.graph.preferences.page.PrefsPageGraphToolTips"
+            name="Tool Tips">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Graph Category"
+            id="net.certiv.antlrdt.graph.commands.category">
+      </category>
+      <command
+            categoryId="net.certiv.antlrdt.graph.commands.category"
+            id="net.certiv.antlrdt.graph.tokensCmd"
+            name="Open Tokens View">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="net.certiv.antlrdt.graph.handlers.OpenTokensViewHandler"
+            commandId="net.certiv.antlrdt.graph.tokensCmd">
+      </handler>
+
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="net.certiv.antlrdt.graph.toolbar">
+            <command
+                  commandId="net.certiv.antlrdt.graph.tokensCmd"
+                  icon="icons/obj16/view.png"
+                  label="Tokens View"
+                  style="push"
+                  tooltip="Open Tokens View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+           
+		  </toolbar>
+      </menuContribution>
+   </extension>
+    
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlrdt.graph.view.tokens.TokensView"
+            icon="icons/obj16/grammarAst.png"
+            id="net.certiv.antlrdt.graph.view.tokens"
+            inject="false"
+            name="Tokens View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlrdt.graph.view.tree.TreeView"
+            icon="icons/obj16/call_hierarchy.png"
+            id="net.certiv.antlrdt.graph.view.tree.TreeView"
+            name="Parse Tree View"
+            restorable="false">
+      </view>
+  
+   </extension>
+   
+</plugin>
