@@ -11,7 +11,11 @@ package net.certiv.antlrdt.graph.layouts;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
@@ -27,8 +31,8 @@ import com.google.common.collect.Maps;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 
 /**
@@ -53,55 +57,54 @@ import net.certiv.dsl.core.preferences.DslPrefsManager;
  */
 public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 
-	public static class LW {
+	public static class ORIENT {
 		/** A left-to-right layout orientation */
-		public static final int ORIENT_LEFT_RIGHT = 0;
+		public static final int LEFT_RIGHT = 0;
 		/** A right-to-left layout orientation */
-		public static final int ORIENT_RIGHT_LEFT = 1;
+		public static final int RIGHT_LEFT = 1;
 		/** A top-to-bottom layout orientation */
-		public static final int ORIENT_TOP_BOTTOM = 2;
+		public static final int TOP_BOTTOM = 2;
 		/** A bottom-to-top layout orientation */
-		public static final int ORIENT_BOTTOM_TOP = 3;
+		public static final int BOTTOM_TOP = 3;
 		/** The total number of orientation values */
-		public static final int ORIENTATION_COUNT = 4;
+		public static final int COUNT = 4;
 	}
+
+	private static final Lock lock = new ReentrantLock(true);
 
 	private DslPrefsManager prefsMgr;
 	private int m_orientation; // tree orientation
-
-	@SuppressWarnings("unused")
-	private int m_styles;
 
 	private double m_bspace; // spacing between sibling nodes
 	private double m_tspace; // spacing between subtrees
 	private double m_dspace; // spacing between depth levels
 	private double m_offset; // pixel offset for root node position
 
+	// key = node model; value = wrapping node
+	private Map<Node, LwNode> lookup;
+
 	private Point m_anchor;  // holds anchor co-ordinates
 	private double[] m_depths;
 	private int m_maxDepth;
 
 	/** Create a new NodeLinkTreeLayout. A left-to-right orientation is assumed. */
-	public LinWalkersLayoutAlgorithm(int styles) {
-		this(styles, LW.ORIENT_LEFT_RIGHT);
+	public LinWalkersLayoutAlgorithm() {
+		this(ORIENT.LEFT_RIGHT);
 	}
 
 	/** Create a new NodeLinkTreeLayout with the given orientation. */
-	public LinWalkersLayoutAlgorithm(int styles, int orientation) {
+	public LinWalkersLayoutAlgorithm(int orientation) {
 		super();
-
-		m_styles = styles;
 		m_orientation = orientation;
 		prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
-
-		Log.setLevel(this, Log.LogLevel.Debug);
+		Log.setLevel(this, Log.LogLevel.Info);
 	}
 
 	/**
 	 * Returns the tree layout orientation.
 	 *
-	 * @return the orientation value. One of {@link ORIENT_LEFT_RIGHT}, {@link ORIENT_RIGHT_LEFT},
-	 *         {@link ORIENT_TOP_BOTTOM}, or {@link ORIENT_BOTTOM_TOP}.
+	 * @return the orientation value. One of {@link LEFT_RIGHT}, {@link RIGHT_LEFT}, {@link TOP_BOTTOM},
+	 *         or {@link BOTTOM_TOP}.
 	 */
 	public int getOrientation() {
 		return m_orientation;
@@ -110,11 +113,11 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * Sets the tree layout orientation.
 	 *
-	 * @param orientation the orientation value. One of {@link ORIENT_LEFT_RIGHT},
-	 *            {@link ORIENT_RIGHT_LEFT}, {@link ORIENT_TOP_BOTTOM}, or {@link ORIENT_BOTTOM_TOP}.
+	 * @param orientation the orientation value. One of {@link LEFT_RIGHT}, {@link RIGHT_LEFT},
+	 *            {@link TOP_BOTTOM}, or {@link BOTTOM_TOP}.
 	 */
 	public void setOrientation(int orientation) {
-		if (orientation < 0 || orientation >= LW.ORIENTATION_COUNT) {
+		if (orientation < 0 || orientation >= ORIENT.COUNT) {
 			throw new IllegalArgumentException("Unsupported orientation value: " + orientation);
 		}
 		m_orientation = orientation;
@@ -124,52 +127,66 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	public void applyLayout(LayoutContext context, boolean clean) {
 		if (!clean) return;
 
-		Log.debug(this, "Starting layout ...");
+		lock.lock();
+		try {
+			Log.debug(this, "Starting...");
 
-		m_bspace = prefsMgr.getInt(PrefsKey.PT_SIBLING_SPACING); // between sibling nodes
-		m_tspace = prefsMgr.getInt(PrefsKey.PT_SUBTREE_SPACING); // between subtrees
-		m_dspace = prefsMgr.getInt(PrefsKey.PT_DEPTH_SPACING); // between depth levels
-		m_offset = prefsMgr.getInt(PrefsKey.PT_ROOT_OFFSET); // offset for root node
+			m_bspace = prefsMgr.getInt(PrefsKey.PT_SIBLING_SPACING);	// between sibling nodes
+			m_tspace = prefsMgr.getInt(PrefsKey.PT_SUBTREE_SPACING);	// between subtrees
+			m_dspace = prefsMgr.getInt(PrefsKey.PT_DEPTH_SPACING);		// between depth levels
+			m_offset = prefsMgr.getInt(PrefsKey.PT_ROOT_OFFSET);		// offset for root node
 
-		// (1) build the layout graph
-		LwNode graphRoot = make(context.getNodes());;
-		if (graphRoot == null) {
-			Log.error(this, "No root; has to be a directed graph at least at the root level.");
-			return;
+			// (1) build the layout graph
+			LwNode graphRoot = make(context.getNodes());
+			if (graphRoot == null) {
+				Log.error(this, "No root; has to be a directed graph at least at the root level.");
+				return;
+			}
+
+			// (2) set root node location, etc.
+			Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
+			m_anchor = getLayoutAnchor(bounds, graphRoot.isVirtual());
+			m_maxDepth = 0;
+			m_depths = new double[10];
+
+			// (3) do first Walker pass - compute breadth information, collect depth info
+			firstWalk(graphRoot, 0, 1);
+
+			// (4) sum up the depth info
+			determineDepths();
+
+			// (5) do second Walker pass - assign layout positions
+			secondWalk(graphRoot, null, -graphRoot.prelim, 0);
+
+			// (6) update graph layout positions
+			for (Entry<Node, LwNode> entry : lookup.entrySet()) {
+				Node node = entry.getKey();
+				Point loc = entry.getValue().loc;
+				Log.debug(this, String.format("Loc '%s' @%s:%s", ((NodeModel) node).getDisplayText(), loc.x, loc.y));
+				LayoutProperties.setLocation(node, loc);
+			}
+
+		} catch (Exception e) {
+			Log.error(this, "Layout interrupted: " + e.getMessage());
+		} finally {
+			lock.unlock();
 		}
-
-		// (2) set root node location, etc.
-		Rectangle bounds = LayoutProperties.getBounds(context.getGraph());
-		m_anchor = getLayoutAnchor(bounds, graphRoot.isVirtual());
-		m_maxDepth = 0;
-		m_depths = new double[10];
-
-		// (3) do first Walker pass - compute breadth information, collect depth info
-		firstWalk(graphRoot, 0, 1);
-
-		// (4) sum up the depth info
-		determineDepths();
-
-		// (5) do second Walker pass - assign layout positions
-		secondWalk(graphRoot, null, -graphRoot.prelim, 0);
-
-		Log.debug(this, "Layout complete.");
 	}
 
 	private Point getLayoutAnchor(Rectangle bounds, boolean virtual) {
 		if (virtual) m_offset -= m_dspace;
 		Point anchor = new Point();
 		switch (m_orientation) {
-			case LW.ORIENT_LEFT_RIGHT:
+			case ORIENT.LEFT_RIGHT:
 				anchor.setLocation((int) m_offset, (int) (bounds.getHeight() / 2.0));
 				break;
-			case LW.ORIENT_RIGHT_LEFT:
+			case ORIENT.RIGHT_LEFT:
 				anchor.setLocation((int) (bounds.getWidth() - m_offset), (int) (bounds.getHeight() / 2.0));
 				break;
-			case LW.ORIENT_TOP_BOTTOM:
+			case ORIENT.TOP_BOTTOM:
 				anchor.setLocation((int) (bounds.getWidth() / 2.0), (int) m_offset);
 				break;
-			case LW.ORIENT_BOTTOM_TOP:
+			case ORIENT.BOTTOM_TOP:
 				anchor.setLocation((int) (bounds.getWidth() / 2.0), (int) (bounds.getHeight() - m_offset));
 				break;
 		}
@@ -202,9 +219,9 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 			executeShifts(node);
 			double midpoint = 0.5 * (leftMost.prelim + rightMost.prelim);
 
-			LwNode left = node.previousSibling();
-			if (left != null) {
-				node.prelim = left.prelim + spacing(left, node, true);
+			LwNode prev = node.previousSibling();
+			if (prev != null) {
+				node.prelim = prev.prelim + spacing(prev, node, true);
 				node.mod = node.prelim - midpoint;
 			} else {
 				node.prelim = midpoint;
@@ -214,7 +231,7 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private void updateDepths(int depth, LwNode lwNode) {
 		Dimension size = LayoutProperties.getSize(lwNode.node);
-		boolean vert = (m_orientation == LW.ORIENT_TOP_BOTTOM || m_orientation == LW.ORIENT_BOTTOM_TOP);
+		boolean vert = (m_orientation == ORIENT.TOP_BOTTOM || m_orientation == ORIENT.BOTTOM_TOP);
 		double d = vert ? size.height : size.width;
 		if (m_depths.length <= depth) m_depths = resize(m_depths, 3 * depth / 2);
 		m_depths[depth] = Math.max(m_depths[depth], d);
@@ -226,7 +243,7 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		Dimension refSize = LayoutProperties.getSize(lwNode.node);
 
 		double aveSize = 0;
-		boolean vert = (m_orientation == LW.ORIENT_TOP_BOTTOM || m_orientation == LW.ORIENT_BOTTOM_TOP);
+		boolean vert = (m_orientation == ORIENT.TOP_BOTTOM || m_orientation == ORIENT.BOTTOM_TOP);
 		if (vert) {
 			aveSize = 0.5 * sibSize.getWidth() + refSize.getWidth();
 		} else {
@@ -236,8 +253,9 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	private void determineDepths() {
-		for (int idx = 1; idx < m_maxDepth; ++idx)
+		for (int idx = 1; idx < m_maxDepth; ++idx) {
 			m_depths[idx] += m_depths[idx - 1] + m_dspace;
+		}
 	}
 
 	private LwNode apportion(LwNode current, LwNode defaultAncestor) {
@@ -318,6 +336,8 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	private void executeShifts(LwNode lwNode) {
+		Log.debug(this, "Shift [entity=" + lwNode.toString() + "]");
+
 		double shift = 0;
 		double change = 0;
 		for (LwNode current = lwNode.lastChild(); current != null; current = current.previousSibling()) {
@@ -345,12 +365,14 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private void setBreadth(LwNode n, double b) {
 		switch (m_orientation) {
-			case LW.ORIENT_LEFT_RIGHT:
-			case LW.ORIENT_RIGHT_LEFT:
+			case ORIENT.LEFT_RIGHT:
+			case ORIENT.RIGHT_LEFT:
+				Log.debug(this, "BreadthY: " + (m_anchor.y + b));
 				setY(n, m_anchor.y + b);
 				break;
-			case LW.ORIENT_TOP_BOTTOM:
-			case LW.ORIENT_BOTTOM_TOP:
+			case ORIENT.TOP_BOTTOM:
+			case ORIENT.BOTTOM_TOP:
+				Log.debug(this, "BreadthX: " + (m_anchor.x + b));
 				setX(n, m_anchor.x + b);
 				break;
 			default:
@@ -360,16 +382,20 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 
 	private void setDepth(LwNode n, double d) {
 		switch (m_orientation) {
-			case LW.ORIENT_LEFT_RIGHT:
+			case ORIENT.LEFT_RIGHT:
+				Log.debug(this, "DepthX: " + (m_anchor.x + d));
 				setX(n, m_anchor.x + d);
 				break;
-			case LW.ORIENT_RIGHT_LEFT:
+			case ORIENT.RIGHT_LEFT:
+				Log.debug(this, "DepthX: " + (m_anchor.x - d));
 				setX(n, m_anchor.x - d);
 				break;
-			case LW.ORIENT_TOP_BOTTOM:
+			case ORIENT.TOP_BOTTOM:
+				Log.debug(this, "DepthY: " + (m_anchor.y + d));
 				setY(n, m_anchor.y + d);
 				break;
-			case LW.ORIENT_BOTTOM_TOP:
+			case ORIENT.BOTTOM_TOP:
+				Log.debug(this, "DepthY: " + (m_anchor.y - d));
 				setY(n, m_anchor.y - d);
 				break;
 			default:
@@ -378,15 +404,11 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	private void setX(LwNode n, double x) {
-		Point loc = LayoutProperties.getLocation(n.node);
-		loc.x = x;
-		LayoutProperties.setLocation(n.node, loc);
+		n.loc.x = x;
 	}
 
 	private void setY(LwNode n, double y) {
-		Point loc = LayoutProperties.getLocation(n.node);
-		loc.y = y;
-		LayoutProperties.setLocation(n.node, loc);
+		n.loc.y = y;
 	}
 
 	/** Resize the given array as needed to meet a target size. */
@@ -398,14 +420,16 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	}
 
 	/** Wrapper class holding Node layout parameters. */
-	static class LwNode {
+	class LwNode {
 
-		Node node = null;		// the entity wrapped by this
+		Node node = null;		// the wrapped entity
+		Point loc;				// graph layout location
 
 		LwNode parent = null;	// immediate parent node
 		LwNode ancestor = null;	// a common connected predecessor/parent
 		LwNode thread = null;	// the successor leaf in the contour
-		List<LwNode> children = Lists.newArrayList();
+		int childNum;			// index in parent's list of children
+		final List<LwNode> children = Lists.newArrayList();
 
 		double prelim;	// preliminary virtual x-axis position
 		double mod; 	// accumulated modifier of the prelim
@@ -422,7 +446,6 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		LwNode(Node node) {
 			this.node = node;
 			number = -1;
-			Log.setLevel(this, LogLevel.Info);
 		}
 
 		void clear() {
@@ -437,6 +460,10 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 
 		boolean isVirtual() {
 			return node == null;
+		}
+
+		String getId() {
+			return ((NodeModel) node).getDisplayText();
 		}
 
 		boolean hasChildren() {
@@ -493,42 +520,38 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		// return null if no parent or no next sibling
 		LwNode nextSibling() {
 			if (!hasParent()) return null;
+			if (parent.childCount() <= childNum + 1) return null;
 
-			int nextChild = parent.children.indexOf(this) + 1;
-			int numChildren = parent.childCount();
-			if (nextChild < 1 || nextChild >= numChildren) return null;
-
-			Log.debug(this, "Next [entity=" + nextChild + ":" + parent.childAt(nextChild) + "]");
-			return parent.childAt(nextChild);
+			return parent.children.get(childNum + 1);
 		}
 
-		// return null if no parent or no previous sibling
+		// return null if no parent or no prior sibling
 		LwNode previousSibling() {
-			if (hasParent()) return null;
+			if (!hasParent()) return null;
+			if (childNum < 1) return null;
 
-			int prevChild = parent.children.indexOf(this) - 1;
-			if (prevChild < 0) return null;
-
-			Log.debug(this, "Previous [entity=" + prevChild + ":" + parent.childAt(prevChild) + "]");
-			return parent.childAt(prevChild);
+			return parent.children.get(childNum - 1);
 		}
 
 		@Override
 		public String toString() {
-			String source = parent != null ? parent.toString() : "<empty>";
-			return source + " -> " + children.toString();
+			String source = parent != null ? parent.getId() : "<empty>";
+			return source + " -> " + children.stream().map(elem -> elem.getId()).collect(Collectors.toList());
 		}
 	}
 
 	// makes a layout graph from the given nodes
-	private static LwNode make(Node[] nodes) {
+	private LwNode make(Node[] nodes) {
 		if (nodes.length == 0) return null;
 
 		// 1) wrap nodes
 
-		Map<Node, LwNode> lookup = Maps.newLinkedHashMap();
+		lookup = Maps.newLinkedHashMap();
+
 		for (Node node : nodes) {
-			lookup.put(node, new LwNode(node));
+			LwNode wrapped = new LwNode(node);
+			wrapped.loc = LayoutProperties.getLocation(node).getCopy();
+			lookup.put(node, wrapped);
 		}
 
 		// 2) construct well-ordered acyclic directed graph
@@ -587,11 +610,19 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 			}
 		}
 
+		// 5) assign sibling index values
+
+		for (LwNode parent : lookup.values()) {
+			for (int idx = 0; idx < parent.childCount(); idx++) {
+				parent.children.get(idx).childNum = idx;
+			}
+		}
+
 		return graphRoot;
 	}
 
 	// walk upwards to validate edge targets; returning edges with unreachable targets
-	private static List<Edge> analyzeCycles(Map<Node, LwNode> lookup, LwNode lwRoot, List<Edge> omitted) {
+	private List<Edge> analyzeCycles(Map<Node, LwNode> lookup, LwNode lwRoot, List<Edge> omitted) {
 		if (omitted.isEmpty()) return omitted;
 
 		List<Edge> edges = Lists.newArrayList();
@@ -602,7 +633,7 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		return edges;
 	}
 
-	private static boolean connected(LwNode lwRoot, LwNode lwChild) {
+	private boolean connected(LwNode lwRoot, LwNode lwChild) {
 		Set<LwNode> lwSeen = new HashSet<>();
 		LwNode lwNode = lwChild;
 		while (lwNode.parent != null) {

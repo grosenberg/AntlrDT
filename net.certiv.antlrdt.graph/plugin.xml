@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
 
+
    <extension point="org.eclipse.core.expressions.definitions">
 		<definition id="net.certiv.antlrdt.activeEditor">
 			<with variable="activePartId">
@@ -41,8 +42,13 @@
       </category>
       <command
             categoryId="net.certiv.antlrdt.graph.commands.category"
-            id="net.certiv.antlrdt.graph.tokensCmd"
+            id="net.certiv.antlrdt.graph.openTokensViewCmd"
             name="Open Tokens View">
+      </command>
+      <command
+            categoryId="net.certiv.antlrdt.graph.commands.category"
+            id="net.certiv.antlrdt.graph.openPathsViewCmd"
+            name="Open Paths View">
       </command>
    </extension>
 
@@ -50,9 +56,12 @@
          point="org.eclipse.ui.handlers">
       <handler
             class="net.certiv.antlrdt.graph.handlers.OpenTokensViewHandler"
-            commandId="net.certiv.antlrdt.graph.tokensCmd">
+            commandId="net.certiv.antlrdt.graph.openTokensViewCmd">
       </handler>
-
+      <handler
+            class="net.certiv.antlrdt.graph.handlers.OpenPathsViewHandler"
+            commandId="net.certiv.antlrdt.graph.openPathsViewCmd">
+      </handler>
    </extension>
 
    <extension
@@ -62,11 +71,24 @@
          <toolbar
                id="net.certiv.antlrdt.graph.toolbar">
             <command
-                  commandId="net.certiv.antlrdt.graph.tokensCmd"
-                  icon="icons/obj16/view.png"
+                  commandId="net.certiv.antlrdt.graph.openTokensViewCmd"
+                  icon="src/main/resources/icons/obj16/view.png"
                   label="Tokens View"
                   style="push"
                   tooltip="Open Tokens View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlrdt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlrdt.graph.openPathsViewCmd"
+                  icon="src/main/resources/icons/obj16/hierarchy_co.png"
+                  label="Paths View"
+                  style="push"
+                  tooltip="Open Paths View">
 	            <visibleWhen
     	              checkEnabled="false">
         	       <reference
@@ -85,8 +107,8 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.graph.view.tokens.TokensView"
-            icon="icons/obj16/grammarAst.png"
-            id="net.certiv.antlrdt.graph.view.tokens"
+            icon="src/main/resources/icons/obj16/view.png"
+            id="net.certiv.antlrdt.graph.view.tokens.TokenView"
             inject="false"
             name="Tokens View"
             restorable="false">
@@ -95,12 +117,37 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.graph.view.tree.TreeView"
-            icon="icons/obj16/call_hierarchy.png"
+            icon="src/main/resources/icons/obj16/tree.png"
             id="net.certiv.antlrdt.graph.view.tree.TreeView"
+            inject="false"
             name="Parse Tree View"
             restorable="false">
       </view>
-  
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlrdt.graph.view.tree.PathsView"
+            icon="src/main/resources/icons/obj16/hierarchy_co.png"
+            id="net.certiv.antlrdt.graph.view.tree.PathsView"
+            inject="false"
+            name="Paths View"
+            restorable="false">
+      </view>
    </extension>
+   
+<!-- 
+   <extension
+         point="org.eclipse.elk.core.layoutProviders">
+      <provider
+            class="net.certiv.antlrdt.graph.elk.TreeLayoutMetaDataProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.elk.core.service.layoutConnectors">
+      <setup
+            class="net.certiv.antlrdt.graph.elk.ElkLayoutSetup">
+      </setup>
+   </extension>
+-->
    
 </plugin>

@@ -32,14 +32,14 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 
 		@Override
 		public void onChanged(MultisetChangeListener.Change<? extends IVisualPart<? extends Node>> change) {
-			// boolean isRelevantChange = false;
-			// while (change.next()) {
-			// if (change.getElement() instanceof IContentPart) {
-			// isRelevantChange = true;
-			// break;
-			// }
-			// }
-			// if (isRelevantChange) layoutLabels();
+			boolean isRelevantChange = false;
+			while (change.next()) {
+				if (change.getElement() instanceof IContentPart) {
+					isRelevantChange = true;
+					break;
+				}
+			}
+			if (isRelevantChange) layoutLabels();
 		}
 	};
 
@@ -65,19 +65,17 @@ public abstract class AbstractLayoutBehavior extends AbstractBehavior {
 	 */
 	protected abstract LayoutContext getLayoutContext();
 
-	// /**
-	// * Called after a layout pass to adjust label positions.
-	// */
-	// protected void layoutLabels() {
-	// for (IVisualPart<? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
-	// if (anchored.getViewer() == null) continue;
-	//
-	// if (anchored instanceof AbstractLabelPart) {
-	// AbstractLabelPart labelPart = (AbstractLabelPart) anchored;
-	// labelPart.recomputeLabelPosition();
-	// }
-	// }
-	// }
+	/** Called after a layout pass to adjust label positions. */
+	protected void layoutLabels() {
+		for (IVisualPart<? extends Node> anchored : getHost().getAnchoredsUnmodifiable().elementSet()) {
+			if (anchored.getViewer() == null) continue;
+
+			// if (anchored instanceof AbstractLabelPart) {
+			// AbstractLabelPart labelPart = (AbstractLabelPart) anchored;
+			// labelPart.recomputeLabelPosition();
+			// }
+		}
+	}
 
 	/**
 	 * Called after a layout pass. Should be used to transfer layout information from the layout model.

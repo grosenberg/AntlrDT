@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 
 import org.eclipse.gef.mvc.fx.ui.actions.AbstractViewerContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,9 +15,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import net.certiv.antlrdt.graph.GraphUI;
 import net.certiv.antlrdt.graph.models.DiagramModel;
-import net.certiv.antlrdt.graph.view.tree.TreeView;
+import net.certiv.antlrdt.graph.view.GraphFXView;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
@@ -30,11 +28,13 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 	private ToolItem item;
 	private TableCombo combo;
 	protected DiagramModel diagModel;
+	private GraphFXView view;
 
-	private ListChangeListener<Object> layoutListener;
+	private ListChangeListener<Object> changeListener;
 
-	public LayoutContributionItem() {
+	public LayoutContributionItem(GraphFXView view) {
 		setId(ITEM_ID);
+		this.view = view;
 	}
 
 	@Override
@@ -46,9 +46,9 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 		table.setLayoutData(new GridData(240, SWT.DEFAULT));
 		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
 		for (Layout layout : Layout.values()) {
-			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setImage(0, imgMgr.get(layout.getImageDescriptor()));
-			ti.setText(layout.getDisplayName());
+			TableItem row = new TableItem(table, SWT.NONE);
+			row.setImage(0, imgMgr.get(layout.getImageDescriptor()));
+			row.setText(layout.getDisplayName());
 		}
 
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -56,12 +56,12 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (diagModel != null) {
-					Layout layout = Layout.getEnum(e.text);
+					int idx = combo.getSelectionIndex();
+					TableItem row = combo.getTable().getItem(idx);
+					Layout layout = Layout.getEnum(row.getText());
 					if (layout == null) layout = Layout.SPRING;
-
-					IDialogSettings ds = GraphUI.getDefault().getDialogSettings();
-					ds.put(TreeView.GRAPH_LAYOUT, layout.getDisplayName());
 					diagModel.setLayout(layout);
+					view.refresh();
 				}
 			}
 		});
@@ -72,12 +72,12 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 
 	@Override
 	protected void register() {
-		if (layoutListener != null) {
+		if (changeListener != null) {
 			Log.warn(this, "Layout combo listener is already registered.");
 			return;
 		}
 
-		layoutListener = new ListChangeListener<Object>() {
+		changeListener = new ListChangeListener<Object>() {
 
 			@Override
 			public void onChanged(Change<? extends Object> c) {
@@ -88,14 +88,14 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 			}
 		};
 
-		getViewer().getContents().addListener(layoutListener);
+		getViewer().getContents().addListener(changeListener);
 	}
 
 	@Override
 	protected void unregister() {
-		if (layoutListener != null) {
-			getViewer().getContents().removeListener(layoutListener);
-			layoutListener = null;
+		if (changeListener != null) {
+			getViewer().getContents().removeListener(changeListener);
+			changeListener = null;
 		}
 	}
 

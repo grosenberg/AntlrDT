@@ -1,68 +1,41 @@
 package net.certiv.antlrdt.graph.models;
 
-public class EdgeModel extends BaseModel {
+import org.eclipse.gef.fx.nodes.AbstractRouter;
+import org.eclipse.gef.graph.Edge;
 
-	private NodeModel source;
-	private NodeModel target;
-	private boolean connected;
+public class EdgeModel extends Edge {
 
-	public EdgeModel(NodeModel source, NodeModel target) {
-		connect(source, target);
+	private DiagramModel model;
+	private boolean hidden;
+
+	public EdgeModel(DiagramModel model, NodeModel source, NodeModel target) {
+		super(source, target);
+		this.model = model;
 	}
 
+	@Override
 	public NodeModel getSource() {
-		return source;
+		return (NodeModel) super.getSource();
 	}
 
-	public void setSource(NodeModel source) {
-		if (this.source != source) {
-			NodeModel prior = this.source;
-			this.source = source;
-			fire(PROP_SOURCE, prior, source);
-		}
-	}
-
+	@Override
 	public NodeModel getTarget() {
-		return target;
+		return (NodeModel) super.getTarget();
 	}
 
-	public void setTarget(NodeModel target) {
-		if (this.target != target) {
-			NodeModel prior = this.target;
-			this.target = target;
-			fire(PROP_TARGET, prior, target);
-		}
+	public DiagramModel getDiagramModel() {
+		return model;
 	}
 
-	public void connect(NodeModel source, NodeModel target) {
-		if (source == null || target == null || source == target) {
-			throw new IllegalArgumentException();
-		}
-		disconnect();
-		this.source = source;
-		this.target = target;
-		reconnect();
+	public AbstractRouter getRouter() {
+		return model.getRouter().getRouter();
 	}
 
-	public void disconnect() {
-		if (connected) {
-			source.removeOutgoingConnection(this);
-			target.removeIncomingConnection(this);
-			connected = false;
-		}
+	public boolean isHidden() {
+		return hidden;
 	}
 
-	public void reconnect() {
-		if (!connected) {
-			source.addOutgoingConnection(this);
-			target.addIncomingConnection(this);
-			connected = true;
-		}
-	}
-
-	public void dispose() {
-		source = null;
-		target = null;
-		connected = false;
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 }

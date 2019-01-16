@@ -9,26 +9,58 @@
  * .edge .label: connection label
  * .edge .decoration: start/end arrow of a connection
  */
+
 .node .shape {
-	-fx-fill: white;
-	-fx-stroke: black;
+	-fx-fill: rgb(135.0, 150.0, 220.0);
+	-fx-stroke: rgb(99.0, 123.0, 71.0);
 }
 
 .node .label {
-	-fx-fill: black;
+	-fx-fill: white;
+	-fx-font-size: 14.0;
+	-fx-font-family: "Times New Roman";
 }
 
 .edge .curve {
-	-fx-stroke: black;
-	-fx-stroke-width: 1px;
+	-fx-stroke: rgb(99.0, 123.0, 71.0);
+	-fx-stroke-width: 1.5px;
 }
 
 .edge .label {
 	-fx-fill: black;
+	-fx-font-size: 14.0;
+	-fx-font-family: "Times New Roman";
 }
 
 .edge .decoration {
-	-fx-stroke: black;
-	-fx-stroke-width: 1px;
-	-fx-fill: black;
+	-fx-stroke: rgb(99.0, 123.0, 71.0);
+	-fx-stroke-width: 1.5px;
+	-fx-fill: white;
 }
+
+.infotip {
+	-fx-font-size: 12.0;
+	-fx-font-family: "Times New Roman";
+    -fx-text-fill: black;
+}
+
+.infotip-title {
+	-fx-font-size: 14.0;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.infotip-key {
+    -fx-text-fill: black;
+}
+
+.infotip-value {
+    -fx-text-fill: black;
+}
+
+/*
+VBox {
+    -fx-border-width: 1.0;
+    -fx-border-color: red;
+}
+ */

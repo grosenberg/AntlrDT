@@ -1,96 +1,121 @@
-/*******************************************************************************
- * Copyright (c) 2014, 2017 itemis AG and others.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Matthias Wienand (itemis AG) - initial API & implementation
- *******************************************************************************/
 package net.certiv.antlrdt.graph.behaviors;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
 import org.eclipse.gef.fx.nodes.InfiniteCanvas;
 import org.eclipse.gef.geometry.planar.Rectangle;
+import org.eclipse.gef.graph.Edge;
 import org.eclipse.gef.graph.Graph;
-import org.eclipse.gef.layout.ILayoutAlgorithm;
+import org.eclipse.gef.layout.ILayoutFilter;
 import org.eclipse.gef.layout.LayoutContext;
 import org.eclipse.gef.layout.LayoutProperties;
+import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
-import net.certiv.antlrdt.graph.parts.TreeModelPart;
+import net.certiv.antlrdt.graph.actions.Layout;
+import net.certiv.antlrdt.graph.models.DiagramModel;
+import net.certiv.antlrdt.graph.models.EdgeModel;
+import net.certiv.antlrdt.graph.models.IModel;
+import net.certiv.antlrdt.graph.models.NodeModel;
+import net.certiv.antlrdt.graph.parts.TreeEdgePart;
+import net.certiv.antlrdt.graph.parts.TreeGraphPart;
+import net.certiv.antlrdt.graph.util.Mark;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Time;
 
-/**
- * The {@link GraphLayoutBehavior} is responsible for initiating layout passes. Only applicable to
- * {@link GraphPart}.
- */
+/** The {@link GraphLayoutBehavior} is responsible for initiating layout passes. */
 public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 
-	private Runnable postLayout = new Runnable() {
+	private static final int SPRING_ITRS = 50;
+	private static final int SPRING_SECS = 10;
 
-		@Override
-		public void run() {
-			postLayout();
+	private ILayoutFilter layoutFilter;
+	private Runnable postLayout = () -> postLayout();
+	private Runnable preLayout = () -> preLayout();
+
+	private ChangeListener<? super Bounds> viewportBoundsChangeListener = (observable, oldBounds, newBounds) -> {
+		updateBounds();
+	};
+
+	private ListChangeListener<IVisualPart<? extends Node>> childrenObserver = c -> {
+		if (c.next()) {
+			List<? extends IVisualPart<? extends Node>> change = c.getAddedSubList();
+			if (change.size() > 0) {
+				if (change.get(0) instanceof TreeEdgePart) return;
+				getHost().getContent().setLayoutBehavior(this);
+			}
 		}
 	};
 
-	private Runnable preLayout = new Runnable() {
-
-		@Override
-		public void run() {
-			preLayout();
-		}
-	};
-
-	private ChangeListener<? super Bounds> viewportBoundsChangeListener = new ChangeListener<Bounds>() {
-
-		@Override
-		public void changed(ObservableValue<? extends Bounds> observable, Bounds oldBounds, Bounds newBounds) {
-			updateBounds();
-		}
-	};
-
-	private ListChangeListener<IVisualPart<? extends Node>> childrenObserver = new ListChangeListener<IVisualPart<? extends Node>>() {
-
-		@Override
-		public void onChanged(ListChangeListener.Change<? extends IVisualPart<? extends Node>> c) {
-			applyLayout();
-		}
-	};
+	protected GraphLayoutBehavior() {
+		super();
+	}
 
 	@Override
-	public TreeModelPart getHost() {
-		return (TreeModelPart) super.getHost();
+	public TreeGraphPart getHost() {
+		return (TreeGraphPart) super.getHost();
 	}
 
 	/** Performs a layout pass using the layout algorithm that is configured in the model. */
-	public void applyLayout() {
-		LayoutContext context = getLayoutContext();
-		IViewer viewer = getHost().getRoot().getViewer();
-		TreeModelPart part = viewer.getAdapter(TreeModelPart.class);
-		ILayoutAlgorithm algorithm = part.getContent().getLayout().getAlgorithm();
-		if (algorithm != null) {
-			if (context.getLayoutAlgorithm() != algorithm) {
-				context.setLayoutAlgorithm(algorithm);
-			}
+	public synchronized void applyLayout() {
+		if (CoreUtil.getActiveWorkbench().isClosing()) return;
 
-		} else {
-			if (context.getLayoutAlgorithm() != null) {
-				context.setLayoutAlgorithm(null);
-			}
+		DiagramModel model = getHost().getContent();
+		Graph graph = model.getGraph();
+
+		// skip if graph layout is disabled
+		Boolean en = (Boolean) graph.getAttributes().get(IModel.LAYOUT_ENABLED);
+		if (en == null || !en) return;
+
+		LayoutProperties.setBounds(graph, computeLayoutBounds());
+
+		Layout layout = model.getLayout();
+		LayoutContext context = getLayoutContext();
+		context.setGraph(graph);
+		context.setLayoutAlgorithm(layout.getAlgorithm());
+
+		Time.start(Mark.MAIN);
+		context.applyLayout(true);
+		Log.info(this, Time.elapsed(Mark.MAIN, "Graph layout required %s ms"));
+
+		if (layout == Layout.SPRING) {
+			Platform.runLater(new Runnable() {
+
+				@Override
+				public void run() {
+					new Animator((SpringLayoutAlgorithm) context.getLayoutAlgorithm()).start();
+				}
+			});
+		}
+	}
+
+	protected class Animator extends AnimationTimer {
+		private final Instant done = Instant.now().plusSeconds(SPRING_SECS);
+		private final SpringLayoutAlgorithm algo;
+
+		public Animator(SpringLayoutAlgorithm algo) {
+			super();
+			this.algo = algo;
 		}
 
-		context.applyLayout(true);
-	}
+		@Override
+		public void handle(long now) {
+			algo.performNIteration(SPRING_ITRS);
+			if (Instant.now().compareTo(done) > 0) stop();
+		}
+	};
 
 	/** Updates the bounds property from the visual */
 	protected void updateBounds() {
@@ -100,26 +125,29 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		Graph graph = context.getGraph();
 		if (graph == null) return;
 
-		Rectangle newBounds = computeLayoutBounds();
-		Rectangle oldBounds = LayoutProperties.getBounds(graph);
-		if (oldBounds != newBounds && (oldBounds == null || !oldBounds.equals(newBounds))) {
-			LayoutProperties.setBounds(graph, newBounds);
+		Rectangle pres = computeLayoutBounds();
+		Rectangle prev = LayoutProperties.getBounds(graph);
+		if (prev != pres && (prev == null || !prev.equals(pres))) {
+			LayoutProperties.setBounds(graph, pres);
 			applyLayout();
 		}
 	}
 
 	/** Determines the layout bounds for the graph. */
 	protected Rectangle computeLayoutBounds() {
-		Rectangle newBounds = new Rectangle();
 		InfiniteCanvas canvas = getInfiniteCanvas();
 		// Use minimum of window size and canvas size, because the
 		// canvas size is invalid when its scene is changed.
-		double windowWidth = canvas.getScene().getWindow().getWidth();
-		double windowHeight = canvas.getScene().getWindow().getHeight();
-		newBounds = new Rectangle(0, 0,
-				Double.isFinite(windowWidth) ? Math.min(canvas.getWidth(), windowWidth) : canvas.getWidth(),
-				Double.isFinite(windowHeight) ? Math.min(canvas.getHeight(), windowHeight) : canvas.getHeight());
-		return newBounds;
+		double windowX = canvas.getScene().getWindow().getWidth();
+		double windowY = canvas.getScene().getWindow().getHeight();
+
+		double canvasX = Double.isFinite(canvas.getWidth()) ? canvas.getWidth() : 0;
+		double canvasY = Double.isFinite(canvas.getHeight()) ? canvas.getHeight() : 0;
+
+		windowX = Math.max(canvasX, windowX);
+		windowY = Math.max(canvasY, windowY);
+
+		return new Rectangle(0, 0, windowX, windowY);
 	}
 
 	@Override
@@ -130,6 +158,31 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		layoutContext.schedulePreLayoutPass(preLayout);
 		layoutContext.schedulePostLayoutPass(postLayout);
 		getInfiniteCanvas().scrollableBoundsProperty().addListener(viewportBoundsChangeListener);
+
+		// add filter to exclude hidden model elements
+		layoutFilter = new ILayoutFilter() {
+			Map<Object, IContentPart<? extends Node>> contentPartMap = getHost().getViewer().getContentPartMap();
+
+			@Override
+			public boolean isLayoutIrrelevant(Edge edge) {
+				if (!contentPartMap.containsKey(edge)) return true;
+				if (!contentPartMap.get(edge).isActive()) return true;
+
+				EdgeModel model = (EdgeModel) edge;
+				return model.isHidden() || model.getSource().isHidden() || model.getTarget().isHidden();
+			}
+
+			@Override
+			public boolean isLayoutIrrelevant(org.eclipse.gef.graph.Node node) {
+				if (!contentPartMap.containsKey(node)) return true;
+				if (!contentPartMap.get(node).isActive()) return true;
+
+				NodeModel model = (NodeModel) node;
+				return model.isHidden();
+			}
+		};
+
+		getLayoutContext().addLayoutFilter(layoutFilter);
 	}
 
 	@Override
@@ -139,6 +192,7 @@ public class GraphLayoutBehavior extends AbstractLayoutBehavior {
 		LayoutContext layoutContext = getLayoutContext();
 		layoutContext.unschedulePreLayoutPass(preLayout);
 		layoutContext.unschedulePostLayoutPass(postLayout);
+		getLayoutContext().removeLayoutFilter(layoutFilter);
 		getInfiniteCanvas().scrollableBoundsProperty().removeListener(viewportBoundsChangeListener);
 	}
 

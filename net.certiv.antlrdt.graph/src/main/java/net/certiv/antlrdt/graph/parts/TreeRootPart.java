@@ -14,10 +14,9 @@ public class TreeRootPart extends LayeredRootPart {
 	@Override
 	protected void doActivate() {
 		getVisual().getScene().getStylesheets().add(TreeView.StylesCss);
-		getContentLayer().getStyleClass().add("background");
 
-		boolean visibility = AntlrDTCore.getDefault().getPrefsManager().getBoolean(PrefsKey.PT_SHOW_GRID);
-		getViewer().getAdapter(GridModel.class).setShowGrid(visibility);
+		boolean show = AntlrDTCore.getDefault().getPrefsManager().getBoolean(PrefsKey.PT_SHOW_GRID);
+		getViewer().getAdapter(GridModel.class).setShowGrid(show);
 
 		super.doActivate();
 	}

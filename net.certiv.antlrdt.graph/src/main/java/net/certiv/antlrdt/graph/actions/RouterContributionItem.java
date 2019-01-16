@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 
 import org.eclipse.gef.mvc.fx.ui.actions.AbstractViewerContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,9 +15,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import net.certiv.antlrdt.graph.GraphUI;
 import net.certiv.antlrdt.graph.models.DiagramModel;
-import net.certiv.antlrdt.graph.view.tree.TreeView;
+import net.certiv.antlrdt.graph.view.GraphFXView;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
@@ -30,11 +28,13 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 	private ToolItem item;
 	private TableCombo combo;
 	protected DiagramModel diagModel;
+	private GraphFXView view;
 
-	private ListChangeListener<Object> routerListener;
+	private ListChangeListener<Object> changeListener;
 
-	public RouterContributionItem() {
+	public RouterContributionItem(GraphFXView view) {
 		setId(ITEM_ID);
+		this.view = view;
 	}
 
 	@Override
@@ -47,9 +47,9 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 		table.setLayoutData(new GridData(240, SWT.DEFAULT));
 		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
 		for (Router router : Router.values()) {
-			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setImage(0, imgMgr.get(router.getImageDescriptor()));
-			ti.setText(router.getDisplayName());
+			TableItem row = new TableItem(table, SWT.NONE);
+			row.setImage(0, imgMgr.get(router.getImageDescriptor()));
+			row.setText(router.getDisplayName());
 		}
 
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -57,12 +57,12 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (diagModel != null) {
-					Router router = Router.getEnum(e.text);
+					int idx = combo.getSelectionIndex();
+					TableItem row = combo.getTable().getItem(idx);
+					Router router = Router.getEnum(row.getText());
 					if (router == null) router = Router.FAN;
-
-					IDialogSettings ds = GraphUI.getDefault().getDialogSettings();
-					ds.put(TreeView.NODE_ROUTER, router.getDisplayName());
 					diagModel.setRouter(router);
+					view.refresh();
 				}
 			}
 		});
@@ -73,12 +73,12 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 
 	@Override
 	protected void register() {
-		if (routerListener != null) {
+		if (changeListener != null) {
 			Log.warn(this, "Router combo listener is already registered.");
 			return;
 		}
 
-		routerListener = new ListChangeListener<Object>() {
+		changeListener = new ListChangeListener<Object>() {
 
 			@Override
 			public void onChanged(Change<? extends Object> c) {
@@ -89,14 +89,14 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 			}
 		};
 
-		getViewer().getContents().addListener(routerListener);
+		getViewer().getContents().addListener(changeListener);
 	}
 
 	@Override
 	protected void unregister() {
-		if (routerListener != null) {
-			getViewer().getContents().removeListener(routerListener);
-			routerListener = null;
+		if (changeListener != null) {
+			getViewer().getContents().removeListener(changeListener);
+			changeListener = null;
 		}
 	}
 

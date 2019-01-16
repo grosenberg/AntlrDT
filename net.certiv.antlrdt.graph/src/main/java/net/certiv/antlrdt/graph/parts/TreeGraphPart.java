@@ -9,14 +9,13 @@ import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.SetMultimap;
 
 import net.certiv.antlrdt.graph.models.DiagramModel;
+import net.certiv.antlrdt.graph.models.NodeModel;
 
-/** The {@link TreeModelPart} creates visuals from the {@link DiagramModel}. */
-public class TreeModelPart extends AbstractContentPart<Group> {
-
-	private Group rootGroup;
+public class TreeGraphPart extends AbstractContentPart<Group> {
 
 	@Override
 	public DiagramModel getContent() {
@@ -25,7 +24,28 @@ public class TreeModelPart extends AbstractContentPart<Group> {
 
 	@Override
 	protected List<? extends Object> doGetContentChildren() {
-		return getContent().getNodes();
+		List<Object> children = Lists.newArrayList();
+		children.addAll(getContent().getEdges()); // order forces edges crossing nodes
+		children.addAll(getContent().getNodes()); // to be drawn under the nodes!
+		return children;
+	}
+
+	@Override
+	protected void doAddContentChild(Object child, int index) {
+		if (child instanceof NodeModel) {
+			getContent().addNode((NodeModel) child, index);
+		} else {
+			throw new IllegalArgumentException("Content child type invalid: " + child.getClass());
+		}
+	}
+
+	@Override
+	protected void doRemoveContentChild(Object contentChild) {
+		if (contentChild instanceof NodeModel) {
+			getContent().removeNode((NodeModel) contentChild);
+		} else {
+			throw new IllegalArgumentException("Content child type invalid: " + contentChild.getClass());
+		}
 	}
 
 	@Override
@@ -35,8 +55,9 @@ public class TreeModelPart extends AbstractContentPart<Group> {
 
 	@Override
 	protected Group doCreateVisual() {
-		rootGroup = new Group();
-		return rootGroup;
+		Group visual = new Group();
+		visual.setAutoSizeChildren(false);
+		return visual;
 	}
 
 	@Override
@@ -44,11 +65,16 @@ public class TreeModelPart extends AbstractContentPart<Group> {
 
 	@Override
 	protected void doAddChildVisual(IVisualPart<? extends Node> child, int index) {
-		rootGroup.getChildren().add(index, child.getVisual());
+		getVisual().getChildren().add(index, child.getVisual());
 	}
 
 	@Override
 	protected void doRemoveChildVisual(IVisualPart<? extends Node> child, int index) {
-		rootGroup.getChildren().remove(index);
+		getVisual().getChildren().remove(index);
+	}
+
+	@Override
+	public boolean isSelectable() {
+		return false;
 	}
 }

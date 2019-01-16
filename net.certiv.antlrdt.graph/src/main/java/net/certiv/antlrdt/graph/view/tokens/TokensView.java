@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
+
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
 import org.eclipse.core.resources.IFile;
@@ -35,7 +37,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
@@ -43,7 +44,13 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
+import net.certiv.antlrdt.graph.EventManager;
+import net.certiv.antlrdt.graph.GraphUI;
+import net.certiv.antlrdt.graph.IEvents;
 import net.certiv.antlrdt.graph.parse.ErrorRecord;
 import net.certiv.antlrdt.graph.parse.GrammarRecord;
 import net.certiv.antlrdt.graph.parse.ListProcessor;
@@ -61,7 +68,7 @@ import net.certiv.dsl.ui.util.WorkbenchAdaptor;
 
 public class TokensView extends ViewPart {
 
-	public static final String VIEW_ID = "net.certiv.antlrdt.graph.view.tokens";
+	public static final String VIEW_ID = "net.certiv.antlrdt.graph.view.tokens.TokenView";
 	public static final String GraphTopic = "TreeView/Graph";
 
 	static final int hSp = 16;
@@ -102,11 +109,32 @@ public class TokensView extends ViewPart {
 	private boolean validControls;
 
 	private ImageManager imgMgr;
+	private EventManager evtMgr;
+	private ServiceRegistration<EventHandler> evtReg;
 
 	public TokensView() {
 		super();
 		imgMgr = AntlrDTUI.getDefault().getImageManager();
 		Log.setLevel(this, LogLevel.Debug);
+	}
+
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		addListeners(this);
+		addEventHandler();
+
+		IDialogSettings settings = AntlrDTUI.getDefault().getDialogSettings();
+		dialogSettings = settings.getSection(AntlrDTUI.PT_DIALOG_SEC);
+		if (dialogSettings == null) {
+			dialogSettings = settings.addNewSection(AntlrDTUI.PT_DIALOG_SEC);
+		}
+		history = new ArrayList<>();
+
+		decoRegistry = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+
+		linkEditorState = dialogSettings.getBoolean(LINK_EDITOR_STATE);
+		showHidden = dialogSettings.getBoolean(SHOW_HIDDEN);
 	}
 
 	@Override
@@ -129,24 +157,6 @@ public class TokensView extends ViewPart {
 		contributeToActionBars();
 
 		validateControls();
-	}
-
-	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		addListeners(this);
-
-		IDialogSettings settings = AntlrDTUI.getDefault().getDialogSettings();
-		dialogSettings = settings.getSection(AntlrDTUI.PT_DIALOG_SEC);
-		if (dialogSettings == null) {
-			dialogSettings = settings.addNewSection(AntlrDTUI.PT_DIALOG_SEC);
-		}
-		history = new ArrayList<>();
-
-		decoRegistry = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
-
-		linkEditorState = dialogSettings.getBoolean(LINK_EDITOR_STATE);
-		showHidden = dialogSettings.getBoolean(SHOW_HIDDEN);
 	}
 
 	// called on:
@@ -494,9 +504,28 @@ public class TokensView extends ViewPart {
 				return Status.OK_STATUS;
 			}
 		};
-		displayJob.setPriority(Job.SHORT);
-		displayJob.setSystem(true);
+		displayJob.setPriority(Job.LONG);
 		displayJob.schedule();
+	}
+
+	// EventAdmin entry point
+	private void addEventHandler() {
+		EventHandler handler = new EventHandler() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						performBuild();
+					}
+				});
+			}
+		};
+
+		evtMgr = GraphUI.getDefault().getEventManager();
+		evtReg = evtMgr.addHandler(handler, IEvents.TOPIC_GRAPHS);
 	}
 
 	private void addListeners(final TokensView view) {
@@ -523,10 +552,15 @@ public class TokensView extends ViewPart {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part == view) viewVisible = false;
 			}
+
+			@Override
+			public void partClosed(IWorkbenchPartReference partRef) {
+				IWorkbenchPart part = partRef.getPart(false);
+				if (part == view) evtMgr.removeHandler(evtReg);
+			}
 		};
 
 		CoreUtil.getPartService().addPartListener(partAdaptor);
-
 		CoreUtil.getActiveWorkbench().addWorkbenchListener(new WorkbenchAdaptor() {
 
 			@Override

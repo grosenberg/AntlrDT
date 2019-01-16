@@ -1,7 +1,5 @@
 package net.certiv.antlrdt.graph.parts;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +8,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Translate;
 
 import org.eclipse.gef.fx.utils.NodeUtils;
+import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
@@ -18,39 +17,35 @@ import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import net.certiv.antlrdt.graph.models.BaseModel;
 import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.antlrdt.graph.shapes.NodeShape;
+import net.certiv.antlrdt.graph.tips.Infotip;
 
-public class TreeNodePart extends AbstractContentPart<NodeShape>
-		implements ITransformableContentPart<NodeShape>, PropertyChangeListener {
+public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITransformableContentPart<NodeShape> {
 
-	public static final double PADDING = 5;
-	public static final String CSS_CLASS = "node";
-	public static final String CSS_CLASS_LABEL = "label";
-	public static final String CSS_CLASS_ICON = "icon";
+	// public static final double PADDING = 5;
+	// public static final String CSS_CLASS = "node";
+	// public static final String CSS_CLASS_LABEL = "label";
+	// public static final String CSS_CLASS_ICON = "icon";
 
-	private NodeShape shape;
 	private Tooltip tooltip;
+
+	protected TreeNodePart() {
+		super();
+	}
 
 	@Override
 	public NodeModel getContent() {
 		return (NodeModel) super.getContent();
 	}
 
-	public NodeShape getShape() {
-		return shape;
-	}
-
 	@Override
 	protected void doActivate() {
 		super.doActivate();
-		getContent().addPropertyChangeListener(this);
 	}
 
 	@Override
 	protected void doDeactivate() {
-		getContent().removePropertyChangeListener(this);
 		super.doDeactivate();
 	}
 
@@ -72,37 +67,44 @@ public class TreeNodePart extends AbstractContentPart<NodeShape>
 	@Override
 	protected void doRefreshVisual(NodeShape visual) {
 		NodeModel model = getContent();
-		Point location = model.getBounds().getLocation();
-		Affine transform = new Affine(new Translate(location.x, location.y));
-		if (!NodeUtils.equals(getVisualTransform(), transform)) {
-			setVisualTransform(transform);
+		if (model == null) throw new IllegalStateException();
+
+		refreshTooltip(visual);
+
+		Point loc = model.getLocation();
+		if (loc != null) {
+			Affine transform = new Affine(new Translate(loc.x, loc.y));
+			if (!NodeUtils.equals(getVisualTransform(), transform)) {
+				setVisualTransform(transform);
+			}
 		}
 
+		Dimension size = model.getSize();
+		if (size != null) {
+			getVisual().resize(size.width, size.height);
+		} else {
+			getVisual().autosize();
+		}
+	}
+
+	protected void refreshTooltip(NodeShape visual) {
 		if (tooltip == null) {
-			tooltip = new Tooltip(model.getText());
-			Tooltip.install(getVisual(), tooltip);
+			tooltip = new Infotip(getContent());
+			Tooltip.install(visual, tooltip);
 		}
 	}
 
 	@Override
 	public Affine getContentTransform() {
-		Rectangle bounds = getContent().getBounds();
-		return new Affine(new Translate(bounds.getX(), bounds.getY()));
+		Point loc = getContent().getLocation();
+		if (loc == null) loc = new Point();
+		return new Affine(new Translate(loc.x, loc.y));
 	}
 
 	@Override
 	public void setContentTransform(Affine transform) {
-		Rectangle bounds = getContent().getBounds().getCopy();
-		bounds.setX(transform.getTx());
-		bounds.setY(transform.getTy());
+		Rectangle bounds = getContent().getBounds();
+		bounds.setLocation(transform.getTx(), transform.getTy());
 		getContent().setBounds(bounds);
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		String prop = event.getPropertyName();
-		if (BaseModel.PROP_BOUNDS.equals(prop)) {
-			refreshVisual();
-		}
 	}
 }

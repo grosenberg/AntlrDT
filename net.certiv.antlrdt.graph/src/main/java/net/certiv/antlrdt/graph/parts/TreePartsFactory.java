@@ -21,7 +21,7 @@ public class TreePartsFactory implements IContentPartFactory {
 	@Override
 	public IContentPart<? extends javafx.scene.Node> createContentPart(Object content, Map<Object, Object> map) {
 
-		if (content instanceof DiagramModel) return injector.getInstance(TreeModelPart.class);
+		if (content instanceof DiagramModel) return injector.getInstance(TreeGraphPart.class);
 		if (content instanceof NodeModel) return injector.getInstance(TreeNodePart.class);
 		if (content instanceof EdgeModel) return injector.getInstance(TreeEdgePart.class);
 

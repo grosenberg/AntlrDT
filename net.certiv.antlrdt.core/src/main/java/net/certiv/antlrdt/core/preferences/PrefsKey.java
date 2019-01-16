@@ -148,6 +148,8 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_DEPTH_SPACING = "{DSL_ID}" + ".ptDepthSpacing";
 	public static final String PT_ROOT_OFFSET = "{DSL_ID}" + ".ptRootOffset";
 
+	public static final String PT_TOOLTIP_COLOR = "{DSL_ID}" + ".ptTooltipColor";
+
 	public static final String PT_COLOR_PREFIX = "{DSL_ID}" + ".ptColor";
 	public static final String PT_CONN_COLOR = PT_COLOR_PREFIX + "Conn";
 	public static final String PT_CONN_HIGHLIGHT = PT_COLOR_PREFIX + "ConnHighlight";

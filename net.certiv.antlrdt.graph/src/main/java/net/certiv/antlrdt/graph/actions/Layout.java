@@ -6,25 +6,27 @@ import org.eclipse.gef.layout.algorithms.GridLayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.HorizontalShiftAlgorithm;
 import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import net.certiv.antlrdt.graph.layouts.BranchedLayoutAlgorithm;
 import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm;
-import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm.LW;
+import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm.ORIENT;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.util.Reflect;
 import net.certiv.dsl.core.util.Strings;
 
 public enum Layout {
-	HTREE("Horizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(LW.ORIENT_LEFT_RIGHT)),
-	VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(LW.ORIENT_TOP_BOTTOM)),
-	HFLOW("Horizontal Flow", "IMG_LAYOUT_CALL", new BranchedLayoutAlgorithm(0)),
-	CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW",
-			new CompositeLayoutAlgorithm(
-					new ILayoutAlgorithm[] { new TreeLayoutAlgorithm(), new HorizontalShiftAlgorithm() })),
+	// HTREE("Horizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new
+	// LinWalkersLayoutAlgorithm(ORIENT.LEFT_RIGHT)),
+	// VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(ORIENT.TOP_BOTTOM)),
 
+	// HFLOW("Horizontal Flow", "IMG_LAYOUT_CALL", new BranchedLayoutAlgorithm(0)),
+	// CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW",
+	// new CompositeLayoutAlgorithm(
+	// new ILayoutAlgorithm[] { new TreeLayoutAlgorithm(), new HorizontalShiftAlgorithm() })),
+
+	HTREE("Hoizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(ORIENT.LEFT_RIGHT)),
+	VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(ORIENT.TOP_BOTTOM)),
 	SPRING("Spring", "IMG_LAYOUT_SPRING", new SpringLayoutAlgorithm()),
 	RADIAL("Radial", "IMG_LAYOUT_RADIAL", new RadialLayoutAlgorithm()),
 	GRID("Grid", "IMG_LAYOUT_GRID", new CompositeLayoutAlgorithm(

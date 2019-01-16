@@ -12,18 +12,15 @@
 
 	<name>net.certiv.antlrdt :: parent</name>
 	<description>net.certiv.antlrdt parent</description>
-
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+	<organization>
+		<name>Certiv Analytics</name>
+		<url>www.certiv.net</url>
+	</organization>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<tycho.version>1.2.0</tycho.version>
-		<tycho.extras.version>1.2.0</tycho.extras.version>
-		<tycho.test.platformArgs />
-		<tycho.test.jvmArgs>-Xmx512m</tycho.test.jvmArgs>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -52,22 +49,6 @@
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-compiler-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<compilerArgs>
-						<arg>-warn:-raw,unchecked</arg>
-					</compilerArgs>
-				</configuration>
 			</plugin>
 
 			<plugin>
@@ -75,24 +56,16 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<resolver>p2</resolver>
-					<pomDependencies>consider</pomDependencies>
-					<ignoreTychoRepositories>true</ignoreTychoRepositories>
+					<includePackedArtifacts>true</includePackedArtifacts>
+					<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
+					<dependency-resolution>
+						<optionalDependencies>require</optionalDependencies>
+					</dependency-resolution>
 					<environments>
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
 							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
 						</environment>
 						<environment>
 							<os>win32</os>
@@ -108,34 +81,49 @@
 				</configuration>
 			</plugin>
 
-		</plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<compilerArgs>
+						<arg>-warn:-raw,unchecked</arg>
+					</compilerArgs>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<extraClasspathElements>
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafxswt</artifactId>
+							<version>8.0.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.google.inject.extensions</groupId>
+							<artifactId>guice-multibindings</artifactId>
+							<version>3.0</version>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.google.inject.extensions</groupId>
+							<artifactId>guice-assistedinject</artifactId>
+							<version>3.0</version>
+						</extraClasspathElement>
+					</extraClasspathElements>
+				</configuration>
+			</plugin>
 
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-packaging-plugin</artifactId>
-					<version>${tycho.version}</version>
-					<configuration>
-						<format>yyyyMMdd-HHmm</format>
-						<archive>
-							<addMavenDescriptor>false</addMavenDescriptor>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-surefire-plugin</artifactId>
-					<version>${tycho.version}</version>
-					<configuration>
-						<useUIHarness>true</useUIHarness>
-						<argLine>${tycho.test.jvmArgs}</argLine>
-						<!-- kill test JVM if tests take more than 60 seconds to finish -->
-						<forkedProcessTimeoutInSeconds>60</forkedProcessTimeoutInSeconds>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<format>yyyyMMdd-HHmm</format>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>
@@ -150,37 +138,12 @@
 				<tycho.test.platformArgs>-XstartOnFirstThread</tycho.test.platformArgs>
 			</properties>
 		</profile>
-		<profile>
-			<id>source-feature</id>
-			<activation>
-				<file>
-					<exists>feature.xml</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>attach-p2-metadata</id>
-								<phase>package</phase>
-								<goals>
-									<goal>p2-metadata</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 	<modules>
 		<module>net.certiv.antlrdt.core</module>
 		<module>net.certiv.antlrdt.ui</module>
+		<module>net.certiv.antlrdt.graph</module>
 		<module>net.certiv.antlrdt.feature</module>
 		<module>net.certiv.antlrdt.site</module>
 	</modules>

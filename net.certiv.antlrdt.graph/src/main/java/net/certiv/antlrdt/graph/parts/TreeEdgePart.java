@@ -19,19 +19,15 @@ import net.certiv.antlrdt.graph.models.EdgeModel;
 import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.antlrdt.graph.shapes.EdgeShape;
 
-public class TreeEdgePart extends AbstractContentPart<Connection> implements IBendableContentPart<Connection> {
+public class TreeEdgePart extends AbstractContentPart<EdgeShape> implements IBendableContentPart<EdgeShape> {
 
 	public static final String SOURCE_ROLE = "SOURCE";
 	public static final String TARGET_ROLE = "TARGET";
 
-	public static final String CSS_CLASS = "edge";
-	public static final String CSS_DECORATION = "decoration";
-
-	private EdgeShape shape;
 	private List<BendPoint> bendPoints = Lists.newArrayList();
 
-	public EdgeShape getShape() {
-		return shape;
+	protected TreeEdgePart() {
+		super();
 	}
 
 	@Override
@@ -51,19 +47,13 @@ public class TreeEdgePart extends AbstractContentPart<Connection> implements IBe
 
 	@Override
 	protected EdgeShape doCreateVisual() {
-		shape = new EdgeShape(getContent());
-		shape.getStyleClass().add(CSS_CLASS);
-		if (shape.getStartDecoration() != null) {
-			shape.getStartDecoration().getStyleClass().add(CSS_DECORATION);
-		}
-		if (shape.getEndDecoration() != null) {
-			shape.getEndDecoration().getStyleClass().add(CSS_DECORATION);
-		}
-		return shape;
+		return new EdgeShape();
 	}
 
 	@Override
-	protected void doRefreshVisual(Connection visual) {}
+	protected void doRefreshVisual(EdgeShape visual) {
+		visual.setRouter(getContent().getRouter());
+	}
 
 	@Override
 	protected void doAttachToAnchorageVisual(IVisualPart<?> anchorage, String role) {

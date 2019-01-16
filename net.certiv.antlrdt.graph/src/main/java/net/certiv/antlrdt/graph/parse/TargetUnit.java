@@ -26,13 +26,14 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
+import net.certiv.antlrdt.core.parser.ITargetInfo;
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.view.tokens.Trace;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.eclipse.DynamicLoader;
 import net.certiv.dsl.core.util.eclipse.JdtUtil;
 
-class TargetUnit {
+class TargetUnit implements ITargetInfo {
 
 	private static final Class<?>[] lexParams = new Class[] { CharStream.class };
 	private static final Class<?>[] parserParams = new Class[] { TokenStream.class };
@@ -184,18 +185,27 @@ class TargetUnit {
 		return errors;
 	}
 
+	@Override
+	public IFile getGrammar() {
+		return grammar;
+	}
+
+	@Override
 	public String getMainRuleName() {
 		return mainRuleName;
 	}
 
+	@Override
 	public String[] getRuleNames() {
 		return ruleNames;
 	}
 
+	@Override
 	public String[] getTokenNames() {
 		return tokenNames;
 	}
 
+	@Override
 	public String[] getModeNames() {
 		return modeNames;
 	}
@@ -338,10 +348,12 @@ class TargetUnit {
 
 		if (tree != null) {
 			Log.info(this, "Generating graph model...");
-			TreeProcessor walker = new TreeProcessor(new DiagramModel(grammar, ruleNames, tokenNames));
+			DiagramModel diagModel = new DiagramModel();
+			diagModel.setTargetInfo(this);
+
+			TreeProcessor walker = new TreeProcessor(this, diagModel);
 			walker.walk(walker, tree);
 			model = walker.getModel();
-			Log.info(this, "Graph model generated [nodes=" + (model.getParseTreeList().size() + "]."));
 		}
 	}
 }

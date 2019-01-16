@@ -6,41 +6,60 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.FragmentRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerRuleSpecContext;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ModeRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ParserRuleSpecContext;
 
-/**
- * Implementing functions for grammar path walker.
- * 
- * TODO: handle modes
- */
+/** Implementing functions for grammar path walker. */
 public abstract class PathAdaptor extends Processor {
 
-	private PathsData helper;
+	private IPathProcessor helper;
 
 	public PathAdaptor(ParseTree tree) {
 		super(tree);
 	}
 
-	public void setHelper(PathsData helper) {
+	public void setHelper(IPathProcessor helper) {
 		this.helper = helper;
 	}
 
-	public void parserRef(Token term) {
-		ParserRuleSpecContext ruleSpec = (ParserRuleSpecContext) pathNodes().get(1);
-		Token ref = ruleSpec.RULE_REF().getSymbol();
-		boolean parserRule = Character.isLowerCase(ref.getText().charAt(0));
-		helper.addPathsElement(ref, term, parserRule, false);
+	public void parserRuleName(Token term) {
+		ParserRuleSpecContext rule = (ParserRuleSpecContext) pathNodes().get(0);
+		helper.startRule(rule, Path.PARSER);
+		helper.addPathRule(rule, term, Path.PARSER);
 	}
 
-	public void lexerRef(Token term) {
-		LexerRuleSpecContext ruleSpec = (LexerRuleSpecContext) pathNodes().get(1);
-		Token ref = ruleSpec.TOKEN_REF().getSymbol();
-		helper.addPathsElement(ref, term, false, false);
+	public void ruleAltName(Token term) {
+		helper.addPathChild(term);
 	}
 
-	public void fragmentRef(Token term) {
-		FragmentRuleSpecContext ruleSpec = (FragmentRuleSpecContext) pathNodes().get(1);
-		Token ref = ruleSpec.TOKEN_REF().getSymbol();
-		helper.addPathsElement(ref, term, false, true);
+	public void parserRuleDone() {
+		helper.endRule(Path.PARSER);
+	}
+
+	public void lexerRuleName(Token term) {
+		LexerRuleSpecContext rule = (LexerRuleSpecContext) pathNodes().get(0);
+		helper.startRule(rule, Path.PARSER);
+		helper.addPathRule(rule, term, Path.LEXER);
+	}
+
+	public void lexerRuleDone() {
+		helper.endRule(Path.LEXER);
+	}
+
+	public void fragmentRuleName(Token term) {
+		FragmentRuleSpecContext rule = (FragmentRuleSpecContext) pathNodes().get(0);
+		helper.startRule(rule, Path.PARSER);
+		helper.addPathRule(rule, term, Path.FRAGMENT);
+	}
+
+	public void fragmentRuleDone() {
+		helper.endRule(Path.FRAGMENT);
+	}
+
+	public void modeName(Token parse, Token lex) {
+		Token term = parse != null ? parse : lex;
+		ModeRuleSpecContext rule = (ModeRuleSpecContext) pathNodes().get(1);
+		helper.startRule(rule, Path.PARSER);
+		helper.addPathRule(rule, term, Path.MODE);
 	}
 }

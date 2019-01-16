@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IPath;
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
-import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
@@ -68,17 +67,5 @@ public class AntlrSourceParser extends DslSourceParser {
 	@Override
 	public boolean modelContributor() {
 		return true;
-	}
-
-	public PathsData buildPathsData() {
-		PathsData data = new PathsData();
-		try {
-			PathVisitor walker = new PathVisitor(record.tree);
-			walker.setHelper(data);
-			walker.findAll();
-		} catch (IllegalArgumentException e) {
-			getDslErrorListener().generalError("Paths: %s @%s:%s", e);
-		}
-		return data;
 	}
 }

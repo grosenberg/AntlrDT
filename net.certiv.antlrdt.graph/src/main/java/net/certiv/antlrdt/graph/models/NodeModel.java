@@ -1,149 +1,78 @@
 package net.certiv.antlrdt.graph.models;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import javafx.scene.paint.Color;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
+import org.eclipse.gef.graph.Edge;
+import org.eclipse.gef.graph.Graph;
+import org.eclipse.gef.graph.Node;
+import org.eclipse.gef.layout.LayoutProperties;
 import org.eclipse.swt.graphics.RGB;
 
 import com.google.common.collect.Lists;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.parser.ITargetInfo;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.FragmentRuleSpecContext;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerRuleSpecContext;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ParserRuleSpecContext;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
+import net.certiv.antlrdt.graph.shapes.NodeShape;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.Strings;
 
-public class NodeModel extends BaseModel {
+public class NodeModel extends Node implements IModel {
+
+	private final PropertyChangeSupport queue = new PropertyChangeSupport(this);
 
 	private final List<EdgeModel> incoming = Lists.newArrayList();
 	private final List<EdgeModel> outgoing = Lists.newArrayList();
 
-	protected ParseTree ctx;
-
 	private DslPrefsManager prefsMgr;
 	private ImageManager imgMgr;
-	private Rectangle bounds;
+	private boolean hidden;
+	private NodeShape shape;
 
-	public NodeModel(ParseTree ctx, IFile grammar, String[] ruleNames, String[] tokenNames) {
-		super(grammar, ruleNames, tokenNames);
-		this.ctx = ctx;
+	protected ParseTree ctx;
+	protected ITargetInfo info;
+
+	public NodeModel() {
+		super();
 
 		prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
 		imgMgr = AntlrDTUI.getDefault().getImageManager();
+
+		LayoutProperties.setLocation(this, new Point());
+		LayoutProperties.setSize(this, new Dimension());
 	}
 
-	/** Return a URL string defining an icon image to be used to decorate the {@code NodeShape}. */
-	public String getIconUrl() {
-		if (ctx instanceof RuleNode) return imgMgr.getUrl(imgMgr.IMG_OBJ_RULE).toExternalForm();
-		if (ctx instanceof ErrorNode) return imgMgr.getUrl(imgMgr.ERROR_NODE).toExternalForm();
-		return imgMgr.getUrl(imgMgr.IMG_OBJ_TERMINAL).toExternalForm();
+	public void init(ParseTree ctx, ITargetInfo info) {
+		this.ctx = ctx;
+		this.info = info;
 	}
 
-	/** Return the full text of the node context. */
-	public String getText() {
-		if (ctx instanceof TerminalNode) {
-			TerminalNode node = (TerminalNode) ctx;
-			try {
-				return node.toString();
-			} catch (Exception e) {
-				int ttype = node.getSymbol().getType();
-				ttype = tokenNames != null && ttype >= 0 && ttype < tokenNames.length ? ttype : -1;
-				return ttype > -1 ? tokenNames[ttype] : "<unknown>";
-			}
-		}
-		if (ctx instanceof RuleNode) {
-			RuleContext node = (RuleContext) ctx;
-			int idx = node.getRuleIndex();
-			idx = ruleNames != null && idx >= 0 && idx < ruleNames.length ? idx : -1;
-			return idx > -1 ? ruleNames[idx] : "<unknown>";
-		}
-		return "";
-	}
-
-	/** Returns the ellipsized text suitable for use in the {@code NodeShape}. */
-	public String getDisplayText() {
-		return Strings.displyEscape(getText(), 36);
-	}
-
-	public String getCssID() {
-		if (ctx instanceof RuleNode) return "rule";
-		if (ctx instanceof ErrorNode) return "errorNode";
-		return "terminalNode";
-	}
-
-	public String getCssClass() {
-		if (ctx instanceof TerminalNode && Chars.isWhitespace(ctx.getText())) return "whitespace";
-		return Strings.EMPTY_STRING;
-	}
-
-	public Color getColor() {
-		if (ctx instanceof RuleNode) return convert(PrefsKey.PT_NODE_RULE);
-		if (ctx instanceof ErrorNode) return convert(PrefsKey.PT_NODE_ERROR);
-		if (ctx instanceof TerminalNode) return convert(PrefsKey.PT_NODE_TERMINAL);
-		return convert(PrefsKey.PT_NODE_BACKGROUND);
-	}
-
-	public Rectangle getBounds() {
-		if (bounds == null) {
-			double w = 24 + getDisplayText().length() * 8;
-			bounds = new Rectangle(ranPoint(), new Point(w, 24));
-		}
-		return bounds;
-	}
-
-	public void setBounds(Rectangle bounds) {
-		if (this.bounds != bounds) {
-			Rectangle prior = this.bounds;
-			this.bounds = bounds;
-			fire(PROP_BOUNDS, prior, bounds);
-		}
-	}
-
-	public Point getLocation() {
-		Rectangle b = getBounds();
-		return b.getLocation();
-	}
-
-	public void setLocation(Point location) {
-		Rectangle b = getBounds();
-		setBounds(b.setLocation(location));
-	}
-
-	public int getNodeSourceLine() {
-		if (ctx instanceof TerminalNode) {
-			return ((TerminalNode) ctx).getSymbol().getLine();
-		} else {
-			return ((ParserRuleContext) ctx).getStart().getLine();
-		}
-	}
-
-	public int getNodeSourceOffsetInLine() {
-		if (ctx instanceof TerminalNode) {
-			return ((TerminalNode) ctx).getSymbol().getCharPositionInLine();
-		} else {
-			return ((ParserRuleContext) ctx).getStart().getCharPositionInLine();
-		}
-	}
-
-	public int getNodeSourceLength() {
-		return ctx.getText().length();
-	}
-
-	private Color convert(String key) {
-		RGB c = prefsMgr.getColor(key).getRGB();
-		return Color.rgb(c.red, c.blue, c.green);
+	public IFile getGrammar() {
+		return info.getGrammar();
 	}
 
 	public void addOutgoingConnection(EdgeModel conn) {
@@ -174,16 +103,240 @@ public class NodeModel extends BaseModel {
 		return incoming;
 	}
 
+	// Property Change Support
+	public void fire(String prop, Object oldValue, Object newValue) {
+		queue.firePropertyChange(prop, oldValue, newValue);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		queue.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		queue.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public Set<Edge> getAllIncomingEdges() {
+		return new HashSet<>(incoming);
+	}
+
+	@Override
+	public Set<Edge> getIncomingEdges() {
+		return new HashSet<>(incoming);
+	}
+
+	@Override
+	public Set<Edge> getAllOutgoingEdges() {
+		return new HashSet<>(outgoing);
+	}
+
+	@Override
+	public Set<Edge> getOutgoingEdges() {
+		return new HashSet<>(outgoing);
+	}
+
+	@Override
+	public Set<Node> getAllPredecessorNodes() {
+		return super.getPredecessorNodes();
+	}
+
+	@Override
+	public Set<Node> getAllSuccessorNodes() {
+		return super.getSuccessorNodes();
+	}
+
+	@Override
+	public Graph getNestedGraph() {
+		throw new IllegalArgumentException("Nested graphs not supported");
+	}
+
+	@Override
+	public void setNestedGraph(Graph nestedGraph) {
+		throw new IllegalArgumentException("Nested graphs not supported");
+	}
+
+	// -----------------
+	// Shape support
+
+	public NodeShape getShape() {
+		return shape;
+	}
+
+	/** Call back providing a reference to the {@code NodeShape} instance. */
+	public void setShape(NodeShape shape) {
+		this.shape = shape;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+
+	/** Return a URL string defining an icon image to be used to decorate the {@code NodeShape}. */
+	public String getIconUrl() {
+		if (ctx instanceof RuleNode) return imgMgr.getUrl(imgMgr.IMG_OBJ_RULE).toExternalForm();
+		if (ctx instanceof ErrorNode) return imgMgr.getUrl(imgMgr.ERROR_NODE).toExternalForm();
+		return imgMgr.getUrl(imgMgr.IMG_OBJ_TERMINAL).toExternalForm();
+	}
+
+	/** Return the full text of the node context. */
+	public String getText() {
+		TerminalNode node = null;
+		if (ctx instanceof RuleNode) {
+
+			// specific to Antlr grammar
+			if (ctx instanceof ParserRuleSpecContext) {
+				node = ((ParserRuleSpecContext) ctx).RULE_REF();
+			}
+			if (ctx instanceof LexerRuleSpecContext) {
+				node = ((LexerRuleSpecContext) ctx).TOKEN_REF();
+			}
+			if (ctx instanceof FragmentRuleSpecContext) {
+				node = ((FragmentRuleSpecContext) ctx).TOKEN_REF();
+			}
+
+			if (node != null) {
+				try {
+					return node.toString();
+				} catch (Exception e) {}
+			}
+
+			// client grammar
+			int idx = ((RuleContext) ctx).getRuleIndex();
+			String[] ruleNames = info.getRuleNames();
+			idx = ruleNames != null && idx >= 0 && idx < ruleNames.length ? idx : -1;
+			return idx > -1 ? ruleNames[idx] : "<unknown>";
+		}
+
+		node = (TerminalNode) ctx;
+		try {
+			return node.toString();
+		} catch (Exception e) {
+			int ttype = node.getSymbol().getType();
+			String[] tokenNames = info.getTokenNames();
+			ttype = tokenNames != null && ttype >= 0 && ttype < tokenNames.length ? ttype : -1;
+			return ttype > -1 ? tokenNames[ttype] : "<unknown>";
+		}
+	}
+
+	/** Returns the ellipsized text suitable for use in the {@code NodeShape}. */
+	public String getDisplayText() {
+		return Strings.displyEscape(getText(), 36);
+	}
+
+	public String getCssID() {
+		if (ctx instanceof RuleNode) return "rule";
+		if (ctx instanceof ErrorNode) return "errorNode";
+		return "terminalNode";
+	}
+
+	public String getCssClass() {
+		if (ctx instanceof TerminalNode && Chars.isWhitespace(ctx.getText())) return "whitespace";
+		return Strings.EMPTY_STRING;
+	}
+
+	public Color getColor() {
+		if (ctx instanceof RuleNode) return convert(PrefsKey.PT_NODE_RULE);
+		if (ctx instanceof ErrorNode) return convert(PrefsKey.PT_NODE_ERROR);
+		if (ctx instanceof TerminalNode) return convert(PrefsKey.PT_NODE_TERMINAL);
+		return convert(PrefsKey.PT_NODE_BACKGROUND);
+	}
+
+	/**
+	 * Bounds are initially set in response to a call from shape creation. Subsequently, bounds may be
+	 * set/altered in response to node transformations. In both cases, size and location are held as
+	 * node attributes as necessary to support layout.
+	 */
+	public void setBounds(Rectangle bounds) {
+		setBounds(bounds.getLocation(), bounds.getSize());
+	}
+
+	public void setBounds(Point loc, Dimension size) {
+		// Log.info(this, String.format("SetBounds (location): %s '%s'.", loc, getText()));
+		LayoutProperties.setLocation(this, loc);
+		LayoutProperties.setSize(this, size);
+	}
+
+	public Point getLocation() {
+		return LayoutProperties.getLocation(this);
+	}
+
+	public Dimension getSize() {
+		return LayoutProperties.getSize(this);
+	}
+
+	public Rectangle getBounds() {
+		return new Rectangle(getLocation(), getSize());
+	}
+
+	public ParseTree getParserRuleContext() {
+		return ctx;
+	}
+
+	public String getNodeDescription() {
+		if (ctx instanceof ErrorNode) return "Error Node";
+		if (ctx instanceof TerminalNode) return "Terminal Node";
+		return "Parser Rule";
+	}
+
+	public String getNodeType() {
+		if (ctx instanceof TerminalNode) {
+			Token token = ((TerminalNode) ctx).getSymbol();
+			return info.getTokenNames()[token.getType()];
+		}
+
+		ParserRuleContext context = ((ParserRuleContext) ctx);
+		return info.getTokenNames()[context.getRuleIndex()];
+	}
+
+	public int getNodeSourceLine() {
+		if (ctx instanceof TerminalNode) {
+			return ((TerminalNode) ctx).getSymbol().getLine();
+		} else {
+			return ((ParserRuleContext) ctx).getStart().getLine();
+		}
+	}
+
+	public int getNodeSourceOffsetInLine() {
+		if (ctx instanceof TerminalNode) {
+			return ((TerminalNode) ctx).getSymbol().getCharPositionInLine();
+		} else {
+			return ((ParserRuleContext) ctx).getStart().getCharPositionInLine();
+		}
+	}
+
+	public int getNodeSourceLength() {
+		return ctx.getText().length();
+	}
+
+	private Color convert(String key) {
+		RGB c = prefsMgr.getColor(key).getRGB();
+		return Color.rgb(c.red, c.blue, c.green);
+	}
+
 	public void dispose() {
-		for (EdgeModel in : incoming) {
-			in.dispose();
-		}
-		for (EdgeModel out : outgoing) {
-			out.dispose();
-		}
 		incoming.clear();
 		outgoing.clear();
-		bounds = null;
+		info = null;
 		ctx = null;
+		shape = null;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ctx);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (!(obj instanceof NodeModel)) return false;
+		NodeModel other = (NodeModel) obj;
+		return Objects.equals(ctx, other.ctx);
 	}
 }

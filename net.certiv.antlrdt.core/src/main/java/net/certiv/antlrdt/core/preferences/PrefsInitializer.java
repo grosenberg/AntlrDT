@@ -129,7 +129,7 @@ public class PrefsInitializer extends DslPrefsInit {
 		// ------------------------------------------------------------------------------
 		// Paths View
 
-		setBool(PrefsKey.PT_SHOW_GRID, false);
+		setBool(PrefsKey.PT_SHOW_GRID, true);
 
 		setInt(PrefsKey.PT_DEPTH_LIMIT, 2);
 
@@ -143,6 +143,8 @@ public class PrefsInitializer extends DslPrefsInit {
 		setRGB(PrefsKey.PT_NODE_RULE, new RGB(216, 228, 248));
 		setRGB(PrefsKey.PT_NODE_TERMINAL, new RGB(220, 220, 220));
 		setRGB(PrefsKey.PT_NODE_ERROR, new RGB(255, 153, 153));
+
+		setRGB(PrefsKey.PT_TOOLTIP_COLOR, new RGB(255, 255, 225));
 
 		setString(PrefsKey.PT_TOOLTIP_TYPE, PrefsKey.PT_TTT_ENH);
 		setString(PrefsKey.PT_ENH_POSITION, PrefsKey.PT_ENH_FLOAT);
@@ -171,6 +173,5 @@ public class PrefsInitializer extends DslPrefsInit {
 		setInt(PrefsKey.PT_ROOT_OFFSET, 50);
 
 		setInt(PrefsKey.PT_ANIMATION_LIMIT, 500);
-
 	}
 }
