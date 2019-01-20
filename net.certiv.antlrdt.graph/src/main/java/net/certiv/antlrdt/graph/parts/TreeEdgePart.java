@@ -47,12 +47,13 @@ public class TreeEdgePart extends AbstractContentPart<EdgeShape> implements IBen
 
 	@Override
 	protected EdgeShape doCreateVisual() {
-		return new EdgeShape();
+		return new EdgeShape(getContent());
 	}
 
 	@Override
 	protected void doRefreshVisual(EdgeShape visual) {
 		visual.setRouter(getContent().getRouter());
+		visual.setVisible(!getContent().isHidden());
 	}
 
 	@Override

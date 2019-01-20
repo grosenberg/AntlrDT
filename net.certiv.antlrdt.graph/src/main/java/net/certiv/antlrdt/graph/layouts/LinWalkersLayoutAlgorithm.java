@@ -167,7 +167,7 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 			}
 
 		} catch (Exception e) {
-			Log.error(this, "Layout interrupted: " + e.getMessage());
+			Log.error(this, "Layout failed: " + e.getMessage(), e);
 		} finally {
 			lock.unlock();
 		}
@@ -564,6 +564,7 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		for (LwNode lwParent : lookup.values()) {
 			for (Edge edge : lwParent.node.getAllOutgoingEdges()) {
 				LwNode lwChild = lookup.get(edge.getTarget());
+				if (lwChild == null) continue;
 				if (lwChild.parent == null) {
 					lwChild.setParent(lwParent);
 					lwParent.children.add(lwChild);

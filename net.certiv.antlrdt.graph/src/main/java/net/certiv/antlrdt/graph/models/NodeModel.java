@@ -30,11 +30,14 @@ import com.google.common.collect.Lists;
 
 import net.certiv.antlrdt.core.AntlrDTCore;
 import net.certiv.antlrdt.core.parser.ITargetInfo;
+import net.certiv.antlrdt.core.parser.Target;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.FragmentRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ParserRuleSpecContext;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.TerminalContext;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.shapes.NodeShape;
+import net.certiv.antlrdt.graph.view.tree.PathInfo;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
@@ -178,9 +181,14 @@ public class NodeModel extends Node implements IModel {
 
 	/** Return a URL string defining an icon image to be used to decorate the {@code NodeShape}. */
 	public String getIconUrl() {
-		if (ctx instanceof RuleNode) return imgMgr.getUrl(imgMgr.IMG_OBJ_RULE).toExternalForm();
+		if (ctx instanceof ParserRuleSpecContext) return imgMgr.getUrl(imgMgr.IMG_NODE_PARSER).toExternalForm();
+		if (ctx instanceof LexerRuleSpecContext) return imgMgr.getUrl(imgMgr.IMG_NODE_LEXER).toExternalForm();
+		if (ctx instanceof FragmentRuleSpecContext) return imgMgr.getUrl(imgMgr.IMG_NODE_FRAGMENT).toExternalForm();
+		if (ctx instanceof TerminalContext) return imgMgr.getUrl(imgMgr.IMG_NODE_TERMINAL).toExternalForm();
+
 		if (ctx instanceof ErrorNode) return imgMgr.getUrl(imgMgr.ERROR_NODE).toExternalForm();
-		return imgMgr.getUrl(imgMgr.IMG_OBJ_TERMINAL).toExternalForm();
+		if (ctx instanceof TerminalNode) return imgMgr.getUrl(imgMgr.IMG_OBJ_TERMINAL).toExternalForm();
+		return imgMgr.getUrl(imgMgr.IMG_OBJ_RULE).toExternalForm();
 	}
 
 	/** Return the full text of the node context. */
@@ -190,13 +198,28 @@ public class NodeModel extends Node implements IModel {
 
 			// specific to Antlr grammar
 			if (ctx instanceof ParserRuleSpecContext) {
+				if (info.getTargetType() == Target.ALT) {
+					return ((PathInfo) info).getPathTerm().getText();
+				}
 				node = ((ParserRuleSpecContext) ctx).RULE_REF();
 			}
 			if (ctx instanceof LexerRuleSpecContext) {
+				if (info.getTargetType() == Target.ALT) {
+					return ((PathInfo) info).getPathTerm().getText();
+				}
 				node = ((LexerRuleSpecContext) ctx).TOKEN_REF();
 			}
 			if (ctx instanceof FragmentRuleSpecContext) {
+				if (info.getTargetType() == Target.ALT) {
+					return ((PathInfo) info).getPathTerm().getText();
+				}
 				node = ((FragmentRuleSpecContext) ctx).TOKEN_REF();
+			}
+			if (ctx instanceof TerminalContext) {
+				if (info.getTargetType() == Target.ALT) {
+					return ((PathInfo) info).getPathTerm().getText();
+				}
+				node = ((TerminalContext) ctx).TOKEN_REF();
 			}
 
 			if (node != null) {

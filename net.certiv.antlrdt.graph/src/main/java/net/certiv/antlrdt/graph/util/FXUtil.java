@@ -43,8 +43,7 @@ public class FXUtil {
 	}
 
 	public static Paint linearGradient(Color color) {
-		Color darkr = color.darker();
-		Stop[] stops = new Stop[] { new Stop(0, color), new Stop(1, darkr) };
+		Stop[] stops = new Stop[] { new Stop(0, color.brighter()), new Stop(0.7, color), new Stop(1, color.darker()) };
 		return new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, stops);
 	}
 

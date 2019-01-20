@@ -72,7 +72,6 @@ public class TreeView extends GraphFXView {
 		if (viewer == null) throw new IllegalStateException("Invalid content viewer.");
 
 		viewer.getContents().setAll(Collections.singleton(model));
-
 		Platform.runLater(new Runnable() {
 
 			@Override

@@ -15,7 +15,7 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 
 import net.certiv.antlrdt.graph.operations.PathsOperation;
 import net.certiv.antlrdt.graph.parts.TreeNodePart;
-import net.certiv.antlrdt.graph.view.Kind;
+import net.certiv.antlrdt.graph.view.PathOp;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
@@ -39,7 +39,7 @@ public class PathNodeContextMenuHandler extends AbstractHandler implements IOnCl
 
 	private ContextMenu makeMenu() {
 
-		MenuItem addCallers = new MenuItem(Kind.ADD_CALLERS.text());
+		MenuItem addCallers = new MenuItem(PathOp.ADD_CALLERS.text());
 		addCallers.setGraphic(new ImageView(imgMgr.getUrl(imgMgr.IMG_ACTION_ADD_CALLERS).toExternalForm()));
 		addCallers.setOnAction((e) -> {
 			TreeNodePart host = (TreeNodePart) getHost();
@@ -47,14 +47,14 @@ public class PathNodeContextMenuHandler extends AbstractHandler implements IOnCl
 			if (host == hover.getHover()) hover.clearHover();
 
 			try {
-				ITransactionalOperation op = new PathsOperation(host, Kind.ADD_CALLERS);
+				ITransactionalOperation op = new PathsOperation(host, PathOp.ADD_CALLERS);
 				host.getRoot().getViewer().getDomain().execute(op, null);
 			} catch (ExecutionException ex) {
 				Log.error(this, ex.getMessage());
 			}
 		});
 
-		MenuItem addCallees = new MenuItem(Kind.ADD_CALLEES.text());
+		MenuItem addCallees = new MenuItem(PathOp.ADD_CALLEES.text());
 		addCallees.setGraphic(new ImageView(imgMgr.getUrl(imgMgr.IMG_ACTION_ADD_PATHS).toExternalForm()));
 		addCallees.setOnAction((e) -> {
 			TreeNodePart host = (TreeNodePart) getHost();
@@ -62,14 +62,14 @@ public class PathNodeContextMenuHandler extends AbstractHandler implements IOnCl
 			if (host == hover.getHover()) hover.clearHover();
 
 			try {
-				ITransactionalOperation op = new PathsOperation(host, Kind.ADD_CALLEES);
+				ITransactionalOperation op = new PathsOperation(host, PathOp.ADD_CALLEES);
 				host.getRoot().getViewer().getDomain().execute(op, null);
 			} catch (ExecutionException ex) {
 				Log.error(this, ex.getMessage());
 			}
 		});
 
-		MenuItem removeNode = new MenuItem(Kind.REMOVE_NODE.text());
+		MenuItem removeNode = new MenuItem(PathOp.REMOVE_NODE.text());
 		removeNode.setGraphic(new ImageView(imgMgr.getUrl(imgMgr.IMG_ACTION_REMOVE_PATHS).toExternalForm()));
 		removeNode.setOnAction((e) -> {
 			TreeNodePart host = (TreeNodePart) getHost();
@@ -77,7 +77,7 @@ public class PathNodeContextMenuHandler extends AbstractHandler implements IOnCl
 			if (host == hover.getHover()) hover.clearHover();
 
 			try {
-				ITransactionalOperation op = new PathsOperation(host, Kind.REMOVE_NODE);
+				ITransactionalOperation op = new PathsOperation(host, PathOp.REMOVE_NODE);
 				host.getRoot().getViewer().getDomain().execute(op, null);
 			} catch (ExecutionException ex) {
 				Log.error(this, ex.getMessage());

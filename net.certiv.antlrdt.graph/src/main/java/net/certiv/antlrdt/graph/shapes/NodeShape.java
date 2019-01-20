@@ -61,7 +61,7 @@ public class NodeShape extends Group {
 		shape.setEffect(FXUtil.createShadowEffect());
 
 		getChildren().addAll(shape, hbox);
-
+		setVisible(!model.isHidden());
 		model.setShape(this);
 	}
 

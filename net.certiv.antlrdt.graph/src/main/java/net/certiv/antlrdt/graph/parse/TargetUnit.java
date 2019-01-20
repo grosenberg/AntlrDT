@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
 import net.certiv.antlrdt.core.parser.ITargetInfo;
+import net.certiv.antlrdt.core.parser.Target;
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.view.tokens.Trace;
 import net.certiv.dsl.core.log.Log;
@@ -208,6 +209,11 @@ class TargetUnit implements ITargetInfo {
 	@Override
 	public String[] getModeNames() {
 		return modeNames;
+	}
+
+	@Override
+	public Target getTargetType() {
+		return Target.UNIT;
 	}
 
 	private boolean buildClasses(DynamicLoader loader) {

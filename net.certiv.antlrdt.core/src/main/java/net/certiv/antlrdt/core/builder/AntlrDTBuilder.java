@@ -47,7 +47,7 @@ import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class AntlrDTBuilder extends DslBuilder {
 
-	private static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
+	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
 
 		@Override
 		public int compare(ICodeUnit u1, ICodeUnit u2) {

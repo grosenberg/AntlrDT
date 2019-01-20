@@ -9,30 +9,30 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import org.eclipse.ui.IViewPart;
 
-import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.RulerefContext;
+import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.antlrdt.graph.parts.TreeNodePart;
-import net.certiv.antlrdt.graph.view.Kind;
+import net.certiv.antlrdt.graph.view.PathOp;
 import net.certiv.antlrdt.graph.view.tree.PathsView;
 import net.certiv.dsl.core.util.CoreUtil;
 
 public class PathsOperation extends AbstractOperation implements ITransactionalOperation {
 
 	private final TreeNodePart nodePart;
-	private final Kind kind;
+	private final PathOp op;
 
-	public PathsOperation(TreeNodePart nodePart, Kind kind) {
+	public PathsOperation(TreeNodePart nodePart, PathOp op) {
 		super("Change graph");
 		this.nodePart = nodePart;
-		this.kind = kind;
+		this.op = op;
 	}
 
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		IViewPart view = CoreUtil.getActivePage().findView(PathsView.VIEW_ID);
 		if (view instanceof PathsView) {
-			RulerefContext ctx = (RulerefContext) nodePart.getContent().getParserRuleContext();
-			String rulename = ctx.RULE_REF().getText();
-			((PathsView) view).updateGraph(null, rulename, kind);
+			NodeModel model = nodePart.getContent();
+			String rulename = model.getText();
+			((PathsView) view).updateGraph(null, rulename, op);
 			return Status.OK_STATUS;
 		}
 		return Status.CANCEL_STATUS;

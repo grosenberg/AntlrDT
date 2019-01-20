@@ -14,22 +14,22 @@ options {
 paths
 	: parserRule
 	| parserAltRule
-	| parserTerminal
+	| parserAltTerm
 	| lexerRule
-	| lexerTerminal
-	| fragmentRule
-	| fragmentTerminal
+	| lexerAltTerm
+	| fragRule
+	| fragAltTerm
 	| modeRule
 	;
 
-parserRule		: //parserRuleSpec				{ onEntry: parserRuleName($RULE_REF); }	{ onExit: parserRuleDone(); }	;
-parserAltRule	: //parserRuleSpec//ruleref		{ ruleAltName($RULE_REF); }	;
-parserTerminal	: //parserRuleSpec//terminal	{ ruleAltName($TOKEN_REF); }	;
+parserRule		: //parserRuleSpec					{ parserRuleName($RULE_REF); }	{ onExit: ruleDone(); }	;
+parserAltRule	: //parserRuleSpec//ruleref			{ ruleAltName($RULE_REF, null); }		;
+parserAltTerm	: //parserRuleSpec//terminal		{ ruleAltName($TOKEN_REF, $STRING_LITERAL); }	;
 
-lexerRule		: //lexerRuleSpec				{ lexerRuleName($TOKEN_REF); }	{ onExit: lexerRuleDone(); }	;
-lexerTerminal	: //lexerRuleSpec//terminal		{ ruleAltName($TOKEN_REF); }	;
+lexerRule		: //lexerRuleSpec					{ lexerRuleName($TOKEN_REF); }	{ onExit: ruleDone(); }	;
+lexerAltTerm	: //lexerRuleSpec//terminal			{ ruleAltName($TOKEN_REF, $STRING_LITERAL); }	;
 
-fragmentRule		: //fragmentRuleSpec 			{ fragmentRuleName($TOKEN_REF); } { onExit: fragmentRuleDone(); }	;
-fragmentTerminal	: //fragmentRuleSpec//terminal	{ ruleAltName($TOKEN_REF); };
+fragRule		: //fragmentRuleSpec 				{ fragmentRuleName($TOKEN_REF); } { onExit: ruleDone(); } ;
+fragAltTerm		: //fragmentRuleSpec//terminal		{ ruleAltName($TOKEN_REF, $STRING_LITERAL); }	;
 
-modeRule		: //modeRuleSpec/id 			{ modeName($RULE_REF, $TOKEN_REF); } ;
+modeRule		: //modeRuleSpec/id 				{ modeName($RULE_REF, $TOKEN_REF); } ;

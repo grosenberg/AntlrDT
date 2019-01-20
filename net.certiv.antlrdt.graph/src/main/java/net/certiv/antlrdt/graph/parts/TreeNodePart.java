@@ -40,16 +40,6 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 	}
 
 	@Override
-	protected void doActivate() {
-		super.doActivate();
-	}
-
-	@Override
-	protected void doDeactivate() {
-		super.doDeactivate();
-	}
-
-	@Override
 	protected NodeShape doCreateVisual() {
 		return new NodeShape(getContent());
 	}
@@ -69,6 +59,7 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 		NodeModel model = getContent();
 		if (model == null) throw new IllegalStateException();
 
+		visual.setVisible(!model.isHidden());
 		refreshTooltip(visual);
 
 		Point loc = model.getLocation();
@@ -81,9 +72,9 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 
 		Dimension size = model.getSize();
 		if (size != null) {
-			getVisual().resize(size.width, size.height);
+			visual.resize(size.width, size.height);
 		} else {
-			getVisual().autosize();
+			visual.autosize();
 		}
 	}
 

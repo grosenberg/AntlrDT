@@ -59,13 +59,13 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 		Group pvGroup = new Group(parent, SWT.NONE);
 		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(pvGroup);
 		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(pvGroup);
-		pvGroup.setText("Path View Controls");
+		pvGroup.setText("Target View Controls");
 
 		Composite pvComp = new Composite(pvGroup, SWT.NONE);
 		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(pvComp);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(pvComp);
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_LIMIT), "Initial Path Depth:", pvComp, 0, 1, 1000, 1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_LIMIT), "Initial Target Depth:", pvComp, 0, 1, 1000, 1));
 
 		// ///////////////////////////////////////////////////////
 

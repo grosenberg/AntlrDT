@@ -1,9 +1,9 @@
 package net.certiv.antlrdt.graph.view;
 
-public enum Kind {
-	FULL_BUILD("Root Path", "Rebuild and show root path"),
-	ADD_CALLEES("Add Callees", "Add called nodes"),
+public enum PathOp {
+	FULL_BUILD("Root Target", "Rebuild and show root path"),
 	ADD_CALLERS("Add Callers", "Add calling nodes"),
+	ADD_CALLEES("Add Callees", "Add called nodes"),
 	REMOVE_NODE("Remove Node", "Remove node and connections"),
 
 	;
@@ -11,7 +11,7 @@ public enum Kind {
 	private String _text;
 	private String _tooltip;
 
-	Kind(String text, String tooltip) {
+	PathOp(String text, String tooltip) {
 		_text = text;
 		_tooltip = tooltip;
 	}

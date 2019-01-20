@@ -1,7 +1,10 @@
 package net.certiv.antlrdt.core.parser;
 
-public enum Path {
+public enum Target {
+	UNIT,
+
 	PARSER,
+	ALT,
 	LEXER,
 	FRAGMENT,
 	MODE;

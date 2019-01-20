@@ -5,11 +5,9 @@ import org.antlr.v4.runtime.Token;
 
 public interface IPathProcessor {
 
-	void startRule(ParserRuleContext rule, Path kind);
+	void addRuleSpec(ParserRuleContext rule, Token term, Target kind);
 
-	void endRule(Path kind);
+	void addRuleAlt(ParserRuleContext rule, Token term);
 
-	void addPathRule(ParserRuleContext rule, Token term, Path kind);
-
-	void addPathChild(Token term);
+	void endRule();
 }

@@ -6,6 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 import org.eclipse.gef.fx.nodes.Connection;
 
+import net.certiv.antlrdt.graph.models.EdgeModel;
+
 public class EdgeShape extends Connection {
 
 	public static final String STYLE = "-fx-stroke-width: 1; -fx-stroke: darkblue;";
@@ -23,8 +25,9 @@ public class EdgeShape extends Connection {
 		}
 	}
 
-	public EdgeShape() {
+	public EdgeShape(EdgeModel model) {
 		getCurve().setStyle(STYLE);
 		setEndDecoration(new ArrowHead());
+		setVisible(!model.isHidden());
 	}
 }

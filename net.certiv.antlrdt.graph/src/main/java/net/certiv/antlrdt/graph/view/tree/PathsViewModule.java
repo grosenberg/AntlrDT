@@ -20,8 +20,8 @@ import net.certiv.antlrdt.graph.behaviors.EdgeLayoutBehavior;
 import net.certiv.antlrdt.graph.behaviors.GraphLayoutBehavior;
 import net.certiv.antlrdt.graph.behaviors.NodeLayoutBehavior;
 import net.certiv.antlrdt.graph.handlers.DoubleClickHandler;
-import net.certiv.antlrdt.graph.handlers.NodeContextMenuHandler;
 import net.certiv.antlrdt.graph.handlers.PanOnDragHandler;
+import net.certiv.antlrdt.graph.handlers.PathNodeContextMenuHandler;
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.parts.FXCanvasFactory;
 import net.certiv.antlrdt.graph.parts.TreeEdgePart;
@@ -66,7 +66,7 @@ public class PathsViewModule extends MvcFxModule {
 		binder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 
 		// context menu policy
-		binder.addBinding(AdapterKey.defaultRole()).to(NodeContextMenuHandler.class);
+		binder.addBinding(AdapterKey.defaultRole()).to(PathNodeContextMenuHandler.class);
 
 		// double click policy
 		binder.addBinding(AdapterKey.defaultRole()).to(DoubleClickHandler.class);

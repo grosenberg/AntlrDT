@@ -4,23 +4,23 @@ import org.antlr.v4.runtime.Token;
 import org.eclipse.core.resources.IFile;
 
 import net.certiv.antlrdt.core.parser.ITargetInfo;
-import net.certiv.antlrdt.core.parser.Path;
+import net.certiv.antlrdt.core.parser.Target;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.util.Strings;
 
 public class PathInfo implements ITargetInfo {
 
-	public final Token token;
-	public final Path kind;
+	public final Token term;
+	public final Target type;
 
 	private boolean isParent;
 	private String[] rulenames = Strings.EMPTY_STRINGS;;
 	private String[] tokennames = Strings.EMPTY_STRINGS;
 	private IFile file;
 
-	public PathInfo(Token token, Path kind, DslParseRecord record) {
-		this.token = token;
-		this.kind = kind;
+	public PathInfo(Token term, Target type, DslParseRecord record) {
+		this.term = term;
+		this.type = type;
 		init(record);
 	}
 
@@ -29,6 +29,11 @@ public class PathInfo implements ITargetInfo {
 		file = record.unit.getFile();
 		rulenames = record.parser.getRuleNames();
 		tokennames = record.parser.getTokenNames();
+	}
+
+	@Override
+	public Target getTargetType() {
+		return type;
 	}
 
 	@Override
@@ -56,20 +61,24 @@ public class PathInfo implements ITargetInfo {
 		return Strings.EMPTY_STRINGS;
 	}
 
+	public Token getPathTerm() {
+		return term;
+	}
+
 	public boolean isParserRule() {
-		return kind == Path.PARSER;
+		return type == Target.PARSER;
 	}
 
 	public boolean isLexerRule() {
-		return kind == Path.LEXER;
+		return type == Target.LEXER;
 	}
 
 	public boolean isFragmentRule() {
-		return kind == Path.FRAGMENT;
+		return type == Target.FRAGMENT;
 	}
 
 	public boolean isModeStatement() {
-		return kind == Path.MODE;
+		return type == Target.MODE;
 	}
 
 	public boolean isParent() {

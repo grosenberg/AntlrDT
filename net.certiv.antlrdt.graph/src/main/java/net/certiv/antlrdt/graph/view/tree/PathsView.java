@@ -24,7 +24,7 @@ import net.certiv.antlrdt.graph.actions.Layout;
 import net.certiv.antlrdt.graph.actions.Router;
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.view.GraphFXView;
-import net.certiv.antlrdt.graph.view.Kind;
+import net.certiv.antlrdt.graph.view.PathOp;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IModuleStmt;
@@ -74,7 +74,7 @@ public class PathsView extends GraphFXView implements ISelectionListener {
 						IResource res = statement.getResource();
 						String name = statement.getElementName();
 						Log.info(this, "Requesting path build for " + name);
-						updateGraph(res, name, Kind.FULL_BUILD);
+						updateGraph(res, name, PathOp.FULL_BUILD);
 					}
 				}
 			}
@@ -82,13 +82,13 @@ public class PathsView extends GraphFXView implements ISelectionListener {
 	}
 
 	/**
-	 * Trigger graph update with new input. The {@code kind} parameter specifies whether to (1) generate
+	 * Trigger graph update with new input. The {@code type} parameter specifies whether to (1) generate
 	 * and install a complete root to selected element diagModel; or (2) add or remove the sub path
 	 * segments of the {@code ruleName} identified path node in the existing diagModel.
 	 */
-	public void updateGraph(IResource res, String ruleName, Kind kind) {
+	public void updateGraph(IResource res, String ruleName, PathOp op) {
 		if (ruleName != null) {
-			switch (kind) {
+			switch (op) {
 				case ADD_CALLERS:
 					paths.addCallerPaths(ruleName);
 					break;
@@ -120,15 +120,19 @@ public class PathsView extends GraphFXView implements ISelectionListener {
 		IDialogSettings ds = GraphUI.getSettings();
 		diagModel.setLayout(Layout.getEnum(ds.get(NODE_LAYOUT)));
 		diagModel.setRouter(Router.getEnum(ds.get(EDGE_ROUTER)));
+		setGraph(diagModel);
+	}
+
+	public void setGraph(DiagramModel model) {
 		InfiniteCanvasViewer viewer = (InfiniteCanvasViewer) getContentViewer();
 		if (viewer == null) throw new IllegalStateException("Invalid content viewer.");
 
-		viewer.getContents().setAll(Collections.singleton(diagModel));
+		viewer.getContents().setAll(Collections.singleton(model));
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				diagModel.doLayout();
+				model.doLayout();
 				resetViewport();
 			}
 		});
