@@ -300,6 +300,10 @@ public class NodeModel extends Node implements IModel {
 		return ctx;
 	}
 
+	public boolean isTerminal() {
+		return ctx instanceof TerminalNode;
+	}
+
 	public String getNodeDescription() {
 		if (ctx instanceof ErrorNode) return "Error Node";
 		if (ctx instanceof TerminalNode) return "Terminal Node";
@@ -361,5 +365,11 @@ public class NodeModel extends Node implements IModel {
 		if (!(obj instanceof NodeModel)) return false;
 		NodeModel other = (NodeModel) obj;
 		return Objects.equals(ctx, other.ctx);
+	}
+
+	@Override
+	public String toString() {
+		String state = hidden ? " (hidden)" : "";
+		return String.format("NodeModel '%s' %s in, %s out%s", ctx.getText(), incoming.size(), outgoing.size(), state);
 	}
 }

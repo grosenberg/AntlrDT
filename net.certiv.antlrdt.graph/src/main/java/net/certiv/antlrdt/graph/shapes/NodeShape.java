@@ -25,13 +25,15 @@ public class NodeShape extends Group {
 	private static final double H_SPACING = 4d;
 	private static final double H_NUDGING = 2d;
 
-	private HBox hbox;
+	private NodeModel model;
 
+	private HBox hbox;
 	private GeometryNode<RoundedRectangle> shape;
 	private ImageView icon;
 	private Text text;
 
 	public NodeShape(NodeModel model) {
+		this.model = model;
 		shape = new GeometryNode<>(new RoundedRectangle(0, 0, 70, 30, 16, 16));
 		shape.setStroke(Color.DARKBLUE);
 		shape.setStrokeType(StrokeType.INSIDE);
@@ -68,5 +70,9 @@ public class NodeShape extends Group {
 	@Override
 	public Orientation getContentBias() {
 		return Orientation.HORIZONTAL;
+	}
+
+	public NodeModel getContent() {
+		return model;
 	}
 }

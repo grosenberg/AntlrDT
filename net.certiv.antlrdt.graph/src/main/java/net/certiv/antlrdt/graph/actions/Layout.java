@@ -8,8 +8,11 @@ import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import net.certiv.antlrdt.graph.layouts.BranchedConnectionRouter.Branched;
+import net.certiv.antlrdt.graph.layouts.CoffmanGrahamLayoutAlgorithm;
+import net.certiv.antlrdt.graph.layouts.CoffmanGrahamLayoutAlgorithm.Flow;
 import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm;
-import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm.ORIENT;
+import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm.Orient;
 import net.certiv.antlrdt.ui.AntlrDTUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.util.Reflect;
@@ -17,31 +20,39 @@ import net.certiv.dsl.core.util.Strings;
 
 public enum Layout {
 	// HTREE("Horizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new
-	// LinWalkersLayoutAlgorithm(ORIENT.LEFT_RIGHT)),
-	// VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(ORIENT.TOP_BOTTOM)),
+	// LinWalkersLayoutAlgorithm(Flow.LEFT_RIGHT)),
+	// VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(Flow.TOP_BOTTOM)),
 
-	// HFLOW("Horizontal Flow", "IMG_LAYOUT_CALL", new BranchedLayoutAlgorithm(0)),
+	// HFLOW("Horizontal Flow", "IMG_LAYOUT_CALL", new CoffmanGrahamLayoutAlgorithm(0)),
 	// CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW",
 	// new CompositeLayoutAlgorithm(
 	// new ILayoutAlgorithm[] { new TreeLayoutAlgorithm(), new HorizontalShiftAlgorithm() })),
 
-	HTREE("Hoizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(ORIENT.LEFT_RIGHT)),
-	VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(ORIENT.TOP_BOTTOM)),
-	SPRING("Spring", "IMG_LAYOUT_SPRING", new SpringLayoutAlgorithm()),
-	RADIAL("Radial", "IMG_LAYOUT_RADIAL", new RadialLayoutAlgorithm()),
-	GRID("Grid", "IMG_LAYOUT_GRID", new CompositeLayoutAlgorithm(
-			new ILayoutAlgorithm[] { new GridLayoutAlgorithm(), new HorizontalShiftAlgorithm() })),
+	HTREE("Hoizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(Orient.LEFT_RIGHT),
+			Branched.LEFT_RIGHT),
+	VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(Orient.TOP_BOTTOM), Branched.TOP_BOTTOM),
+
+	CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW", new CoffmanGrahamLayoutAlgorithm(Flow.LEFT_RIGHT), Branched.LEFT_RIGHT),
+
+	SPRING("Spring", "IMG_LAYOUT_SPRING", new SpringLayoutAlgorithm(), Branched.MID_POINTS),
+	RADIAL("Radial", "IMG_LAYOUT_RADIAL", new RadialLayoutAlgorithm(), Branched.MID_POINTS),
+	GRID("Grid", "IMG_LAYOUT_GRID",
+			new CompositeLayoutAlgorithm(
+					new ILayoutAlgorithm[] { new GridLayoutAlgorithm(), new HorizontalShiftAlgorithm() }),
+			Branched.MID_POINTS),
 
 	;
 
 	private String layoutName;
 	private String imageKey;
 	private ILayoutAlgorithm layoutAlgorithm;
+	private Branched routerStyle;
 
-	Layout(String name, String key, ILayoutAlgorithm algorithm) {
+	Layout(String name, String key, ILayoutAlgorithm algorithm, Branched style) {
 		layoutName = name;
 		imageKey = key;
 		layoutAlgorithm = algorithm;
+		routerStyle = style;
 	}
 
 	public String getDisplayName() {
@@ -64,6 +75,10 @@ public enum Layout {
 
 	public ILayoutAlgorithm getAlgorithm() {
 		return layoutAlgorithm;
+	}
+
+	public Branched getRouterStyle() {
+		return routerStyle;
 	}
 
 	/** Returns an enum given a display name. */

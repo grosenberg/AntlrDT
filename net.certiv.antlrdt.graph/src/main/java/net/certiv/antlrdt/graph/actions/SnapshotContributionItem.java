@@ -1,11 +1,9 @@
 package net.certiv.antlrdt.graph.actions;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.image.WritableImage;
 
-import org.eclipse.gef.graph.Graph;
 import org.eclipse.gef.mvc.fx.ui.actions.AbstractViewerContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -54,22 +52,13 @@ public class SnapshotContributionItem extends AbstractViewerContributionItem {
 	}
 
 	protected void openWizard() {
-		if (getGraph() != null) {
-			InfiniteCanvasViewer viewer = (InfiniteCanvasViewer) getViewer();
-			Group contents = viewer.getCanvas().getContentGroup();
-			WritableImage image = contents.snapshot(null, null); // use defaults
-			Bounds bounds = contents.getBoundsInLocal();
-
-			SnapshotWizard wizard = new SnapshotWizard(image, (int) bounds.getWidth(), (int) bounds.getHeight());
-			WizardDialog dialog = new WizardDialog(CoreUtil.getActiveWorkbenchShell(), wizard);
-			dialog.open();
-		}
-	}
-
-	private Graph getGraph() {
 		InfiniteCanvasViewer viewer = (InfiniteCanvasViewer) getViewer();
-		ObservableList<Object> contents = viewer.getContents();
-		if (contents.isEmpty()) return null;
-		return (Graph) contents.get(0);
+		Group contents = viewer.getCanvas().getContentGroup();
+		WritableImage image = contents.snapshot(null, null); // use defaults
+		Bounds bounds = contents.getBoundsInLocal();
+
+		SnapshotWizard wizard = new SnapshotWizard(image, (int) bounds.getWidth(), (int) bounds.getHeight());
+		WizardDialog dialog = new WizardDialog(CoreUtil.getActiveWorkbenchShell(), wizard);
+		dialog.open();
 	}
 }

@@ -28,8 +28,6 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 	// public static final String CSS_CLASS_LABEL = "label";
 	// public static final String CSS_CLASS_ICON = "icon";
 
-	private Tooltip tooltip;
-
 	protected TreeNodePart() {
 		super();
 	}
@@ -41,7 +39,10 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 
 	@Override
 	protected NodeShape doCreateVisual() {
-		return new NodeShape(getContent());
+		NodeModel model = getContent();
+		NodeShape visual = new NodeShape(getContent());
+		Tooltip.install(visual, new Infotip(model));
+		return visual;
 	}
 
 	@Override
@@ -60,7 +61,6 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 		if (model == null) throw new IllegalStateException();
 
 		visual.setVisible(!model.isHidden());
-		refreshTooltip(visual);
 
 		Point loc = model.getLocation();
 		if (loc != null) {
@@ -78,13 +78,6 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 		}
 	}
 
-	protected void refreshTooltip(NodeShape visual) {
-		if (tooltip == null) {
-			tooltip = new Infotip(getContent());
-			Tooltip.install(visual, tooltip);
-		}
-	}
-
 	@Override
 	public Affine getContentTransform() {
 		Point loc = getContent().getLocation();
@@ -97,5 +90,10 @@ public class TreeNodePart extends AbstractContentPart<NodeShape> implements ITra
 		Rectangle bounds = getContent().getBounds();
 		bounds.setLocation(transform.getTx(), transform.getTy());
 		getContent().setBounds(bounds);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("TreeNodePart '%s'", getContent().getText());
 	}
 }

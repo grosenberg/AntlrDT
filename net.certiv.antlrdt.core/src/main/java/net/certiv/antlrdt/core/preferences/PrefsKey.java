@@ -139,6 +139,7 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_PIN_ENABLED = "{DSL_ID}" + ".ptPinEnabled";
 	public static final String PT_SOURCE_LEAD = "{DSL_ID}" + ".ptSourceLead";
 	public static final String PT_TARGET_LEAD = "{DSL_ID}" + ".ptTargetLead";
+	public static final String PT_LAYER_MAX_ITEMS = "{DSL_ID}" + ".ptLayerMaxItems";
 
 	public static final String PT_FIND_IMPL = "{DSL_ID}" + ".ptFindImplementor";
 

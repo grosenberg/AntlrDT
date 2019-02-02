@@ -165,6 +165,8 @@ public class PrefsInitializer extends DslPrefsInit {
 		setInt(PrefsKey.PT_SOURCE_LEAD, 16);
 		setInt(PrefsKey.PT_TARGET_LEAD, 24);
 
+		setInt(PrefsKey.PT_LAYER_MAX_ITEMS, 24);
+
 		setBool(PrefsKey.PT_FIND_IMPL, true);
 
 		setInt(PrefsKey.PT_SIBLING_SPACING, 5);

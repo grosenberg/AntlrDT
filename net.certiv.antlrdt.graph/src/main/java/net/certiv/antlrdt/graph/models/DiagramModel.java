@@ -17,7 +17,7 @@ import net.certiv.antlrdt.graph.GraphUI;
 import net.certiv.antlrdt.graph.actions.Layout;
 import net.certiv.antlrdt.graph.actions.Router;
 import net.certiv.antlrdt.graph.behaviors.GraphLayoutBehavior;
-import net.certiv.antlrdt.graph.view.tree.TreeView;
+import net.certiv.antlrdt.graph.view.GraphFXView;
 import net.certiv.dsl.core.log.Log;
 
 public class DiagramModel implements IModel, IAttributeStore {
@@ -140,7 +140,7 @@ public class DiagramModel implements IModel, IAttributeStore {
 	}
 
 	public Layout getLayout() {
-		String name = GraphUI.getSettings().get(TreeView.NODE_LAYOUT);
+		String name = GraphUI.getSettings().get(GraphFXView.NODE_LAYOUT);
 		return Layout.getEnum(name);
 	}
 
@@ -149,13 +149,13 @@ public class DiagramModel implements IModel, IAttributeStore {
 
 		Layout prior = getLayout();
 		if (prior != layout) {
-			GraphUI.getSettings().put(TreeView.NODE_LAYOUT, layout.getDisplayName());
+			GraphUI.getSettings().put(GraphFXView.NODE_LAYOUT, layout.getDisplayName());
 			fire(PROP_LAYOUT, prior, layout);
 		}
 	}
 
 	public Router getRouter() {
-		String name = GraphUI.getSettings().get(TreeView.EDGE_ROUTER);
+		String name = GraphUI.getSettings().get(GraphFXView.EDGE_ROUTER);
 		return Router.getEnum(name);
 	}
 
@@ -164,44 +164,10 @@ public class DiagramModel implements IModel, IAttributeStore {
 
 		Router prior = getRouter();
 		if (prior != router) {
-			GraphUI.getSettings().put(TreeView.EDGE_ROUTER, router.getDisplayName());
+			GraphUI.getSettings().put(GraphFXView.EDGE_ROUTER, router.getDisplayName());
 			fire(PROP_ROUTER, prior, router);
 		}
 	}
-
-	// --------------
-
-	// Paths support
-
-	// public List<ParseTree> getParseTreeList() {
-	// return Lists.newArrayList(elements.keySet());
-	// }
-	//
-	// public List<ParseTree> findCallers(ParseTree ctx) {
-	// List<ParseTree> targets = Lists.newArrayList();
-	//
-	// NodeModel elem = elements.get(ctx);
-	// if (elem == null) return targets;
-	//
-	// List<EdgeModel> conns = elem.getIncomingConnections();
-	// for (EdgeModel conn : conns) {
-	// targets.add(conn.getSource().ctx);
-	// }
-	// return targets;
-	// }
-	//
-	// public List<ParseTree> findCallees(ParseTree ctx) {
-	// List<ParseTree> targets = Lists.newArrayList();
-	//
-	// NodeModel elem = elements.get(ctx);
-	// if (elem == null) return targets;
-	//
-	// List<EdgeModel> conns = elem.getOutgoingConnections();
-	// for (EdgeModel conn : conns) {
-	// targets.add(conn.getTarget().ctx);
-	// }
-	// return targets;
-	// }
 
 	public void clear() {
 		dispose();
@@ -210,8 +176,6 @@ public class DiagramModel implements IModel, IAttributeStore {
 	public void dispose() {
 		if (graph != null) {
 			graph.getAttributes().clear();
-			// graph.getNodes().clear();
-			// graph.getEdges().clear();
 			graph = null;
 		}
 		for (NodeModel model : nodes) {

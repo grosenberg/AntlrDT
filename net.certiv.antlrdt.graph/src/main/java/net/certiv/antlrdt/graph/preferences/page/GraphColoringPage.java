@@ -29,6 +29,9 @@ public class GraphColoringPage extends AbstractFieldEditorPreferencePage {
 
 	public GraphColoringPage() {
 		super(GRID);
+		DslPrefsManagerDelta delta = AntlrDTCore.getDefault().getPrefsManager().createDeltaManager();
+		delta.setDefaultProject(null);
+		setPreferenceStore(delta);
 	}
 
 	@Override

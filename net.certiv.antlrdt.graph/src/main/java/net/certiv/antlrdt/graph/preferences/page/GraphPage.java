@@ -37,23 +37,19 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 	public void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
 
-		// ///////////////////////////////////////////////////////
+		Group group = new Group(parent, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(2, 1).applyTo(group);
+		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(group);
+		group.setText("General Options");
 
-		Group genGroup = new Group(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(2, 1).applyTo(genGroup);
-		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(genGroup);
-		genGroup.setText("General Options");
+		Composite comp = new Composite(group, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(comp);
+		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(comp);
 
-		Composite genComp = new Composite(genGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(genComp);
-		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(genComp);
+		addField(new BooleanFieldEditor(bind(PrefsKey.PT_FIND_IMPL), "Double-click activates code editor", comp));
+		addField(new BooleanFieldEditor(bind(PrefsKey.PT_SURFACE_DRAG_ENABLED), "Surface drag enabled", comp));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit", comp, 0, 10, 1000, 10));
 
-		addField(new BooleanFieldEditor(bind(PrefsKey.PT_FIND_IMPL), "Double-click activates code editor", genComp));
-		addField(new BooleanFieldEditor(bind(PrefsKey.PT_SURFACE_DRAG_ENABLED), "Surface drag enabled", genComp));
-		addField(
-				new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit", genComp, 0, 10, 10000, 1));
-
-		// ///////////////////////////////////////////////////////
 		// ///////////////////////////////////////////////////////
 
 		Group pvGroup = new Group(parent, SWT.NONE);
@@ -65,9 +61,7 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(pvComp);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(pvComp);
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_LIMIT), "Initial Target Depth:", pvComp, 0, 1, 1000, 1));
-
-		// ///////////////////////////////////////////////////////
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_LIMIT), "Initial Target Depth:", pvComp, 0, 1, 100, 1));
 
 		// ///////////////////////////////////////////////////////
 
@@ -78,38 +72,38 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 
 		// ///////////////////////////////////////////////////////
 
-		Group trGroup = new Group(alGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(trGroup);
-		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(trGroup);
-		trGroup.setText("Layout");
+		Group lgrp = new Group(alGroup, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(lgrp);
+		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(lgrp);
+		lgrp.setText("Layout");
 
-		Composite wkComp = new Composite(trGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(wkComp);
-		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(wkComp);
+		Composite lcomp = new Composite(lgrp, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(lcomp);
+		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(lcomp);
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SIBLING_SPACING), "Inter-sibling spacing:", wkComp, 0, 0, 100,
-				1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SUBTREE_SPACING), "Inter-subtree spacing:", wkComp, 0, 0, 100,
-				1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_SPACING), "Inter-level spacing:", wkComp, 0, 0, 200, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ROOT_OFFSET), "Root node offset:", wkComp, 0, 0, 200, 1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SIBLING_SPACING), "Inter-sibling spacing:", lcomp, 0, 16, 1000,
+				8));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SUBTREE_SPACING), "Inter-subtree spacing:", lcomp, 0, 16, 1000,
+				8));
+		addField(
+				new SpinnerFieldEditor(bind(PrefsKey.PT_DEPTH_SPACING), "Inter-level spacing:", lcomp, 0, 16, 1000, 8));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ROOT_OFFSET), "Root node offset:", lcomp, 0, 16, 1000, 8));
 
 		// ///////////////////////////////////////////////////////
-		// ///////////////////////////////////////////////////////
 
-		Group tfGroup = new Group(alGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(tfGroup);
-		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(tfGroup);
-		tfGroup.setText("Algorithm");
+		Group agrp = new Group(alGroup, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(agrp);
+		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(agrp);
+		agrp.setText("Algorithm");
 
-		Composite tfComp = new Composite(tfGroup, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(wkComp);
-		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(wkComp);
+		Composite acomp = new Composite(agrp, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 4).grab(true, false).applyTo(lcomp);
+		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(lcomp);
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_VERT_SPACING), "Vertical spacing:", tfComp, 0, 10, 1000, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_HORZ_SPACING), "Horizontal spacing:", tfComp, 0, 10, 1000, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SOURCE_LEAD), "Source lead:", tfComp, 0, 0, 100, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_TARGET_LEAD), "Target lead:", tfComp, 0, 0, 100, 1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_VERT_SPACING), "Vertical spacing:", acomp, 0, 16, 1000, 8));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_HORZ_SPACING), "Horizontal spacing:", acomp, 0, 16, 1000, 8));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_SOURCE_LEAD), "Source lead:", acomp, 0, 8, 100, 8));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_TARGET_LEAD), "Target lead:", acomp, 0, 8, 100, 8));
 
 		// ///////////////////////////////////////////////////////
 	}
