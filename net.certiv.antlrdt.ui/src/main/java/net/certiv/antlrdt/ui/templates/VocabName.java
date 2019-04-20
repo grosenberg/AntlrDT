@@ -8,7 +8,9 @@ import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateContext;
 
 public class VocabName extends TemplateVariableResolver {
 
-	public VocabName() {}
+	public VocabName() {
+		super();
+	}
 
 	public VocabName(String type, String description) {
 		super(type, description);

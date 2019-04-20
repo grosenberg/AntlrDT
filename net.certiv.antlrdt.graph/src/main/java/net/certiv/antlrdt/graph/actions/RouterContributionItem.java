@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.view.GraphFXView;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
 
@@ -45,7 +45,7 @@ public class RouterContributionItem extends AbstractViewerContributionItem {
 
 		Table table = combo.getTable();
 		table.setLayoutData(new GridData(240, SWT.DEFAULT));
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		for (Router router : Router.values()) {
 			TableItem row = new TableItem(table, SWT.NONE);
 			row.setImage(0, imgMgr.get(router.getImageDescriptor()));

@@ -13,26 +13,17 @@ import net.certiv.antlrdt.graph.layouts.CoffmanGrahamLayoutAlgorithm;
 import net.certiv.antlrdt.graph.layouts.CoffmanGrahamLayoutAlgorithm.Flow;
 import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm;
 import net.certiv.antlrdt.graph.layouts.LinWalkersLayoutAlgorithm.Orient;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.util.Reflect;
 import net.certiv.dsl.core.util.Strings;
 
 public enum Layout {
-	// HTREE("Horizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new
-	// LinWalkersLayoutAlgorithm(Flow.LEFT_RIGHT)),
-	// VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(Flow.TOP_BOTTOM)),
-
-	// HFLOW("Horizontal Flow", "IMG_LAYOUT_CALL", new CoffmanGrahamLayoutAlgorithm(0)),
-	// CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW",
-	// new CompositeLayoutAlgorithm(
-	// new ILayoutAlgorithm[] { new TreeLayoutAlgorithm(), new HorizontalShiftAlgorithm() })),
-
 	HTREE("Hoizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(Orient.LEFT_RIGHT),
 			Branched.LEFT_RIGHT),
 	VTREE("Vertical Tree", "IMG_LAYOUT_TREE", new LinWalkersLayoutAlgorithm(Orient.TOP_BOTTOM), Branched.TOP_BOTTOM),
 
-	CALL("Call Flow", "IMG_LAYOUT_GRAPHFLOW", new CoffmanGrahamLayoutAlgorithm(Flow.LEFT_RIGHT), Branched.LEFT_RIGHT),
+	FLOW("Call Flow", "IMG_LAYOUT_GRAPHFLOW", new CoffmanGrahamLayoutAlgorithm(Flow.LEFT_RIGHT), Branched.LEFT_RIGHT),
 
 	SPRING("Spring", "IMG_LAYOUT_SPRING", new SpringLayoutAlgorithm(), Branched.MID_POINTS),
 	RADIAL("Radial", "IMG_LAYOUT_RADIAL", new RadialLayoutAlgorithm(), Branched.MID_POINTS),
@@ -60,14 +51,14 @@ public enum Layout {
 	}
 
 	public String getImageUrlname() {
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Object value = Reflect.get(imgMgr, imageKey, true);
 		if (value == null) return Strings.EMPTY_STRING;
 		return imgMgr.getUrl((String) value).toExternalForm();
 	}
 
 	public ImageDescriptor getImageDescriptor() {
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Object key = Reflect.get(imgMgr, imageKey, true);
 		if (key == null) return null;
 		return imgMgr.getDescriptor((String) key);

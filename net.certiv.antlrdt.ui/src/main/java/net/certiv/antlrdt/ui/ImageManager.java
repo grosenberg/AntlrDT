@@ -7,7 +7,7 @@ import net.certiv.dsl.ui.DslImageManager;
 
 public class ImageManager extends DslImageManager {
 
-	private static final Bundle locBundle = AntlrDTUI.getDefault().getBundle();
+	private static final Bundle locBundle = AntlrUI.getDefault().getBundle();
 	private static final String locPrefix = locBundle.getSymbolicName() + '.';
 
 	public final String IMG_OBJ_BUFFER = create(locBundle, OBJ, locPrefix + "buffer.png");
@@ -113,6 +113,6 @@ public class ImageManager extends DslImageManager {
 
 	@Override
 	public ImageRegistry getRegistry() {
-		return AntlrDTUI.getDefault().getImageRegistry();
+		return AntlrUI.getDefault().getImageRegistry();
 	}
 }

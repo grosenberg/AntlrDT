@@ -5,12 +5,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.graph.view.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class GrammarRecord {
@@ -58,13 +57,13 @@ public class GrammarRecord {
 	}
 
 	private void init() {
-		store = AntlrDTCore.getDefault().getPrefsManager();
+		store = AntlrCore.getDefault().getPrefsManager();
 
 		genPackageNames();
 		genID();
 		snippetDir = "";
 		if (project.exists()) {
-			IPath path = CoreUtil.getWorkspaceLocation().append(project.getFullPath());
+			IPath path = project.getLocation();
 			if (project.exists(DEF_SNIPPETS_DIR)) {
 				path = path.append(DEF_SNIPPETS_DIR);
 			}
@@ -75,7 +74,7 @@ public class GrammarRecord {
 	}
 
 	private void genPackageNames() {
-		ICodeUnit unit = AntlrDTCore.getDefault().getModelManager().create(grammar);
+		ICodeUnit unit = AntlrCore.getDefault().getModelManager().create(grammar);
 		String pkgName = AntlrUtil.resolvePackageName(unit);
 
 		String filename = grammar.getName();

@@ -26,7 +26,7 @@ import org.eclipse.ui.part.ShowInContext;
 
 import com.google.inject.Injector;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.GraphUI;
 import net.certiv.antlrdt.graph.actions.Layout;
@@ -60,7 +60,7 @@ public abstract class GraphFXView extends AbstractFXView implements IShowInTarge
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		prefMgr = AntlrDTCore.getDefault().getPrefsManager();
+		prefMgr = AntlrCore.getDefault().getPrefsManager();
 		prefMgr.addPropertyChangeListener(prefs);
 
 		IDialogSettings ds = GraphUI.getSettings();

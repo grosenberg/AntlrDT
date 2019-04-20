@@ -335,7 +335,7 @@ lexerAtom
 	:	range
 	|	terminal
 	|	notSet
-	|	LEXER_CHAR_SET
+	|	charSet
 	|	DOT elementOptions?
 	;
 
@@ -362,7 +362,11 @@ setElement
 	:	TOKEN_REF elementOptions?
 	|	STRING_LITERAL elementOptions?
 	|	range
-	|	LEXER_CHAR_SET
+	|	charSet
+	;
+
+charSet
+	: LEXER_CHAR_SET
 	;
 
 // -------------

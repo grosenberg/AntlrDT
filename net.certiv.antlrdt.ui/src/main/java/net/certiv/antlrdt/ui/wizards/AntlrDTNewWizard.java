@@ -12,8 +12,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Strings;
@@ -32,12 +32,12 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

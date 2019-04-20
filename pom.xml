@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
@@ -20,25 +22,28 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<tycho.version>1.2.0</tycho.version>
+		<tycho.version>1.3.0</tycho.version>
 		<java.version>1.8</java.version>
+		<eclipse-repo.url>http://download.eclipse.org/releases/2019-03</eclipse-repo.url>
+		<certiv-repo.url>file:/D:/DevFiles/Eclipse/Tools/Certiv/net.certiv/net.certiv.tools.site/target/repository</certiv-repo.url>
+		<dsl-repo.url>file:/D:/DevFiles/Eclipse/Tools/Dsl/net.certiv.dsl/net.certiv.dsl.site/target/repository</dsl-repo.url>
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>eclipse</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/latest</url>
+			<url>${eclipse-repo.url}</url>
+		</repository>
+		<repository>
+			<id>certiv</id>
+			<layout>p2</layout>
+			<url>${certiv-repo.url}</url>
 		</repository>
 		<repository>
 			<id>dsl</id>
 			<layout>p2</layout>
-			<url>file:/D:/DevFiles/Eclipse/Dsl/net.certiv.dsl/net.certiv.dsl.site/target/repository/</url>
-		</repository>
-		<repository>
-			<id>tools</id>
-			<layout>p2</layout>
-			<url>file:/D:/DevFiles/Eclipse/Certiv/net.certiv/net.certiv.tools.site/target/repository/</url>
+			<url>${dsl-repo.url}</url>
 		</repository>
 	</repositories>
 
@@ -49,6 +54,11 @@
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -86,29 +96,10 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<compilerArgs>
 						<arg>-warn:-raw,unchecked</arg>
 					</compilerArgs>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<extraClasspathElements>
-						<extraClasspathElement>
-							<groupId>com.oracle</groupId>
-							<artifactId>javafxswt</artifactId>
-							<version>8.0.0-SNAPSHOT</version>
-							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
-							<scope>system</scope>
-						</extraClasspathElement>
-						<extraClasspathElement>
-							<groupId>com.google.inject.extensions</groupId>
-							<artifactId>guice-multibindings</artifactId>
-							<version>3.0</version>
-						</extraClasspathElement>
-						<extraClasspathElement>
-							<groupId>com.google.inject.extensions</groupId>
-							<artifactId>guice-assistedinject</artifactId>
-							<version>3.0</version>
-						</extraClasspathElement>
-					</extraClasspathElements>
 				</configuration>
 			</plugin>
 
@@ -143,7 +134,7 @@
 	<modules>
 		<module>net.certiv.antlrdt.core</module>
 		<module>net.certiv.antlrdt.ui</module>
-		<module>net.certiv.antlrdt.graph</module>
+		<module>net.certiv.antlrdt.vis</module> 
 		<module>net.certiv.antlrdt.feature</module>
 		<module>net.certiv.antlrdt.site</module>
 	</modules>

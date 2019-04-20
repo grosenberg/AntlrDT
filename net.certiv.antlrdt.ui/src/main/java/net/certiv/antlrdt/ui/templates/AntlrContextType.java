@@ -35,7 +35,7 @@ public class AntlrContextType extends DslTemplateContextType {
 	public DslTemplateContext createContext(IDocument document, int completionPosition, int length,
 			ICodeUnit sourceModule) {
 
-		return new AntlrDTTemplateContext(this, document, completionPosition, length, sourceModule);
+		return new AntlrTemplateContext(this, document, completionPosition, length, sourceModule);
 	}
 
 	@Override

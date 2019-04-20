@@ -6,7 +6,7 @@ import org.eclipse.gef.fx.nodes.StraightRouter;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.antlrdt.graph.layouts.BranchedConnectionRouter;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.util.Reflect;
 import net.certiv.dsl.core.util.Strings;
@@ -32,14 +32,14 @@ public enum Router {
 	}
 
 	public ImageDescriptor getImageDescriptor() {
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Object key = Reflect.get(imgMgr, imageKey, true);
 		if (key == null) return null;
 		return imgMgr.getDescriptor((String) key);
 	}
 
 	public String getImageUrlname() {
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Object value = Reflect.get(imgMgr, imageKey, true);
 		if (value == null) return Strings.EMPTY_STRING;
 		return imgMgr.getUrl((String) value).toExternalForm();

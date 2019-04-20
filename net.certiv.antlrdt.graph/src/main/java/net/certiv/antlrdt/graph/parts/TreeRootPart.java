@@ -5,7 +5,7 @@ import org.eclipse.gef.mvc.fx.models.GridModel;
 import org.eclipse.gef.mvc.fx.parts.LayeredRootPart;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.view.tree.TreeView;
 
@@ -15,7 +15,7 @@ public class TreeRootPart extends LayeredRootPart {
 	protected void doActivate() {
 		getVisual().getScene().getStylesheets().add(TreeView.StylesCss);
 
-		boolean show = AntlrDTCore.getDefault().getPrefsManager().getBoolean(PrefsKey.PT_SHOW_GRID);
+		boolean show = AntlrCore.getDefault().getPrefsManager().getBoolean(PrefsKey.PT_SHOW_GRID);
 		getViewer().getAdapter(GridModel.class).setShowGrid(show);
 
 		super.doActivate();

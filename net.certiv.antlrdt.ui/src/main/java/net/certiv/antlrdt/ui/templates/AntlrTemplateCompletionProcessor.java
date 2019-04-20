@@ -1,33 +1,27 @@
 package net.certiv.antlrdt.ui.templates;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPartitioningException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension3;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
 import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateCompletionProcessor;
 import net.certiv.dsl.ui.templates.CompletionManager;
 
+@SuppressWarnings("deprecation")
 public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProcessor {
 
 	private static char[] IGNORE = new char[] { '.' };
 
 	public AntlrTemplateCompletionProcessor(DslContentAssistInvocationContext context) {
-		super(AntlrDTUI.getDefault(), context);
+		super(AntlrUI.getDefault(), context);
 	}
 
 	private CompletionManager getCompletionMgr() {
-		return AntlrDTUI.getDefault().getCompletionMgr();
+		return AntlrUI.getDefault().getCompletionMgr();
 	}
 
 	@Override

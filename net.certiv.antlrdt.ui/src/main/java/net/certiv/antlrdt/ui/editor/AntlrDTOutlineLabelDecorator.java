@@ -4,7 +4,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import net.certiv.antlrdt.core.parser.ModelData;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.DslImageDescriptor;
@@ -13,7 +13,7 @@ import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
 public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	public AntlrDTOutlineLabelDecorator() {
-		super(AntlrDTUI.getDefault().getImageManager());
+		super(AntlrUI.getDefault().getImageManager());
 	}
 
 	@Override
@@ -79,7 +79,6 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 		ImageDescriptor desc = null;
 
 		switch (getElementKind()) {
-			case IDslElement.DSL_CONTAINER:
 			case IDslElement.DSL_UNIT:
 				desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_PACKAGE);
 				break;
@@ -121,8 +120,7 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_PARSER);
 							if (hasOverlay(data.decoration & ModelData.PROTECTED)) {
 								desc = createOverlayImageDescriptor(desc,
-										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_PROTECTED),
-										DslImageDescriptor.TOP_RIGHT);
+										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_PROTECTED), DslImageDescriptor.TOP_RIGHT);
 							} else if (hasOverlay(data.decoration & ModelData.PRIVATE)) {
 								desc = createOverlayImageDescriptor(desc,
 										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_PRIVATE), DslImageDescriptor.TOP_RIGHT);

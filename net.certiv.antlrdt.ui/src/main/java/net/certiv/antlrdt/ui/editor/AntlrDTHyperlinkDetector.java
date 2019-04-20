@@ -3,7 +3,7 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.builder.ModelManager;
 import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
@@ -36,6 +36,6 @@ public class AntlrDTHyperlinkDetector extends DslHyperlinkDetector {
 
 	@Override
 	public ModelManager getModelMgr() {
-		return AntlrDTCore.getDefault().getModelManager();
+		return AntlrCore.getDefault().getModelManager();
 	}
 }

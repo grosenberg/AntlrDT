@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.log.Log;
 
 /**
@@ -61,7 +61,7 @@ public class RemoveNatureHandler extends AbstractHandler {
 			String[] natures = description.getNatureIds();
 
 			for (int i = 0; i < natures.length; ++i) {
-				if (AntlrDTCore.getDefault().getNatureId().equals(natures[i])) {
+				if (AntlrCore.getDefault().getNatureId().equals(natures[i])) {
 					String[] newNatures = new String[natures.length - 1];
 					System.arraycopy(natures, 0, newNatures, 0, i);
 					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);

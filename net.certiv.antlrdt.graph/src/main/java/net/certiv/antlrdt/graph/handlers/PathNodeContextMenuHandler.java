@@ -16,7 +16,7 @@ import org.eclipse.gef.mvc.fx.operations.ITransactionalOperation;
 import net.certiv.antlrdt.graph.operations.PathsOperation;
 import net.certiv.antlrdt.graph.parts.TreeNodePart;
 import net.certiv.antlrdt.graph.view.PathOp;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
 
@@ -26,7 +26,7 @@ public class PathNodeContextMenuHandler extends AbstractHandler implements IOnCl
 
 	protected PathNodeContextMenuHandler() {
 		super();
-		imgMgr = AntlrDTUI.getDefault().getImageManager();
+		imgMgr = AntlrUI.getDefault().getImageManager();
 	}
 
 	@Override

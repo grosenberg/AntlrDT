@@ -14,9 +14,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
@@ -110,12 +110,12 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

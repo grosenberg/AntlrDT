@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.RGB;
 
 import com.google.common.collect.Lists;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.parser.ITargetInfo;
 import net.certiv.antlrdt.core.parser.Target;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.FragmentRuleSpecContext;
@@ -38,7 +38,7 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.TerminalContext;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.shapes.NodeShape;
 import net.certiv.antlrdt.graph.view.tree.PathInfo;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.util.Chars;
@@ -62,8 +62,8 @@ public class NodeModel extends Node implements IModel {
 	public NodeModel() {
 		super();
 
-		prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
-		imgMgr = AntlrDTUI.getDefault().getImageManager();
+		prefsMgr = AntlrCore.getDefault().getPrefsManager();
+		imgMgr = AntlrUI.getDefault().getImageManager();
 
 		LayoutProperties.setLocation(this, new Point());
 		LayoutProperties.setSize(this, new Dimension());
@@ -186,8 +186,9 @@ public class NodeModel extends Node implements IModel {
 		if (ctx instanceof FragmentRuleSpecContext) return imgMgr.getUrl(imgMgr.IMG_NODE_FRAGMENT).toExternalForm();
 		if (ctx instanceof TerminalContext) return imgMgr.getUrl(imgMgr.IMG_NODE_TERMINAL).toExternalForm();
 
+		if (ctx instanceof ParserRuleContext) return imgMgr.getUrl(imgMgr.IMG_NODE_PARSER).toExternalForm();
 		if (ctx instanceof ErrorNode) return imgMgr.getUrl(imgMgr.ERROR_NODE).toExternalForm();
-		if (ctx instanceof TerminalNode) return imgMgr.getUrl(imgMgr.IMG_OBJ_TERMINAL).toExternalForm();
+		if (ctx instanceof TerminalNode) return imgMgr.getUrl(imgMgr.IMG_NODE_TERMINAL).toExternalForm();
 		return imgMgr.getUrl(imgMgr.IMG_OBJ_RULE).toExternalForm();
 	}
 

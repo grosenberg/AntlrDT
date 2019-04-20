@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-
    <extension point="org.eclipse.core.expressions.definitions">
 		<definition id="net.certiv.antlrdt.activeEditor">
 			<with variable="activePartId">
@@ -11,7 +10,6 @@
 		</definition>
 	</extension>
    
-
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -72,7 +70,7 @@
                id="net.certiv.antlrdt.graph.toolbar">
             <command
                   commandId="net.certiv.antlrdt.graph.openTokensViewCmd"
-                  icon="src/main/resources/icons/obj16/view.png"
+                  icon="icons/obj16/view.png"
                   label="Tokens View"
                   style="push"
                   tooltip="Open Tokens View">
@@ -85,7 +83,7 @@
             </command>
             <command
                   commandId="net.certiv.antlrdt.graph.openPathsViewCmd"
-                  icon="src/main/resources/icons/obj16/hierarchy_co.png"
+                  icon="icons/obj16/hierarchy_co.png"
                   label="Paths View"
                   style="push"
                   tooltip="Open Paths View">
@@ -107,7 +105,7 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.graph.view.tokens.TokensView"
-            icon="src/main/resources/icons/obj16/view.png"
+            icon="icons/obj16/view.png"
             id="net.certiv.antlrdt.graph.view.tokens.TokenView"
             inject="false"
             name="Tokens View"
@@ -117,7 +115,7 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.graph.view.tree.TreeView"
-            icon="src/main/resources/icons/obj16/tree.png"
+            icon="icons/obj16/tree.png"
             id="net.certiv.antlrdt.graph.view.tree.TreeView"
             inject="false"
             name="Parse Tree View"
@@ -127,7 +125,7 @@
             allowMultiple="false"
             category="net.certiv.certivtools"
             class="net.certiv.antlrdt.graph.view.tree.PathsView"
-            icon="src/main/resources/icons/obj16/hierarchy_co.png"
+            icon="icons/obj16/hierarchy_co.png"
             id="net.certiv.antlrdt.graph.view.tree.PathsView"
             inject="false"
             name="Paths View"

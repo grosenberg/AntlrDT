@@ -5,16 +5,16 @@ SETLOCAL
 set STARTTIME=%TIME%
 
 rem lib jars directory:
-set jlib=D:\DevFiles\Eclipse\Dsl\net.certiv.dsl\net.certiv.dsl.lib
+set jlib=D:\DevFiles\Eclipse\Tools\Dsl\net.certiv.dsl\net.certiv.dsl.lib
 
 rem grammars src directory:
-set src=D:\DevFiles\Eclipse\DslEditors\net.certiv.antlrdt\net.certiv.antlrdt.core\src\main\java\net\certiv\antlrdt\core\parser
+set src=D:\DevFiles\Eclipse\Tools\Editors\net.certiv.antlrdt\net.certiv.antlrdt.core\src\main\java\net\certiv\antlrdt\core\parser
 
 rem generated class bin
-set bin=D:\DevFiles\Eclipse\DslEditors\net.certiv.antlrdt\net.certiv.antlrdt.core\target\classes
+set bin=D:\DevFiles\Eclipse\Tools\Editors\net.certiv.antlrdt\net.certiv.antlrdt.core\target\classes
 
-set antlrjar=%jlib%\antlr4-4.7.1.jar
-set arntmjar=%jlib%\antlr4-runtime-4.7.1.jar
+set antlrjar=%jlib%\antlr4-4.7.2.jar
+set arntmjar=%jlib%\antlr4-runtime-4.7.2.jar
 set arnt3jar=%jlib%\antlr-runtime-3.5.2.jar
 set sttmpjar=%jlib%\ST4-4.0.8.jar
 set xvisitor=%jlib%\xvisitor-4.7.jar

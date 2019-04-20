@@ -2,7 +2,7 @@ package net.certiv.antlrdt.core.preferences;
 
 import org.eclipse.swt.graphics.RGB;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsInit;
 import net.certiv.dsl.core.preferences.consts.Builder;
@@ -19,7 +19,7 @@ public class PrefsInitializer extends DslPrefsInit {
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override
@@ -103,11 +103,11 @@ public class PrefsInitializer extends DslPrefsInit {
 		setString(PrefsKey.SPACE_LBRACE_ACT, Formatter.AROUND);
 		setString(PrefsKey.SPACE_RBRACE_ACT, Formatter.AROUND);
 
-		// indent
+		// formatter
 
+		setString(Formatter.FORMATTER_CORPUS_LANGUAGE, "antlr");
 		setBool(Formatter.FORMATTER_INDENT_COMMENT_MULTILINE, false);
 		setBool(Formatter.FORMATTER_INDENT_COMMENT_SINGLELINE, false);
-
 		setBool(Formatter.FORMATTER_NATIVE_ENABLE, false);
 
 		// unused
@@ -132,6 +132,7 @@ public class PrefsInitializer extends DslPrefsInit {
 		setBool(PrefsKey.PT_SHOW_GRID, true);
 
 		setInt(PrefsKey.PT_DEPTH_LIMIT, 2);
+		setInt(PrefsKey.PT_CONN_WEIGHT, 3);
 
 		setRGB(PrefsKey.PT_CONN_COLOR, new RGB(128, 128, 128));
 		setRGB(PrefsKey.PT_CONN_HIGHLIGHT, new RGB(127, 0, 0));
@@ -159,8 +160,8 @@ public class PrefsInitializer extends DslPrefsInit {
 		setInt(PrefsKey.PT_GAP_ENH_X, 10);
 		setInt(PrefsKey.PT_GAP_ENH_Y, 5);
 
-		setInt(PrefsKey.PT_VERT_SPACING, 30);
-		setInt(PrefsKey.PT_HORZ_SPACING, 60);
+		setInt(PrefsKey.PT_VERT_SPACING, 32);
+		setInt(PrefsKey.PT_HORZ_SPACING, 96);
 
 		setInt(PrefsKey.PT_SOURCE_LEAD, 16);
 		setInt(PrefsKey.PT_TARGET_LEAD, 24);
@@ -169,10 +170,10 @@ public class PrefsInitializer extends DslPrefsInit {
 
 		setBool(PrefsKey.PT_FIND_IMPL, true);
 
-		setInt(PrefsKey.PT_SIBLING_SPACING, 5);
-		setInt(PrefsKey.PT_SUBTREE_SPACING, 25);
-		setInt(PrefsKey.PT_DEPTH_SPACING, 50);
-		setInt(PrefsKey.PT_ROOT_OFFSET, 50);
+		setInt(PrefsKey.PT_SIBLING_SPACING, 24);
+		setInt(PrefsKey.PT_SUBTREE_SPACING, 32);
+		setInt(PrefsKey.PT_DEPTH_SPACING, 64);
+		setInt(PrefsKey.PT_ROOT_OFFSET, 64);
 
 		setInt(PrefsKey.PT_ANIMATION_LIMIT, 500);
 	}

@@ -17,10 +17,11 @@ import javafx.scene.paint.Color;
 
 import org.eclipse.swt.graphics.RGB;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.antlrdt.graph.util.FXUtil;
+import net.certiv.dsl.core.util.Strings;
 
 public class InfotipPane extends TitledPane {
 
@@ -72,7 +73,7 @@ public class InfotipPane extends TitledPane {
 
 	private VBox headerBlock() {
 		Label text = new Label();
-		text.setText(model.getText());
+		text.setText(Strings.encode(model.getText()));
 		text.setGraphic(new ImageView(model.getIconUrl()));
 		text.setGraphicTextGap(H_PADDING);
 		text.getStyleClass().add(Infotip.TIP_TITLE);
@@ -124,7 +125,7 @@ public class InfotipPane extends TitledPane {
 	}
 
 	protected Color getTooltipFill(NodeModel model) {
-		RGB rgb = AntlrDTCore.getDefault().getPrefsManager().getRGB(PrefsKey.PT_TOOLTIP_COLOR);
+		RGB rgb = AntlrCore.getDefault().getPrefsManager().getRGB(PrefsKey.PT_TOOLTIP_COLOR);
 		return Color.rgb(rgb.red, rgb.green, rgb.blue);
 	}
 }

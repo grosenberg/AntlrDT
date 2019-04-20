@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.layouts.CoffmanGrahamLayoutAlgorithm.Flow;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
@@ -48,7 +48,7 @@ public class CGraph {
 	private void init() {
 		if (nodes.size() == 0) return;
 
-		DslPrefsManager prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
+		DslPrefsManager prefsMgr = AntlrCore.getDefault().getPrefsManager();
 		sSiblings = prefsMgr.getInt(PrefsKey.PT_SIBLING_SPACING);
 		sSubtrees = prefsMgr.getInt(PrefsKey.PT_SUBTREE_SPACING);
 		sDepth = prefsMgr.getInt(PrefsKey.PT_DEPTH_SPACING);

@@ -2,7 +2,7 @@ package net.certiv.antlrdt.ui.editor.completion;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.completion.CompletionProposal;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
@@ -10,7 +10,7 @@ import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
 public class AntlrCompletionLabelProvider extends CompletionLabelProvider {
 
 	public AntlrCompletionLabelProvider() {
-		super(AntlrDTUI.getDefault());
+		super(AntlrUI.getDefault());
 	}
 
 	@Override

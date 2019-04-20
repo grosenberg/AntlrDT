@@ -8,11 +8,8 @@
  *******************************************************************************/
 package net.certiv.antlrdt.graph.layouts;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -29,27 +26,30 @@ import org.eclipse.gef.layout.LayoutProperties;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 
 /**
- * TreeLayout that computes a tidy layout of a node-link tree diagram. This algorithm lays out a
- * rooted tree such that each depth level of the tree is on a shared line. The orientation of the
- * tree can be set such that the tree goes left-to-right (default), right-to-left, top-to-bottom, or
- * bottom-to-top.
+ * TreeLayout that computes a tidy layout of a node-link tree diagram. This
+ * algorithm lays out a rooted tree such that each depth level of the tree is on
+ * a shared line. The orientation of the tree can be set such that the tree goes
+ * left-to-right (default), right-to-left, top-to-bottom, or bottom-to-top.
  * <p>
- * The algorithm used is that of Christoph Buchheim, Michael Junger, and Sebastian Leipert from
- * their research paper <a href="http://citeseer.ist.psu.edu/buchheim02improving.html"> Improving
- * Walker's Algorithm to Run in Linear Time</a>, Graph Drawing 2002. This algorithm corrects
- * performance issues in Walker's algorithm, which generalizes Reingold and Tilford's method for
- * tidy drawings of trees to support trees with an arbitrary number of children at any given node.
+ * The algorithm used is that of Christoph Buchheim, Michael Junger, and
+ * Sebastian Leipert from their research paper
+ * <a href="http://citeseer.ist.psu.edu/buchheim02improving.html"> Improving
+ * Walker's Algorithm to Run in Linear Time</a>, Graph Drawing 2002. This
+ * algorithm corrects performance issues in Walker's algorithm, which
+ * generalizes Reingold and Tilford's method for tidy drawings of trees to
+ * support trees with an arbitrary number of children at any given node.
  * <p>
- * Derived from the <a href="http://prefuse.org">Prefuse</a> NodeLinkTreeLayout implementation (BSD
- * License). Modifications include adaption for use with GEF5, consistent handling of cyclic
- * relations, and proper support for multiple real root nodes.
+ * Derived from the <a href="http://prefuse.org">Prefuse</a> NodeLinkTreeLayout
+ * implementation (BSD License). Modifications include adaption for use with
+ * GEF5, consistent handling of cyclic relations, and proper support for
+ * multiple real root nodes.
  * </p>
  *
  * @author <a href="http://jheer.org">jeffrey heer</a>
@@ -96,15 +96,15 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	public LinWalkersLayoutAlgorithm(int orientation) {
 		super();
 		m_orientation = orientation;
-		prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
+		prefsMgr = AntlrCore.getDefault().getPrefsManager();
 		Log.setLevel(this, Log.LogLevel.Info);
 	}
 
 	/**
 	 * Returns the tree layout orientation.
 	 *
-	 * @return the orientation value. One of {@link LEFT_RIGHT}, {@link RIGHT_LEFT}, {@link TOP_BOTTOM},
-	 *         or {@link BOTTOM_TOP}.
+	 * @return the orientation value. One of {@link LEFT_RIGHT}, {@link RIGHT_LEFT},
+	 *             {@link TOP_BOTTOM}, or {@link BOTTOM_TOP}.
 	 */
 	public int getOrientation() {
 		return m_orientation;
@@ -113,8 +113,9 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 	/**
 	 * Sets the tree layout orientation.
 	 *
-	 * @param orientation the orientation value. One of {@link LEFT_RIGHT}, {@link RIGHT_LEFT},
-	 *            {@link TOP_BOTTOM}, or {@link BOTTOM_TOP}.
+	 * @param orientation the orientation value. One of {@link LEFT_RIGHT},
+	 *                        {@link RIGHT_LEFT}, {@link TOP_BOTTOM}, or
+	 *                        {@link BOTTOM_TOP}.
 	 */
 	public void setOrientation(int orientation) {
 		if (orientation < 0 || orientation >= Orient.COUNT) {
@@ -624,7 +625,8 @@ public class LinWalkersLayoutAlgorithm implements ILayoutAlgorithm {
 		return graphRoot;
 	}
 
-	// walk upwards to validate edge targets; returning edges with unreachable targets
+	// walk upwards to validate edge targets; returning edges with unreachable
+	// targets
 	private List<Edge> analyzeCycles(Map<Node, LNode> lookup, LNode lwRoot, List<Edge> omitted) {
 		if (omitted.isEmpty()) return omitted;
 

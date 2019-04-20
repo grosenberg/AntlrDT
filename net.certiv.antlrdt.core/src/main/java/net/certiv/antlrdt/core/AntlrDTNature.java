@@ -7,6 +7,6 @@ public class AntlrDTNature extends DslNature {
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 }

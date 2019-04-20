@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.core.util.eclipse.TabStyle;
@@ -46,12 +46,12 @@ public class TabGeneral extends FormatterModifyTabPage {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	private class TabPolicyListener extends SelectionAdapter implements IControlCreationManager.IInitializeListener {

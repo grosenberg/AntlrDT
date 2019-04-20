@@ -3,24 +3,21 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.formatter.AntlrDTSourceFormatter;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.completion.AntlrCompletionProcessor;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
 import net.certiv.antlrdt.ui.editor.strategies.SmartAutoEditStrategy;
-import net.certiv.antlrdt.ui.editor.text.EnhDamagerRepairer;
 import net.certiv.antlrdt.ui.editor.text.ScannerAction;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentJD;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentML;
@@ -40,7 +37,6 @@ import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslPresentationReconciler;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
-import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
 import net.certiv.dsl.ui.formatter.strategies.DslFormattingStrategy;
 
@@ -61,12 +57,12 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	private DslPrefsManager getPrefsMgr() {
@@ -121,12 +117,13 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		return reconciler;
 	}
 
-	protected void buildRepairer(PresentationReconciler reconciler, AbstractBufferedRuleBasedScanner scanner,
-			String token, TextAttribute namedAttribute) {
-		DefaultDamagerRepairer dr = new EnhDamagerRepairer(scanner, namedAttribute);
-		reconciler.setDamager(dr, token);
-		reconciler.setRepairer(dr, token);
-	}
+	// protected void buildRepairer(PresentationReconciler reconciler,
+	// AbstractBufferedRuleBasedScanner scanner,
+	// String token, TextAttribute namedAttribute) {
+	// DefaultDamagerRepairer dr = new EnhDamagerRepairer(scanner, namedAttribute);
+	// reconciler.setDamager(dr, token);
+	// reconciler.setRepairer(dr, token);
+	// }
 
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
@@ -138,13 +135,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		if (actionScanner.affectsBehavior(event)) actionScanner.adaptToPreferenceChange(event);
 	}
 
-	/**
-	 * Determines whether the preference change encoded by the given event changes the behavior of one
-	 * of its contained components.
-	 *
-	 * @param event the event to be investigated
-	 * @return {@code true} if event causes a behavioral change
-	 */
 	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return keyScanner.affectsBehavior(event) //
@@ -159,8 +149,8 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	public DslReconciler getReconciler(ISourceViewer viewer) {
 		DslReconciler reconciler = super.getReconciler(viewer);
 
-		AntlrReconcilingStrategy antlr = new AntlrReconcilingStrategy(getEditor(), viewer);
-		reconciler.setReconcilingStrategy(antlr, IDocument.DEFAULT_CONTENT_TYPE);
+		AntlrReconcilingStrategy strategy = new AntlrReconcilingStrategy(getEditor(), viewer);
+		reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
 
 		return reconciler;
 	}
@@ -181,17 +171,14 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
+	public IContentFormatter getContentFormatter(ISourceViewer viewer) {
+		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(viewer);
 
 		AntlrDTSourceFormatter srcFormatter = new AntlrDTSourceFormatter();
 		formatter.setMasterStrategy(new DslFormattingStrategy(getPrefsMgr(), srcFormatter));
 
 		if (getPrefsMgr().getBoolean(Formatter.FORMATTER_NATIVE_ENABLE)) {
 			formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
-			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
-			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
-			// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
 		}
 		return formatter;
 	}

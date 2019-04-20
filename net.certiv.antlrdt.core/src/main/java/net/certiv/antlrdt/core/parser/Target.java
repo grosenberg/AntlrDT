@@ -3,9 +3,10 @@ package net.certiv.antlrdt.core.parser;
 public enum Target {
 	UNIT,
 
+	MODE,
+
 	PARSER,
-	ALT,
 	LEXER,
-	FRAGMENT,
-	MODE;
+	TERMINAL,
+	FRAGMENT;
 }

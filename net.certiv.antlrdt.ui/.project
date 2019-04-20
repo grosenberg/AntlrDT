@@ -44,7 +44,5 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>net.certiv.antlrdt.core.nature</nature>
-		<nature>net.certiv.stdt.core.nature</nature>
 	</natures>
 </projectDescription>

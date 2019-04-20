@@ -1,7 +1,7 @@
 package net.certiv.antlrdt.ui.editor.strategies;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.AbstractSemicolonEditStrategy;
@@ -14,11 +14,11 @@ public class AntlrAutoEditSemicolonStrategy extends AbstractSemicolonEditStrateg
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 }

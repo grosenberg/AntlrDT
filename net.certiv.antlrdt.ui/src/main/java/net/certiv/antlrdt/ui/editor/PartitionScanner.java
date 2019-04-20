@@ -25,15 +25,15 @@ public class PartitionScanner extends AbstractRuleBasedPartitionScanner {
 		IToken string = new Token(Partitions.STRING);
 		IToken action = new Token(Partitions.ACTION);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		rules.add(new BalancedBraceRule(Partitions.PREFIXES, Partitions.PREDICATES, action));
 		rules.add(new MultiLineRule("/**", "*/", jdComment));
 		rules.add(new MultiLineRule("/*", "*/", mlComment));
-		rules.add(new EndOfLineRule("//", slComment));
+		rules.add(new EndOfLineRule("//", slComment, '\\', true));
 		rules.add(new NestingDelimiterRule("[", "]", string, '\\'));
-		rules.add(new SingleLineRule("[", "]", string, '\\')); // non-nested
-		rules.add(new SingleLineRule("'", "'", string, '\\'));
+		rules.add(new SingleLineRule("[", "]", string, '\\', true)); // non-nested
+		rules.add(new SingleLineRule("'", "'", string, '\\', true));
 
 		IPredicateRule[] rule = new IPredicateRule[rules.size()];
 		setPredicateRules(rules.toArray(rule));

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>eclipse-plugin</packaging>
 
@@ -20,5 +20,44 @@
 		<name>Certiv Analytics</name>
 		<url>www.certiv.net</url>
 	</organization>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<compilerArgs>
+						<arg>-warn:-raw,unchecked</arg>
+					</compilerArgs>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<extraClasspathElements>
+
+						<extraClasspathElement>
+							<groupId>com.oracle</groupId>
+							<artifactId>javafxswt</artifactId>
+							<version>8.0.0-SNAPSHOT</version>
+							<systemPath>${java.home}/lib/jfxswt.jar</systemPath>
+							<scope>system</scope>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.google.inject.extensions</groupId>
+							<artifactId>guice-multibindings</artifactId>
+							<version>3.0</version>
+						</extraClasspathElement>
+						<extraClasspathElement>
+							<groupId>com.google.inject.extensions</groupId>
+							<artifactId>guice-assistedinject</artifactId>
+							<version>3.0</version>
+						</extraClasspathElement>
+
+					</extraClasspathElements>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 
 </project>

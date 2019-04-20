@@ -5,7 +5,7 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
@@ -69,7 +69,7 @@ public class AntlrDTTextTools extends DslTextTools {
 	}
 
 	private IColorManager getColorManager() {
-		return AntlrDTCore.getDefault().getColorManager();
+		return AntlrCore.getDefault().getColorManager();
 	}
 
 	@Override

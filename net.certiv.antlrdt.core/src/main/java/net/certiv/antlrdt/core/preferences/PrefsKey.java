@@ -3,7 +3,8 @@ package net.certiv.antlrdt.core.preferences;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
 
 /**
- * Preference keys that are unique to this Dsl plugin. Prefix with the Dsl plugin ID just to ensure.
+ * Preference keys that are unique to this Dsl plugin. Prefix with the Dsl
+ * plugin ID just to ensure.
  */
 public class PrefsKey extends DslPrefsKey {
 
@@ -154,6 +155,7 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_COLOR_PREFIX = "{DSL_ID}" + ".ptColor";
 	public static final String PT_CONN_COLOR = PT_COLOR_PREFIX + "Conn";
 	public static final String PT_CONN_HIGHLIGHT = PT_COLOR_PREFIX + "ConnHighlight";
+	public static final String PT_CONN_WEIGHT = PT_COLOR_PREFIX + "ConnWeight";
 
 	public static final String PT_NODE_FOREGROUND = PT_COLOR_PREFIX + "NodeForeground";
 	public static final String PT_NODE_BACKGROUND = PT_COLOR_PREFIX + "NodeBackground";

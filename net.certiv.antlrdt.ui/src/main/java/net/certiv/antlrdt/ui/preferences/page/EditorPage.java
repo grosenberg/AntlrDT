@@ -1,7 +1,7 @@
 package net.certiv.antlrdt.ui.preferences.page;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.ui.DslUI;
@@ -17,12 +17,12 @@ public class EditorPage extends AbstractPreferencePage {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

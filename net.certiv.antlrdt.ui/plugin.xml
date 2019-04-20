@@ -3,7 +3,7 @@
 <plugin>
    <extension
          id="net.certiv.antlrdt.ui.editor.AntlrDTDocumentSetupParticipant"
-         name="AntlrDT Document"
+         name="Antlr Document"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             class="net.certiv.antlrdt.ui.editor.AntlrDTDocumentSetupParticipant"
@@ -63,7 +63,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="AntlrDT Editor"
+            name="Antlr grammar editor"
             default="true"
             extensions="g4"
             icon="icons/obj16/antlrFile.png"
@@ -146,6 +146,7 @@
    <extension
          point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
       <hyperlinkDetector
+            activate="true"
             class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
             id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
             name="Antlr grammar element hyperlink"
@@ -156,9 +157,9 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="AntlrDTEditor Context"
+            description="Antlr Editor Context"
             id="net.certiv.antlrdt.ui.antlrdtEditorScope"
-            name="AntlrDTEditor Content"
+            name="Antlr Editor Content"
             parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
@@ -170,25 +171,25 @@
      </contextTypeRegistry>
       <contextType
             class="net.certiv.antlrdt.ui.templates.AntlrContextType"
-            id="grammar"
+            id="net.certiv.antlrdt.ui.templates.grammar"
             name="Grammar"
             registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
       <contextType
             class="net.certiv.antlrdt.ui.templates.AntlrContextType"
-            id="antlrOptions"
+            id="net.certiv.antlrdt.ui.templates.options"
             name="Options"
             registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
       <contextType
             class="org.eclipse.jdt.internal.corext.template.java.JavaContextType"
-            id="java"
+            id="net.certiv.antlrdt.ui.templates.actions"
             name="Actions"
             registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
       </contextType>
       <contextType
             class="org.eclipse.jdt.internal.corext.template.java.JavaDocContextType"
-            id="javadoc"
+            id="net.certiv.antlrdt.ui.templates.javadoc"
             name="Javadoc"
             registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
       </contextType>
@@ -198,12 +199,14 @@
      </include>
       <resolver
             class="net.certiv.antlrdt.ui.templates.VocabName"
-            contextTypeId="antlrOptions"
+            contextTypeId="net.certiv.antlrdt.ui.templates.options"
             description="Proper name of the Tokens Vocabulary file"
+            icon="icons/elcl16/templateprop_co.png"
             name="Tokens Vocab Name"
             type="vocabName">
       </resolver>
   </extension>
+  
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
@@ -225,12 +228,6 @@
             class="net.certiv.antlrdt.ui.preferences.page.GeneralPage"
             id="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
             name="AntlrDT ">
-      </page>
-      <page
-            category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlrdt.ui.preferences.page.MarkOccurrencesPage"
-            id="net.certiv.antlrdt.ui.preferences.page.PrefPageMarkOccurrences"
-            name="Mark Occurrences">
       </page>
       <page
             category="net.certiv.antlrdt.ui.preferences.page.PrefPageAntlrDT"
@@ -472,12 +469,6 @@
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	 <key
 	        platform="carbon"
-	        sequence="M2+M3+O"
-	        contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
-	        commandId=""
-	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-	 <key
-	        platform="carbon"
 	        sequence="M1+M3+O"
 	        contextId="net.certiv.antlrdt.ui.antlrdtEditorScope"
 	        commandId="net.certiv.antlrdt.ui.edit.text.toggleMarkOccurrences"
@@ -580,63 +571,21 @@
       </menuContribution>
    </extension>
    
-
-   
-   <extension point="org.eclipse.ui.menus">
-      <menuContribution
-      	    locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
-         <menu
-               id="net.certiv.antlrdt.ui.popups.menu"
-               label="AntlrDT">
-            <command
-                  commandId="net.certiv.antlrdt.ui.cleanGrammarCommand"
-                  id="net.certiv.antlrdt.ui.popups.cleanGrammarCommand">
-               <visibleWhen
-                     checkEnabled="false">
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IFile">
-                        <and>
-                           <test
-                                 property="org.eclipse.core.resources.name"
-                                 value="*.g4">
-                           </test>
-                        </and>
-                     </adapt>
-                  </iterate>
-               </visibleWhen>
-            </command>
-         </menu>
-         
-         <menu
-              id="org.eclipse.ui.projectConfigure"
-              label="Configure">
-            <command
-                  commandId="net.certiv.antlrdt.ui.removeNatureCommand"
-                  id="net.certiv.antlrdt.ui.popups.removeNatureCommand">
-               <visibleWhen
-                     checkEnabled="false">
-                  <iterate
-                        ifEmpty="false"
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IProject">
-                        <and>
-                           <test
-                                 property="org.eclipse.core.resources.projectNature"
-                                 value="net.certiv.antlrdt.core.nature">
-                           </test>
-                        </and>
-                     </adapt>
-                  </iterate>
-               </visibleWhen>
-            </command>
-         </menu>
+	<extension point="org.eclipse.ui.menus">
+    	<menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+            commandId="net.certiv.antlrdt.ui.cleanGrammarCommand"
+            id="net.certiv.antlrdt.ui.popups.cleanGrammarCommand">
+            style="push">
+            <visibleWhen>
+				<reference definitionId="net.certiv.antlrdt.activeContexts.definition"/>
+			</visibleWhen>
+         </command>
       </menuContribution>
-    </extension>
-    
 
-   <!-- completions -->   
+   </extension>
+
+   <!-- completions    
    <extension
          id="AntlrCodeCompletionComputer"
          point="net.certiv.dsl.ui.dslCompletionProposalComputer">
@@ -681,5 +630,5 @@
 		</partition>
     	</dslCompletionProposalComputer>
 	</extension>
-   
+   -->
 </plugin>

@@ -10,7 +10,7 @@ import org.eclipse.gef.geometry.planar.Line;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.geometry.planar.Rectangle;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.graph.shapes.EdgeShape;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
@@ -50,7 +50,7 @@ public class BranchedConnectionRouter extends AbstractRouter {
 
 	public BranchedConnectionRouter() {
 		super();
-		DslPrefsManager prefsMgr = AntlrDTCore.getDefault().getPrefsManager();
+		DslPrefsManager prefsMgr = AntlrCore.getDefault().getPrefsManager();
 		begOffset = prefsMgr.getInt(PrefsKey.PT_SOURCE_LEAD);
 		endOffset = prefsMgr.getInt(PrefsKey.PT_TARGET_LEAD);
 		sibOffset = prefsMgr.getInt(PrefsKey.PT_SIBLING_SPACING);

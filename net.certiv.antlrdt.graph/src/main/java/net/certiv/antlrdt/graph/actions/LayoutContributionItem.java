@@ -1,8 +1,5 @@
 package net.certiv.antlrdt.graph.actions;
 
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-
 import org.eclipse.gef.mvc.fx.ui.actions.AbstractViewerContributionItem;
 import org.eclipse.gef.mvc.fx.viewer.InfiniteCanvasViewer;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
@@ -15,9 +12,11 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import net.certiv.antlrdt.graph.models.DiagramModel;
 import net.certiv.antlrdt.graph.view.GraphFXView;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.log.Log;
 
@@ -44,7 +43,7 @@ public class LayoutContributionItem extends AbstractViewerContributionItem {
 		combo = new TableCombo(bar, SWT.READ_ONLY | SWT.BORDER | SWT.SINGLE);
 		Table table = combo.getTable();
 		table.setLayoutData(new GridData(240, SWT.DEFAULT));
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		for (Layout layout : Layout.values()) {
 			TableItem row = new TableItem(table, SWT.NONE);
 			row.setImage(0, imgMgr.get(layout.getImageDescriptor()));

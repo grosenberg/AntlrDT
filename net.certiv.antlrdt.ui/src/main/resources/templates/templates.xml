@@ -3,174 +3,102 @@
 
 	<template
 		autoinsert="false"
-		context="grammar"
-		description="import statement"
+		context="net.certiv.antlrdt.ui.templates.grammar"
+		description="Import statement"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.import"
 		name="import">import "${cursor}" ;</template>
-	<template
-		autoinsert="false"
-		context="grammar"
-		description="package statement"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.package"
-		name="package">package ${cursor} ;</template>
+
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
-		description="options block"
+		description="Options block"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.options"
-		name="options">options { 
-	${cursor} 
+		name="options">options {
+	${cursor}
 }</template>
 	<template
 		autoinsert="true"
-		context="options"
+		context="net.certiv.antlrdt.ui.templates.options"
 		deleted="false"
-		description="Target language"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.language"
-		name="language">language=${cursor};	</template>
-	<template
-		autoinsert="true"
-		context="options"
-		deleted="false"
-		description="tokenVocab locations and name"
+		description="Token vocabulary"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.tokenVocab"
-		name="tokenVocab">tokenVocab=${vocabName};${cursor}
+		name="tokenVocab">tokenVocab = ${vocabName} ; ${cursor}
 	</template>
 	<template
 		autoinsert="true"
-		context="options"
-		deleted="false"
-		description="ASTLabelType class name"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.TokenLableType"
-		name="TokenLabelType">TokenLabelType=CommonTree;${cursor}
-	</template>
-	<template
-		autoinsert="true"
-		context="options"
+		context="net.certiv.antlrdt.ui.templates.options"
 		deleted="false"
 		description="Parser superclass"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.superClass"
-		name="superClass">superClass=${file};${cursor}
+		name="superClass">superClass = ${file};${cursor}
 	</template>
 	<template
 		autoinsert="true"
-		context="options"
+		context="net.certiv.antlrdt.ui.templates.options"
 		deleted="false"
-		description="Filtering lexer"
+		description="Target language"
 		enabled="true"
-		id="net.certiv.antlrdt.ui.filter"
-		name="filter">filter=true;${cursor}
-	</template>
-	<template
-		autoinsert="true"
-		context="options"
-		deleted="false"
-		description="Use TokenRewriteStream"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.rewrite"
-		name="rewrite">rewrite=true;${cursor}
-	</template>
+		id="net.certiv.antlrdt.ui.language"
+		name="language">language = ${cursor} ;	</template>
 
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
 		description="tokens block"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.tokens"
-		name="tokens">tokens { 
-	${cursor} 
+		name="tokens">tokens {
+	${cursor}
 }</template>
 
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
-		description="Header"
+		description="Header block"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.header"
 		name="@header">@header {
 	${cursor}
 }</template>
+
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
-		description="Parser header"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.parserheader"
-		name="@parser::header">@parser::header {
-	${cursor}
-}</template>
-	<template
-		autoinsert="true"
-		context="grammar"
-		deleted="false"
-		description="Lexer header"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.lexerheader"
-		name="@lexer::header">@lexer::header {
-	${cursor}
-}</template>
-	<template
-		autoinsert="true"
-		context="grammar"
-		deleted="false"
-		description="Members"
+		description="Members block"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.members"
 		name="@members">@members {
 	${cursor}
 }</template>
-	<template
-		autoinsert="true"
-		context="grammar"
-		deleted="false"
-		description="Parser members"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.parsermembers"
-		name="@parser::members">@parser::members {
-	${cursor}
-}</template>
-	<template
-		autoinsert="true"
-		context="grammar"
-		deleted="false"
-		description="Lexer members"
-		enabled="true"
-		id="net.certiv.antlrdt.ui.lexermembers"
-		name="@lexer::members">@lexer::members {
-	${cursor}
-}</template>
 
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
-		description="fragment"
+		description="Fragment modifier"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.fragment"
 		name="fragment">fragment ${cursor}
 	</template>
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
-		description="Action"
+		description="Action block"
 		enabled="true"
 		id="net.certiv.antlrdt.ui.action"
 		name="action">{ ${cursor} }	</template>
 	<template
 		autoinsert="true"
-		context="grammar"
+		context="net.certiv.antlrdt.ui.templates.grammar"
 		deleted="false"
 		description="Predicate"
 		enabled="true"

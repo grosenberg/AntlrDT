@@ -8,7 +8,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 
 public class SnapshotWizard extends Wizard implements IExportWizard {
 
@@ -25,7 +25,7 @@ public class SnapshotWizard extends Wizard implements IExportWizard {
 		this.width = width;
 		this.height = height;
 
-		IDialogSettings workbenchSettings = AntlrDTUI.getDefault().getDialogSettings();
+		IDialogSettings workbenchSettings = AntlrUI.getDefault().getDialogSettings();
 		IDialogSettings section = workbenchSettings.getSection("SnapshotWizard");//$NON-NLS-1$
 		if (section == null) {
 			section = workbenchSettings.addNewSection("SnapshotWizard");//$NON-NLS-1$

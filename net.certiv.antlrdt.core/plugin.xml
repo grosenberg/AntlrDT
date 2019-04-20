@@ -8,7 +8,7 @@
             describer="net.certiv.antlrdt.core.AntlrDTContentDescriber"
             file-extensions="g4"
             id="net.certiv.antlrdt.core.contentType"
-            name="Antlr"
+            name="Antlr grammars"
             priority="high">
       </content-type>
    </extension>
@@ -38,7 +38,7 @@
 
    <extension
          id="net.certiv.antlrdt.core.problem"
-         name="AntlrDT Problem"
+         name="Grammar Problem"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">

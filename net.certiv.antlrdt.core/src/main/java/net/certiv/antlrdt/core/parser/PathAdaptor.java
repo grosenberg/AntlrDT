@@ -1,11 +1,13 @@
 package net.certiv.antlrdt.core.parser;
 
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenSource;
+import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
-import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ModeRuleSpecContext;
 
 /** Implementing functions for grammar path walker. */
 public abstract class PathAdaptor extends Processor {
@@ -21,33 +23,45 @@ public abstract class PathAdaptor extends Processor {
 	}
 
 	public void parserRuleName(Token term) {
-		ParserRuleContext rule = (ParserRuleContext) lastPathNode();
-		helper.addRuleSpec(rule, term, Target.PARSER);
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		helper.addNode(ctx, (AntlrToken) term, Target.PARSER);
 	}
 
-	public void ruleAltName(Token term1, Token term2) {
-		ParserRuleContext rule = (ParserRuleContext) lastPathNode();
-		Token term = term1 != null ? term1 : term2;
-		helper.addRuleAlt(rule, term);
+	public void ruleRefName(Token term) {
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		helper.addNode(ctx, (AntlrToken) term, Target.PARSER);
 	}
 
 	public void lexerRuleName(Token term) {
-		ParserRuleContext rule = (ParserRuleContext) lastPathNode();
-		helper.addRuleSpec(rule, term, Target.LEXER);
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		helper.addNode(ctx, (AntlrToken) term, Target.LEXER);
 	}
 
 	public void fragmentRuleName(Token term) {
-		ParserRuleContext rule = (ParserRuleContext) lastPathNode();
-		helper.addRuleSpec(rule, term, Target.FRAGMENT);
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		helper.addNode(ctx, (AntlrToken) term, Target.FRAGMENT);
+	}
+
+	public void terminal(Token term1, Token term2) {
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		Token term = term1 != null ? term1 : term2;
+		helper.addNode(ctx, (AntlrToken) term, Target.TERMINAL);
+	}
+
+	public void literal() {
+		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
+		AntlrToken token = (AntlrToken) ctx.start;
+		Pair<TokenSource, CharStream> source = new Pair<>(token.getTokenSource(), token.getInputStream());
+		AntlrToken term = new AntlrToken(source, token.getType(), token.getChannel(), token.getStartIndex(),
+				token.getStopIndex());
+		term.setText(ctx.getText());
+		term.setLine(token.getLine());
+		term.setCharPositionInLine(token.getCharPositionInLine());
+		term.setMode(token.getMode());
+		helper.addNode(ctx, term, Target.TERMINAL);
 	}
 
 	public void ruleDone() {
-		helper.endRule();
-	}
-
-	public void modeName(Token parse, Token lex) {
-		Token term = parse != null ? parse : lex;
-		ModeRuleSpecContext rule = (ModeRuleSpecContext) pathNodes().get(1);
-		helper.addRuleSpec(rule, term, Target.MODE);
+		helper.end();
 	}
 }

@@ -30,10 +30,18 @@ public class AntlrToken extends CommonToken implements IDslToken {
 		_mode = mode;
 	}
 
+	public String getTextEncoded() {
+		return Strings.encode(getText());
+	}
+
+	public String getTypeName() {
+		return AntlrDT4Lexer.VOCABULARY.getDisplayName(type);
+	}
+
 	@Override
 	public String toString() {
-		String text = Strings.encode(getText());
-		String tname = AntlrDT4Lexer.VOCABULARY.getDisplayName(type);
+		String text = getTextEncoded();
+		String tname = getTypeName();
 		String mname = _mode == 0 ? "default" : AntlrDT4Lexer.modeNames[_mode];
 		String chan = channel == 0 ? "DEFAULT" : AntlrDT4Lexer.channelNames[channel];
 

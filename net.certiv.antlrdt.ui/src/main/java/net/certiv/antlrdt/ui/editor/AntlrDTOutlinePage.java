@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.ui.IActionBars;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
@@ -63,7 +63,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 	}
 
 	public AntlrDTOutlinePage(DslEditor editor, IPreferenceStore store) {
-		super(AntlrDTUI.getDefault(), editor, store);
+		super(AntlrUI.getDefault(), editor, store);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 
 	// order defines the order in toolbar
 	private List<DslFilterAction> buildActions(DslFilterActionGroup group) {
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		List<DslFilterAction> actions = new ArrayList<>();
 		String title, helpContext;
 

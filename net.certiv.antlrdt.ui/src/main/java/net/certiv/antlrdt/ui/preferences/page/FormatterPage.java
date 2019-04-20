@@ -3,8 +3,8 @@ package net.certiv.antlrdt.ui.preferences.page;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.antlrdt.ui.preferences.formatter.FormatterFactory;
@@ -28,12 +28,12 @@ public class FormatterPage extends DslFormatterPreferencePage {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

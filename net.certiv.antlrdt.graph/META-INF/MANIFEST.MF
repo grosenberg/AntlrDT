@@ -1,18 +1,20 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: net.certiv.antlrdt.graph
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT Graph
 Bundle-SymbolicName: net.certiv.antlrdt.graph;singleton:=true
 Bundle-Version: 4.9.0.qualifier
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/jfxswt.jar
 Bundle-Activator: net.certiv.antlrdt.graph.GraphUI
 Bundle-Vendor: Certiv Analytics
 Bundle-Localization: plugin
 Require-Bundle: net.certiv.antlrdt.ui;bundle-version="4.9.0",
  net.certiv.antlrdt.core;bundle-version="4.9.0",
- net.certiv.tools;bundle-version="1.0.7",
  net.certiv.dsl.core;bundle-version="0.9.0",
  net.certiv.dsl.lib;bundle-version="0.9.0",
  net.certiv.dsl.ui;bundle-version="0.9.0",
+ com.google.inject;bundle-version="3.0.0",
  org.eclipse.core.resources;bundle-version="3.13.200",
  org.eclipse.core.runtime;bundle-version="3.15.100",
  org.eclipse.core.filesystem;bundle-version="1.7.200",
@@ -28,18 +30,19 @@ Require-Bundle: net.certiv.antlrdt.ui;bundle-version="4.9.0",
  org.eclipse.ui.views;bundle-version="3.9.200",
  org.eclipse.ui.workbench.texteditor;bundle-version="3.11.200",
  org.eclipse.gef.common;bundle-version="5.0.0",
- org.eclipse.gef.fx;bundle-version="5.0.1",
- org.eclipse.gef.fx.swt;bundle-version="5.0.2",
  org.eclipse.gef.geometry;bundle-version="5.0.0",
- org.eclipse.gef.geometry.convert.fx;bundle-version="5.0.0",
  org.eclipse.gef.geometry.convert.swt;bundle-version="5.0.2",
  org.eclipse.gef.graph;bundle-version="5.0.0",
  org.eclipse.gef.layout;bundle-version="5.0.0",
+ org.eclipse.gef.fx;bundle-version="5.0.1",
+ org.eclipse.gef.fx.jface;bundle-version="5.0.2",
+ org.eclipse.gef.fx.swt;bundle-version="5.0.2",
+ org.eclipse.gef.geometry.convert.fx;bundle-version="5.0.0",
  org.eclipse.gef.mvc.fx;bundle-version="5.0.2",
  org.eclipse.gef.mvc.fx.ui;bundle-version="5.0.2",
- com.google.inject;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+ org.eclipse.zest.core,
+ org.eclipse.zest.layouts
 Bundle-ActivationPolicy: lazy
 Eclipse-RegisterBuddy: net.certiv.dsl.lib
-Automatic-Module-Name: net.certiv.antlrdt.graph
 Import-Package: com.google.common.collect;version="21.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

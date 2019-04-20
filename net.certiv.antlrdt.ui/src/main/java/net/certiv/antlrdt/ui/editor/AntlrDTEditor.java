@@ -7,8 +7,8 @@ import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.folding.AntlrDTFoldingStructureProvider;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Editor;
@@ -38,12 +38,12 @@ public class AntlrDTEditor extends DslEditor {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

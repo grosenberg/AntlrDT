@@ -6,8 +6,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.Partitions;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrAutoEditSemicolonStrategy;
 import net.certiv.dsl.core.DslCore;
@@ -24,12 +24,12 @@ public class AntlrProposal extends DslCompletionProposal {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override

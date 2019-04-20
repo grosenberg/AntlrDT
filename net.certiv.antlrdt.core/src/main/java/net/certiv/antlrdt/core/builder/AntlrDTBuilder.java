@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -33,19 +32,21 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.DslLanguageManager;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.model.DslSourceRoot;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.parser.DslProblemCollector;
+import net.certiv.dsl.core.parser.problems.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 
 public class AntlrDTBuilder extends DslBuilder {
+
+	private static final String GEN_PATH = "target/generated-sources/antlr4/";
 
 	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
 
@@ -61,7 +62,7 @@ public class AntlrDTBuilder extends DslBuilder {
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override
@@ -88,7 +89,11 @@ public class AntlrDTBuilder extends DslBuilder {
 		try {
 			String srcFile = unit.getLocation().toString();
 			IPath output = determineBuildPath(unit);
-			if (output == null) return;
+			if (output == null) {
+				Log.error(this, "No build path for: " + unit.getPath().toString());
+				CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
+				return;
+			}
 
 			// Log.info(this, "Build [" + srcFile + "]");
 			// Log.info(this, "Output [" + output + "]");
@@ -102,6 +107,7 @@ public class AntlrDTBuilder extends DslBuilder {
 			// Prep and process the grammar file
 			Grammar g = tool.loadGrammar(srcFile);
 			tool.process(g, true); // NOTE: can throw execeptions based on grammar eval
+			CoreUtil.showStatusLineMessage("Built " + unit.getPath().toString(), false);
 			monitor.worked(1);
 
 			postCompileCleanup(unit, output, monitor);
@@ -109,6 +115,7 @@ public class AntlrDTBuilder extends DslBuilder {
 
 		} catch (Exception | Error e) {
 			Log.error(this, "Build failed.", e);
+			CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
 		}
 	}
 
@@ -119,35 +126,36 @@ public class AntlrDTBuilder extends DslBuilder {
 	 * @return a filesystem absolute path to the build folder
 	 */
 	private IPath determineBuildPath(ICodeUnit unit) {
-		if (unit != null) {
-			DslSourceRoot srcRoot = unit.getSourceRoot();
-			String pkg = AntlrUtil.resolvePackageName(unit);
+		DslLanguageManager mgr = getDslCore().getLanguageManager();
+		if (!mgr.onSourcePath(unit)) return null;
 
-			if (srcRoot.isNativeSourceRoot()) {
-				if (pkg != null && !pkg.isEmpty()) {
-					Path path = new Path(pkg.replaceAll("\\.", "/"));
-					return srcRoot.getLocation().append(path);
-				}
-				return null;
+		// absolute project path
+		IPath projectPath = unit.getDslProject().getLocation();
+		String pkg = AntlrUtil.resolvePackageName(unit);
+		if (pkg != null) pkg = pkg.replaceAll("\\.", "/");
 
-			} else if (srcRoot.isExtraSourceRoot()) {
-				IPath output = unit.getDslProject().getLocation().append("target/generated-sources/antlr4/");
-				if (pkg != null && !pkg.isEmpty()) {
-					Path path = new Path(pkg.replaceAll("\\.", "/"));
-					return output.append(path);
+		IPath buildPath = null;
+		if (mgr.onNativeSourcePath(unit.getFile())) {
+			if (pkg != null && !pkg.isEmpty()) {
+				// native requires a package name to be declared in the grammar
+				buildPath = projectPath.append(unit.getSourceRoot()).append(pkg);
+			}
 
-				} else {
-					IPath path = unit.getParent().getLocation().makeRelativeTo(srcRoot.getLocation());
-					return output.append(path);
-				}
+		} else { // must be extra
+			IPath output = unit.getDslProject().getLocation().append(GEN_PATH);
+			if (pkg == null || pkg.isEmpty()) {
+				buildPath = output.append(unit.getProjectRelativePath());
+			} else {
+				buildPath = output.append(pkg);
 			}
 		}
-		return null;
+		Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(), buildPath));
+		return buildPath;
 	}
 
 	private void postCompileCleanup(ICodeUnit unit, IPath output, IProgressMonitor monitor) {
 		if (!unit.exists()) {
-			Log.info(this, "Compile produced no file[file=" + unit.getPath() + "]");
+			Log.error(this, "Compile produced no file[file=" + unit.getPath() + "]");
 			return;
 		}
 		IProject project = unit.getProject();

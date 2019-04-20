@@ -99,7 +99,10 @@ public abstract class StructureBuilder extends Processor {
 		maker.popParent();
 	}
 
-	/** Called for action blocks. Block content is handled as an aggregate of native code. */
+	/**
+	 * Called for action blocks. Block content is handled as an aggregate of native
+	 * code.
+	 */
 	public void doAction() {
 		ActionContext ctx = (ActionContext) lastPathNode();
 		String scope = ctx.actionScopeName() != null ? ctx.actionScopeName().getText() : "";
@@ -262,7 +265,7 @@ public abstract class StructureBuilder extends Processor {
 
 	public void doLexerAtomRef() {
 		LexerAtomContext ctx = (LexerAtomContext) lastPathNode();
-		TerminalNode atom = ctx.LEXER_CHAR_SET() != null ? ctx.LEXER_CHAR_SET() : ctx.DOT();
+		TerminalNode atom = ctx.charSet() != null ? ctx.charSet().LEXER_CHAR_SET() : ctx.DOT();
 		if (atom != null) {
 			ModelData data = new ModelData(ModelType.Value, ctx, atom.getText());
 			data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
@@ -286,7 +289,9 @@ public abstract class StructureBuilder extends Processor {
 		maker.field(ctx, ctx.RULE_REF(), data.type, data.form, data.realm, data);
 	}
 
-	/** Called for each terminal referenced in a parser or lexer rule specification. */
+	/**
+	 * Called for each terminal referenced in a parser or lexer rule specification.
+	 */
 	public void doTerminalRef() {
 		TerminalContext ctx = (TerminalContext) lastPathNode();
 		TerminalNode terminal = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF() : ctx.STRING_LITERAL();
@@ -309,8 +314,8 @@ public abstract class StructureBuilder extends Processor {
 			elem = ctx.TOKEN_REF();
 		} else if (ctx.STRING_LITERAL() != null) {
 			elem = ctx.STRING_LITERAL();
-		} else if (ctx.LEXER_CHAR_SET() != null) {
-			elem = ctx.LEXER_CHAR_SET();
+		} else if (ctx.charSet() != null) {
+			elem = ctx.charSet().LEXER_CHAR_SET();
 		}
 		if (elem != null) {
 			ModelData data = new ModelData(ModelType.LexerRule, ctx, elem.getText());

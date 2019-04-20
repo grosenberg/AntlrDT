@@ -17,6 +17,7 @@ import org.eclipse.gef.geometry.planar.RoundedRectangle;
 
 import net.certiv.antlrdt.graph.models.NodeModel;
 import net.certiv.antlrdt.graph.util.FXUtil;
+import net.certiv.dsl.core.util.Strings;
 
 public class NodeShape extends Group {
 
@@ -43,7 +44,7 @@ public class NodeShape extends Group {
 		hbox.setPadding(new Insets(V_PADDING, H_PADDING, V_PADDING, H_PADDING));
 
 		icon = new ImageView(model.getIconUrl());
-		text = new Text(model.getText());
+		text = new Text(Strings.encode(model.getText()));
 		text.setTextOrigin(VPos.TOP);
 		text.getStyleClass().add(model.getCssClass());
 

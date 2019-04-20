@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.util.CoreUtil;
 
@@ -35,7 +35,7 @@ public class SnapshotContributionItem extends AbstractViewerContributionItem {
 		button = new Button(tb, SWT.PUSH);
 		item.setControl(button);
 
-		ImageManager imgMgr = AntlrDTUI.getDefault().getImageManager();
+		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		button.setImage(imgMgr.get(imgMgr.IMG_SNAPSHOT));
 		button.addSelectionListener(new SelectionListener() {
 

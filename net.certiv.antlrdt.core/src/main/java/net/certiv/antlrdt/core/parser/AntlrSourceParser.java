@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.eclipse.core.runtime.IPath;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
+import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlrdt.core.parser.gen.StructureVisitor;
@@ -28,7 +28,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class AntlrSourceParser extends DslSourceParser {
 	}
 
 	private String getPackageName(ICodeUnit unit) {
-		IPath path = unit.getPath().makeRelativeTo(unit.getSourceRoot().getPath());
+		IPath path = unit.getPath().makeRelativeTo(unit.getSourceRoot());
 		return path.toString().replace('/', '.');
 	}
 

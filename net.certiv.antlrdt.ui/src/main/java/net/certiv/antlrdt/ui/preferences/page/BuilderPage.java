@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import net.certiv.antlrdt.core.AntlrDTCore;
-import net.certiv.antlrdt.ui.AntlrDTUI;
+import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
@@ -32,7 +32,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 	public BuilderPage() {
 		super(GRID);
-		DslPrefsManagerDelta delta = AntlrDTCore.getDefault().getPrefsManager().createDeltaManager();
+		DslPrefsManagerDelta delta = AntlrCore.getDefault().getPrefsManager().createDeltaManager();
 		delta.setDefaultProject(null);
 		setPreferenceStore(delta);
 	}
@@ -108,12 +108,12 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 	@Override
 	public DslUI getDslUI() {
-		return AntlrDTUI.getDefault();
+		return AntlrUI.getDefault();
 	}
 
 	@Override
 	public DslCore getDslCore() {
-		return AntlrDTCore.getDefault();
+		return AntlrCore.getDefault();
 	}
 
 	@Override
