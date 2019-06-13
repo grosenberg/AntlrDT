@@ -126,6 +126,8 @@ public class PrefsInitializer extends DslPrefsInit {
 
 		setString(PrefsKey.SNIPPETTEST_BASEDIR_SOURCE, "");
 
+		setLong(PrefsKey.PARSE_TIMEOUT, 10000);
+
 		// ------------------------------------------------------------------------------
 		// Paths View
 

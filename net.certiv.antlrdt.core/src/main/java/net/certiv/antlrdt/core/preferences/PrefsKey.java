@@ -117,6 +117,8 @@ public class PrefsKey extends DslPrefsKey {
 
 	public static final String SNIPPETTEST_BASEDIR_SOURCE = "{DSL_ID}" + ".SnippetTest.BaseDir.Source";
 
+	public static final String PARSE_TIMEOUT = "{DSL_ID}" + ".ParseTimeout";
+
 	public static final String PT_VERT_SPACING = "{DSL_ID}" + ".ptVerticalSpacing";
 	public static final String PT_HORZ_SPACING = "{DSL_ID}" + ".ptHorizontalSpacing";
 

@@ -48,7 +48,11 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 
 		addField(new BooleanFieldEditor(bind(PrefsKey.PT_FIND_IMPL), "Double-click activates code editor", comp));
 		addField(new BooleanFieldEditor(bind(PrefsKey.PT_SURFACE_DRAG_ENABLED), "Surface drag enabled", comp));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit", comp, 0, 10, 1000, 10));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit (reps)", comp, 0, 10, 1000,
+				10));
+
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PARSE_TIMEOUT), "Parsetree generation timout (ms)", comp, 0, 1000,
+				100000, 500));
 
 		// ///////////////////////////////////////////////////////
 

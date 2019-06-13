@@ -54,10 +54,11 @@ public class AntlrCore extends DslCore {
 		return null;
 	}
 
-	/** For Maven located grammars. */
 	@Override
-	public String[][] getExtraSourceRoots() {
-		return new String[][] { { "src/main/antlr4" }, { "src/main/antlr4/import" } };
+	public String[][] getLangSourceRoots() {
+		return new String[][] { //
+				{ "src/main/antlr4", null, "src/main/antlr4/import", "target/classes" }, // Maven
+		};
 	}
 
 	@Override

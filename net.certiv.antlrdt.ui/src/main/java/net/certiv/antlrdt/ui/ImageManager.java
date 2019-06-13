@@ -37,7 +37,7 @@ public class ImageManager extends DslImageManager {
 	public final String IMG_OBJ_MODE = create(locBundle, OBJ, locPrefix + "mode_obj.png");
 	public final String IMG_OBJ_LABEL = create(locBundle, OBJ, locPrefix + "label_obj.png");
 	public final String IMG_OBJ_RULE_COLON = create(locBundle, OBJ, locPrefix + "ruleColon.png");
-	public final String IMG_OBJ_RULE = create(locBundle, OBJ, locPrefix + "rule_obj.png");
+	public final String IMG_OBJ_RULE = create(locBundle, OBJ, locPrefix + "graph.png");
 	public final String IMG_OBJ_TERMINAL = create(locBundle, OBJ, locPrefix + "terminal_obj.png");
 
 	public final String IMG_NODE_PARSER = create(locBundle, OBJ, locPrefix + "node_rule.png");

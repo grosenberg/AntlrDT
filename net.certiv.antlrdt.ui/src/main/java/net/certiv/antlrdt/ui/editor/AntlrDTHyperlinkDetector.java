@@ -4,8 +4,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.dsl.core.model.DslModel;
 import net.certiv.dsl.core.model.IStatement;
-import net.certiv.dsl.core.model.builder.ModelManager;
 import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
 import net.certiv.dsl.ui.editor.text.DslWordFinder;
 
@@ -35,7 +35,7 @@ public class AntlrDTHyperlinkDetector extends DslHyperlinkDetector {
 	}
 
 	@Override
-	public ModelManager getModelMgr() {
-		return AntlrCore.getDefault().getModelManager();
+	public DslModel getDslModel() {
+		return AntlrCore.getDefault().getDslModel();
 	}
 }

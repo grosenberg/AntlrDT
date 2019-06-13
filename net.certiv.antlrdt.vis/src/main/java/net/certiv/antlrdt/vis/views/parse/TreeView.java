@@ -1,7 +1,5 @@
 package net.certiv.antlrdt.vis.views.parse;
 
-import java.util.List;
-
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolylineConnection;
@@ -78,13 +76,11 @@ import net.certiv.antlrdt.vis.views.ViewForm;
 import net.certiv.antlrdt.vis.views.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IModuleStmt;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.eclipse.PartListener2;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.IContextMenuConstants;
 import net.certiv.dsl.ui.actions.GotoAction;
@@ -128,7 +124,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 	private PathNode focusedNode;
 	private PathNode selectedNode;
-	private List<PathNode> selectedNodes;
+	// private List<PathNode> selectedNodes;
 
 	public TreeView() {
 		super();
@@ -199,11 +195,11 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 	// return false;
 	// }
 
-	@Override
-	public void select(ICodeUnit unit, IStatement statement) {
-		// String name = statement != null ? statement.getElementName() : null;
-		// update(PathOp.FULL_BUILD, unit, name);
-	}
+	// @Override
+	// public void select(ICodeUnit unit, IStatement statement) {
+	// // String name = statement != null ? statement.getElementName() : null;
+	// // update(PathOp.FULL_BUILD, unit, name);
+	// }
 
 	// public void refresh() {
 	// viewer.setInput(helper.getModel());
@@ -211,8 +207,6 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 	// }
 
 	public void setInput(Source source, TargetBuilder builder) {
-		// this.source = source;
-		// labelProvider.setNames(builder.getRuleNames(), builder.getTokenNames());
 		contentProvider.updateModel(builder.getModel());
 		viewer.setInput(builder.getModel());
 		viewer.applyLayout();
@@ -276,7 +270,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 		fgRGB = registry.getRGB(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND);
 		if (fgRGB == null) {
-			fgColor = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			fgColor = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 			fgRGB = fgColor.getRGB();
 		} else {
 			fgColor = new Color(display, fgRGB);
@@ -285,7 +279,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 		bgRGB = registry.getRGB(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 		if (bgRGB == null) {
-			bgColor = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			bgColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 			bgRGB = bgColor.getRGB();
 		} else {
 			bgColor = new Color(display, bgRGB);
@@ -439,44 +433,46 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 					AntlrDTEditor editor = (AntlrDTEditor) part;
 					ISelection selection = editor.getSelectionProvider().getSelection();
 
-					ICodeUnit unit = (ICodeUnit) editor.getEditorInput();
-					IDslElement element = null;
+					ICodeUnit unit = editor.getInputDslElement();
+					IStatement statement = null;
 					if (selection instanceof StructuredSelection) {
-						Object elem = ((StructuredSelection) selection).getFirstElement();
-						if (elem instanceof IStatement) {
-							element = (IDslElement) elem;
+						Object element = ((StructuredSelection) selection).getFirstElement();
+						if (element instanceof IStatement) {
+							statement = (IStatement) element;
 						}
 					}
-					select(unit, element);
+					select(unit, statement);
 				}
 			}
 		}
 	}
 
-	private final PartListener2 partListener = new PartListener2() {
-
-		@Override
-		public void partVisible(IWorkbenchPartReference ref) {
-			if (ref.getId().equals(getSite().getId())) {
-				IWorkbenchPart activePart = ref.getPage().getActivePart();
-				if (activePart != null) selectionChanged(activePart, ref.getPage().getSelection());
-				startListeningForSelectionChanges();
-			}
-		}
-
-		@Override
-		public void partHidden(IWorkbenchPartReference ref) {
-			if (ref.getId().equals(getSite().getId())) stopListeningForSelectionChanges();
-		}
-
-		@Override
-		public void partInputChanged(IWorkbenchPartReference ref) {
-			if (ref.getId().equals(AntlrDTEditor.EDITOR_ID)) {
-				ICodeUnit unit = (ICodeUnit) CoreUtil.getActiveEditor().getEditorInput();
-				viewer.setInput(unit);
-			}
-		}
-	};
+	// private final PartListener2 partListener = new PartListener2() {
+	//
+	// @Override
+	// public void partVisible(IWorkbenchPartReference ref) {
+	// if (ref.getId().equals(getSite().getId())) {
+	// IWorkbenchPart activePart = ref.getPage().getActivePart();
+	// if (activePart != null) selectionChanged(activePart,
+	// ref.getPage().getSelection());
+	// startListeningForSelectionChanges();
+	// }
+	// }
+	//
+	// @Override
+	// public void partHidden(IWorkbenchPartReference ref) {
+	// if (ref.getId().equals(getSite().getId()))
+	// stopListeningForSelectionChanges();
+	// }
+	//
+	// @Override
+	// public void partInputChanged(IWorkbenchPartReference ref) {
+	// if (ref.getId().equals(AntlrDTEditor.EDITOR_ID)) {
+	// ICodeUnit unit = (ICodeUnit) CoreUtil.getActiveEditor().getEditorInput();
+	// viewer.setInput(unit);
+	// }
+	// }
+	// };
 
 	private void addListeners(final TreeView view) {
 
@@ -488,7 +484,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 			public void partActivated(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part instanceof AntlrDTEditor && viewVisible) {
-					viewer.refresh(true);
+					viewer.refresh(false);
 				}
 			}
 
@@ -583,21 +579,20 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-
 		if (linking && part instanceof AntlrDTEditor) {
-			ICodeUnit unit = (ICodeUnit) CoreUtil.getActiveEditor().getEditorInput();
-			IDslElement element = null;
+			ICodeUnit unit = ((AntlrDTEditor) part).getInputDslElement();
+			IStatement statement = null;
 			if (selection instanceof StructuredSelection) {
-				Object elem = ((StructuredSelection) selection).getFirstElement();
-				if (elem instanceof IStatement) {
-					element = (IDslElement) elem;
+				Object element = ((StructuredSelection) selection).getFirstElement();
+				if (element instanceof IStatement) {
+					statement = (IStatement) element;
 				}
 			}
-			select(unit, element);
+			select(unit, statement);
 			return;
 		}
 
-		if (part instanceof ContentOutline) {
+		if (linking && part instanceof ContentOutline) {
 			if (selection instanceof IStructuredSelection) {
 				for (Object elem : ((IStructuredSelection) selection).toList()) {
 					if (elem instanceof Statement && !(elem instanceof IModuleStmt)) {
@@ -611,11 +606,12 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 		}
 	}
 
-	private boolean select(ICodeUnit unit, IDslElement element) {
-		if (unit == null) return false;
-		Log.info(this, "Selecting " + element.toString());
+	@Override
+	public void select(ICodeUnit unit, IStatement element) {
+		if (unit == null) return;
+
+		if (element != null) Log.info(this, "Selecting " + element.toString());
 		viewer.setInput(unit);
-		return true;
 	}
 
 	/* Listens for selections in the graph viewer */
@@ -636,18 +632,17 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 	 * selection occurs. All selectable nodes in the graph should resolve to
 	 * PathsNode.
 	 */
-	@SuppressWarnings("unchecked")
 	private void handleSelectionChanged(Object selectedElement, IStructuredSelection selections) {
 		if (selectedElement instanceof PathNode) {
 			selectedNode = (PathNode) selectedElement;
-			selectedNodes = selections.toList();
+			// selectedNodes = selections.toList();
 			labelProvider.setCurrentSelection(focusedNode, selectedNode);
 			if (focusedNode != null) {
 				viewer.update(contentProvider.getElements(focusedNode), null);
 			}
 		} else {
 			selectedNode = null;
-			selectedNodes = null;
+			// selectedNodes = null;
 		}
 	}
 

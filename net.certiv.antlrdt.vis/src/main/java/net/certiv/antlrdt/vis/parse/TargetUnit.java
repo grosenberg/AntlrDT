@@ -26,6 +26,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 
 import net.certiv.antlrdt.core.parser.ITargetInfo;
 import net.certiv.antlrdt.core.parser.Target;
@@ -33,8 +35,8 @@ import net.certiv.antlrdt.vis.model.TreeModel;
 import net.certiv.antlrdt.vis.views.parse.TreeProcessor;
 import net.certiv.antlrdt.vis.views.tokens.Trace;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.util.eclipse.DynamicLoader;
-import net.certiv.dsl.core.util.eclipse.JdtUtil;
+import net.certiv.dsl.jdt.util.DynamicLoader;
+import net.certiv.dsl.jdt.util.JdtUtil;
 
 class TargetUnit implements ITargetInfo {
 
@@ -121,12 +123,12 @@ class TargetUnit implements ITargetInfo {
 	}
 
 	/**
-	 * Loads and holds the classes that corresponding to the current editor content:
-	 * the source grammar.
+	 * Loads and holds the classes that corresponding to the current editor content: the
+	 * source grammar.
 	 *
-	 * @param record     a data record describing the source grammar
+	 * @param record a data record describing the source grammar
 	 * @param srcGrammar the source grammar file
-	 * @param content    the content of the source grammar file
+	 * @param content the content of the source grammar file
 	 */
 	public TargetUnit(GrammarRecord record, IFile grammar, String content) {
 		this.record = record;
@@ -310,6 +312,7 @@ class TargetUnit implements ITargetInfo {
 			Log.info(this, "Parser constructed ...");
 		} catch (Exception e) {
 			Log.error(this, "Failed to instantiate parser (" + e.getMessage() + ")");
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", e.getMessage());
 			return;
 		}
 

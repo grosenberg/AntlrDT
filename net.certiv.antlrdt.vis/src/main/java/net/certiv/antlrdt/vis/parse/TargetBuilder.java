@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
+import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.vis.model.TreeModel;
 import net.certiv.antlrdt.vis.views.tokens.Source;
@@ -23,19 +24,21 @@ import net.certiv.dsl.ui.DslUI;
 
 public class TargetBuilder {
 
-	private static final long LIMIT = 3000;	// ms for parser execution and tree walk
 	private final BuildJob buildJob = new BuildJob("Parse Tree Builder");
 
 	private AntlrDTEditor editor;
 	private GrammarRecord record;
 	private Source source;
 
+	private long timeout;	// ms for parser execution and tree walk
 	private TargetUnit target;
 
 	public TargetBuilder(AntlrDTEditor editor, GrammarRecord record, Source source) {
 		this.editor = editor;
 		this.record = record;
 		this.source = source;
+
+		timeout = editor.getPrefsMgr().getLong(PrefsKey.PARSE_TIMEOUT);
 
 		buildJob.setPriority(Job.BUILD);
 		buildJob.setSystem(true);
@@ -108,7 +111,7 @@ public class TargetBuilder {
 					Log.warn(this, "Target parser generation timer expired " + (target != null));
 					if (target != null) target.terminate();
 				}
-			}, LIMIT);
+			}, timeout);
 			return timer;
 		}
 

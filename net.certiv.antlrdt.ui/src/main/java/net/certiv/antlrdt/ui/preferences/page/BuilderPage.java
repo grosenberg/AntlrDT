@@ -57,7 +57,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 		});
 		addField(builderEn);
 
-		projRestriction = new BooleanFieldEditor(bind(Builder.BUILDER_RESTRICT_TO_PROJECT),
+		projRestriction = new BooleanFieldEditor(bind(Builder.BUILDER_RESTRICT_TO_ACTIVE_PROJECT),
 				"Restrict builds to grammars within the current project", buildComp);
 		projRestriction.addSelectionListener(new SelectionAdapter() {
 
@@ -70,20 +70,6 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 			}
 		});
 		addField(projRestriction);
-
-		curpathRestriction = new BooleanFieldEditor(bind(Builder.BUILDER_PERMIT_NATIVE_SOURCE_PATH),
-				"Restrict builds to grammars within a source directory", buildComp);
-		curpathRestriction.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean selected = ((Button) e.getSource()).getSelection();
-				if (selected) {
-					projRestriction.setBooleanValue(selected);
-				}
-			}
-		});
-		addField(curpathRestriction);
 
 		// ----
 

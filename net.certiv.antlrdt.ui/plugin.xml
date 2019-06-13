@@ -181,6 +181,8 @@
             name="Options"
             registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
+
+<!--
       <contextType
             class="org.eclipse.jdt.internal.corext.template.java.JavaContextType"
             id="net.certiv.antlrdt.ui.templates.actions"
@@ -193,6 +195,7 @@
             name="Javadoc"
             registryId="org.eclipse.jdt.ui.CompilationUnitEditor">
       </contextType>
+-->
      <include
            file="src/main/resources/templates/templates.xml"
            translations="src/main/resources/templates/templates.properties">
@@ -211,7 +214,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             category="net.certiv.certivtools.wizards"
-            class="net.certiv.antlrdt.ui.wizards.AntlrDTNewWizard"
+            class="net.certiv.antlrdt.ui.wizards.AntlrNewWizard"
             icon="icons/obj16/antlrFile.png"
             id="net.certiv.antlrdt.ui.wizards.AntlrDTNewWizard"
             name="New ANTLR grammar ">
@@ -266,6 +269,22 @@
             name="Builder">
       </page>
    </extension>
+ <extension
+       point="org.eclipse.ui.propertyPages">
+    <page
+          name="Antlr Root Folders"
+          class="net.certiv.antlrdt.ui.properties.RootFoldersPropertyPage"
+          id="net.certiv.antlrdt.ui.properties.RootFoldersPropertyPage"
+          selectionFilter="single">
+       <enabledWhen>
+  			<adapt type="org.eclipse.core.resources.IProject">
+		          <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="net.certiv.antlrdt.core.nature"/>
+			</adapt>           
+       </enabledWhen>
+    </page>
+ </extension>
    
    <extension
          point="org.eclipse.ui.commands">

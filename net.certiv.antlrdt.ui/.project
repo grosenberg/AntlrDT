@@ -10,16 +10,6 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>net.certiv.stdt.core.builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>net.certiv.antlrdt.core.builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>

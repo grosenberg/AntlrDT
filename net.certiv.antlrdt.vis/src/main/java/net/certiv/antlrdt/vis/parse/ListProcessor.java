@@ -19,7 +19,7 @@ public class ListProcessor {
 
 			String idx = String.valueOf(token.getTokenIndex());
 			String ttype = token.getType() == Token.EOF ? "EOF" : tokenNames[token.getType()];
-			String line = String.valueOf(token.getLine() - 1);
+			String line = String.valueOf(token.getLine());
 			String col = String.valueOf(token.getCharPositionInLine() + 1);
 			String text = Strings.escape(token.getText());
 			String chan = String.valueOf(token.getChannel());

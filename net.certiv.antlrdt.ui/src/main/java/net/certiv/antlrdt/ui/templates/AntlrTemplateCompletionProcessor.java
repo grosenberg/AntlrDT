@@ -1,6 +1,13 @@
 package net.certiv.antlrdt.ui.templates;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPartitioningException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
@@ -57,10 +64,10 @@ public class AntlrTemplateCompletionProcessor extends DslTemplateCompletionProce
 		switch (type) {
 			case IDocument.DEFAULT_CONTENT_TYPE:
 				return registry.getContextType(AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID);
-			case Partitions.COMMENT_JD:
-				return registry.getContextType(AntlrContextType.JAVADOC_CONTEXT_TYPE_ID);
-			case Partitions.ACTION:
-				return registry.getContextType(AntlrContextType.ACTIONS_CONTEXT_TYPE_ID);
+			// case Partitions.COMMENT_JD:
+			// return registry.getContextType(AntlrContextType.JAVADOC_CONTEXT_TYPE_ID);
+			// case Partitions.ACTION:
+			// return registry.getContextType(AntlrContextType.ACTIONS_CONTEXT_TYPE_ID);
 			default:
 				return super.getContextType(viewer, region);
 		}

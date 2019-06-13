@@ -60,7 +60,9 @@ public class AntlrSourceParser extends DslSourceParser {
 	}
 
 	private String getPackageName(ICodeUnit unit) {
-		IPath path = unit.getPath().makeRelativeTo(unit.getSourceRoot());
+		IPath path = unit.getProjectRelativePath();
+		IPath root = unit.getSourceRoot();
+		path = path.makeRelativeTo(root);
 		return path.toString().replace('/', '.');
 	}
 

@@ -41,7 +41,7 @@ public enum Router {
 	public String getImageUrlname() {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Object value = Reflect.get(imgMgr, imageKey, true);
-		if (value == null) return Strings.EMPTY_STRING;
+		if (value == null) return Strings.EMPTY;
 		return imgMgr.getUrl((String) value).toExternalForm();
 	}
 

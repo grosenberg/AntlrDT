@@ -34,12 +34,12 @@ import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.DslLanguageManager;
+import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
+import net.certiv.dsl.core.lang.LanguageManager;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.parser.problems.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
@@ -73,10 +73,9 @@ public class AntlrDTBuilder extends DslBuilder {
 			monitor.beginTask("AntlrDT Build", WORK_BUILD);
 			units.sort(NameComp);
 			for (ICodeUnit unit : units) {
-				DslProblemCollector collector = unit.getParseRecord().collector;
-				if (collector != null) collector.beginCollecting();
+				unit.getParseRecord().getCollector().beginCollecting(unit.getResource(), unit.getParseRecord().markerId);
 				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
-				if (collector != null) collector.endCollecting();
+				unit.getParseRecord().getCollector().endCollecting();
 			}
 			return Status.OK_STATUS;
 
@@ -90,13 +89,11 @@ public class AntlrDTBuilder extends DslBuilder {
 			String srcFile = unit.getLocation().toString();
 			IPath output = determineBuildPath(unit);
 			if (output == null) {
-				Log.error(this, "No build path for: " + unit.getPath().toString());
+				explain(Cause.PATH, unit.getPath().toString());
 				CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
 				return;
 			}
 
-			// Log.info(this, "Build [" + srcFile + "]");
-			// Log.info(this, "Output [" + output + "]");
 			monitor.worked(1);
 
 			Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
@@ -114,7 +111,7 @@ public class AntlrDTBuilder extends DslBuilder {
 			monitor.worked(1);
 
 		} catch (Exception | Error e) {
-			Log.error(this, "Build failed.", e);
+			explain(Cause.UNIT, unit.getPath().toString());
 			CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
 		}
 	}
@@ -126,8 +123,8 @@ public class AntlrDTBuilder extends DslBuilder {
 	 * @return a filesystem absolute path to the build folder
 	 */
 	private IPath determineBuildPath(ICodeUnit unit) {
-		DslLanguageManager mgr = getDslCore().getLanguageManager();
-		if (!mgr.onSourcePath(unit)) return null;
+		LanguageManager mgr = getDslCore().getLanguageManager();
+		if (!mgr.onSourceBuildPath(unit)) return null;
 
 		// absolute project path
 		IPath projectPath = unit.getDslProject().getLocation();
@@ -135,7 +132,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		if (pkg != null) pkg = pkg.replaceAll("\\.", "/");
 
 		IPath buildPath = null;
-		if (mgr.onNativeSourcePath(unit.getFile())) {
+		if (mgr.onSourceBuildPath(unit.getFile(), true)) {
 			if (pkg != null && !pkg.isEmpty()) {
 				// native requires a package name to be declared in the grammar
 				buildPath = projectPath.append(unit.getSourceRoot()).append(pkg);
@@ -149,7 +146,8 @@ public class AntlrDTBuilder extends DslBuilder {
 				buildPath = output.append(pkg);
 			}
 		}
-		Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(), buildPath));
+		// Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(),
+		// buildPath));
 		return buildPath;
 	}
 
@@ -219,8 +217,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
-			for (ICompilationUnit cu : cus) {
+			for (ICompilationUnit cu : getCompilationUnits(unit.getResource(), folder)) {
 				monitor.worked(1);
 				String content = cu.getSource();
 				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0, content.length(), 0,
@@ -252,8 +249,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		};
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
-			for (ICompilationUnit cu : cus) {
+			for (ICompilationUnit cu : getCompilationUnits(unit.getResource(), folder)) {
 				OrganizeImportsOperation op = new OrganizeImportsOperation(cu, null, true, true, true, query);
 				op.run(monitor);
 			}

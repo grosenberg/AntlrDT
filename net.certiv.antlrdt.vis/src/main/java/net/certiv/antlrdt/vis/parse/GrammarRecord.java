@@ -74,7 +74,7 @@ public class GrammarRecord {
 	}
 
 	private void genPackageNames() {
-		ICodeUnit unit = AntlrCore.getDefault().getModelManager().create(grammar);
+		ICodeUnit unit = AntlrCore.getDefault().getDslModel().create(grammar);
 		String pkgName = AntlrUtil.resolvePackageName(unit);
 
 		String filename = grammar.getName();

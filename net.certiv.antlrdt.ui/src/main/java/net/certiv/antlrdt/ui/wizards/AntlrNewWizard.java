@@ -1,15 +1,11 @@
 package net.certiv.antlrdt.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.antlrdt.core.AntlrCore;
@@ -22,12 +18,12 @@ import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.wizards.DslBaseWizard;
 
 /** Create a new grammar resource in the indicated container. */
-public class AntlrDTNewWizard extends DslBaseWizard {
+public class AntlrNewWizard extends DslBaseWizard {
 
-	private AntlrDTNewWizardPage page;
+	private AntlrNewWizardPage page;
 
-	public AntlrDTNewWizard() {
-		super();
+	public AntlrNewWizard() {
+		super("AntlrNewWizard");
 	}
 
 	@Override
@@ -42,8 +38,8 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 
 	@Override
 	public ImageDescriptor getPageImageDescriptor() {
-		DslImageManager imgMgr = getDslUI().getImageManager();
-		return imgMgr.getDescriptor(imgMgr.IMG_WIZBAN_NEW_FILE);
+		DslImageManager mgr = getDslUI().getImageManager();
+		return mgr.getDescriptor(mgr.IMG_WIZBAN_NEW_FILE);
 	}
 
 	@Override
@@ -53,49 +49,22 @@ public class AntlrDTNewWizard extends DslBaseWizard {
 
 	@Override
 	public void addPages() {
-		page = new AntlrDTNewWizardPage(getSelection());
+		page = new AntlrNewWizardPage(this, getSelection());
 		page.setTitle("Grammar");
 		page.setDescription("Create new Antlr grammar");
 		addPage(page);
 	}
 
 	@Override
-	public boolean performFinish() {
+	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+
 		final String filename = page.getFileName();
-		final IPath container = page.getContainerFullPath();
+		final IPath containerPath = page.getContainerFullPath();
 		final String packageName = page.getPackageText();
 		final String superclass = page.getSuperClass();
 		final String importTxt = page.getImportTxt();
 		final boolean fragments = page.getFragments();
 		final boolean unicode = page.getUnicode();
-
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(filename, container, packageName, superclass, importTxt, fragments, unicode, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
-			return false;
-		}
-		return true;
-	}
-
-	private void doFinish(String filename, IPath containerPath, String packageName, String superclass, String importTxt,
-			boolean fragments, boolean unicode, IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + filename, 2);
 		IWorkspaceRoot root = CoreUtil.getWorkspaceRoot();

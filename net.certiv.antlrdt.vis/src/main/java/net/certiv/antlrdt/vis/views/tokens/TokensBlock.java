@@ -21,9 +21,9 @@ public class TokensBlock {
 
 	private static final int flags = SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL;
 	private static final String[] tokTitles = { "Idx", "Token", "Line", "Col", "Mode", "Text" };
-	private static final int[] tokWidths = { 30, 100, 30, 30, 40, 280 };
+	private static final int[] tokWidths = { 40, 100, 40, 40, 50, 300 };
 	private static final String[] errTitles = { "Idx", "Line", "Col", "Message" };
-	private static final int[] errWidths = { 40, 40, 40, 340 };
+	private static final int[] errWidths = { 40, 40, 40, 450 };
 
 	private TableViewer tokViewer;
 	private TableViewer errViewer;

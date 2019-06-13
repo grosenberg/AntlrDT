@@ -89,9 +89,11 @@ public class AntlrUI extends DslUI {
 	@Deprecated
 	@Override
 	protected String[] getDslContextTypes() {
-		return new String[] { AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID, AntlrContextType.OPTIONS_CONTEXT_TYPE_ID, //
-				AntlrContextType.ACTIONS_CONTEXT_TYPE_ID, //
-				AntlrContextType.JAVADOC_CONTEXT_TYPE_ID //
+		return new String[] { //
+				AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID, //
+				AntlrContextType.OPTIONS_CONTEXT_TYPE_ID, //
+				// AntlrContextType.ACTIONS_CONTEXT_TYPE_ID, //
+				// AntlrContextType.JAVADOC_CONTEXT_TYPE_ID //
 		};
 	}
 }

@@ -41,5 +41,6 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>net.certiv.xvisitordt.core.nature</nature>
+		<nature>net.certiv.antlrdt.core.nature</nature>
 	</natures>
 </projectDescription>

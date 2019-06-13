@@ -25,8 +25,7 @@
 		<tycho.version>1.3.0</tycho.version>
 		<java.version>1.8</java.version>
 		<eclipse-repo.url>http://download.eclipse.org/releases/2019-03</eclipse-repo.url>
-		<certiv-repo.url>file:/D:/DevFiles/Eclipse/Tools/Certiv/net.certiv/net.certiv.tools.site/target/repository</certiv-repo.url>
-		<dsl-repo.url>file:/D:/DevFiles/Eclipse/Tools/Dsl/net.certiv.dsl/net.certiv.dsl.site/target/repository</dsl-repo.url>
+		<certiv-repo.url>file:/D:/DevFiles/Eclipse/Update</certiv-repo.url>
 	</properties>
 
 	<repositories>
@@ -39,11 +38,6 @@
 			<id>certiv</id>
 			<layout>p2</layout>
 			<url>${certiv-repo.url}</url>
-		</repository>
-		<repository>
-			<id>dsl</id>
-			<layout>p2</layout>
-			<url>${dsl-repo.url}</url>
 		</repository>
 	</repositories>
 
@@ -134,7 +128,7 @@
 	<modules>
 		<module>net.certiv.antlrdt.core</module>
 		<module>net.certiv.antlrdt.ui</module>
-		<module>net.certiv.antlrdt.vis</module> 
+		<module>net.certiv.antlrdt.vis</module>
 		<module>net.certiv.antlrdt.feature</module>
 		<module>net.certiv.antlrdt.site</module>
 	</modules>

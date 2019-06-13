@@ -27,6 +27,7 @@ import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.antlrdt.vis.figures.StdToolTip;
 import net.certiv.antlrdt.vis.model.TreeNode;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
+import net.certiv.dsl.core.util.Strings;
 
 public class NodeLabelProvider implements INodeLabelProvider, IConnectionStyleProvider, IEntityStyleProvider {
 
@@ -49,9 +50,6 @@ public class NodeLabelProvider implements INodeLabelProvider, IConnectionStylePr
 	private final Set<EntityConnectionData> related = new HashSet<>();
 	private final Set<EntityConnectionData> dependent = new HashSet<>();
 
-	// private String[] ruleNames;
-	// private String[] tokenNames;
-
 	public NodeLabelProvider(GraphViewer viewer) {
 		super();
 		this.viewer = viewer;
@@ -64,11 +62,6 @@ public class NodeLabelProvider implements INodeLabelProvider, IConnectionStylePr
 		errorNode = imgr.get(imgr.ERROR_NODE);
 		unknownNode = imgr.get(imgr.UNKNOWN_NODE);
 	}
-
-	// public void setNames(String[] rules, String[] tokens) {
-	// this.ruleNames = rules;
-	// this.tokenNames = tokens;
-	// }
 
 	@Override
 	public Color getColor(Object relation) {
@@ -134,15 +127,27 @@ public class NodeLabelProvider implements INodeLabelProvider, IConnectionStylePr
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof TreeNode) return null;
 		if (element instanceof EntityConnectionData) return null;
+		if (element instanceof TreeNode) {
+			TreeNode node = (TreeNode) element;
+			if (node.isRuleNode()) return ruleNode;
+			if (node.isErrorNode()) return errorNode;
+			if (node.isTerminalNode()) return terminalNode;
+		}
 		return unknownNode;
 	}
 
 	@Override
 	public String getText(Object element) {
 		if (element instanceof TreeNode) {
-			return ((TreeNode) element).getName();
+			TreeNode node = (TreeNode) element;
+			String name = node.getName();
+			if (node.isTerminalNode() || node.isErrorNode()) {
+				String text = node.getSymbol().getText();
+				text = Strings.encode(Strings.ellipsize(text, 16));
+				return String.format("%s « %s »", name, text);
+			}
+			return name;
 		}
 		return null;
 	}

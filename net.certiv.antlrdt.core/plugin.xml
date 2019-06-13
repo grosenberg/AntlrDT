@@ -13,7 +13,7 @@
       </content-type>
    </extension>
    <extension
-         id="nature"
+         id="net.certiv.antlrdt.core.nature"
          name="AntlrDT Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
@@ -29,7 +29,8 @@
          id="net.certiv.antlrdt.core.builder"
          name="AntlrDT Builder"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder
+            hasNature="true">
          <run
                class="net.certiv.antlrdt.core.builder.AntlrDTBuilder">
          </run>

@@ -11,10 +11,10 @@ import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.vis.model.PathModel;
 import net.certiv.antlrdt.vis.model.PathNode;
 import net.certiv.antlrdt.vis.model.providers.PathContentProvider;
-import net.certiv.dsl.core.DslLanguageManager;
+import net.certiv.dsl.core.lang.LanguageManager;
 import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.model.DslModel;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.model.builder.ModelManager;
 import net.certiv.dsl.core.parser.DslParseRecord;
 
 public class PathProcessor {
@@ -62,8 +62,8 @@ public class PathProcessor {
 		Set<ICodeUnit> units = new HashSet<>();
 		units.add(unit);
 
-		ModelManager mgr = core.getModelManager();
-		for (ICodeUnit related : mgr.getRelated(unit)) {
+		DslModel model = core.getDslModel();
+		for (ICodeUnit related : model.getRelated(unit)) {
 			boolean ok = valid(related);
 			if (ok) units.add(related);
 		}
@@ -76,8 +76,8 @@ public class PathProcessor {
 		if (unit == null) return false;
 		if (unit.hasErrors()) return false;
 
-		DslLanguageManager mgr = core.getLanguageManager();
-		if (!mgr.onSourcePath(unit)) return false;
+		LanguageManager mgr = core.getLanguageManager();
+		if (!mgr.onSourceBuildPath(unit)) return false;
 
 		return true;
 	}

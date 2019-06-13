@@ -1,7 +1,5 @@
 package net.certiv.antlrdt.ui.wizards;
 
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -9,21 +7,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import net.certiv.antlrdt.core.AntlrCore;
-import net.certiv.antlrdt.ui.AntlrUI;
-import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
 import net.certiv.dsl.ui.fields.SelectionField;
 import net.certiv.dsl.ui.fields.TextButtonField;
+import net.certiv.dsl.ui.wizards.DslBaseWizard;
 import net.certiv.dsl.ui.wizards.DslContainerWizardPage;
 
 /**
- * Wizard UI to obtain the grammar location and the file name. Will accept no extension OR just g4.
+ * Wizard UI to obtain the grammar location and the file name. Will accept no extension OR
+ * just g4.
  */
-public class AntlrDTNewWizardPage extends DslContainerWizardPage {
+public class AntlrNewWizardPage extends DslContainerWizardPage {
 
 	private final static String PACKAGE = "package";	//$NON-NLS-1$
 	private final static String SUPER = "superclass";	//$NON-NLS-1$
@@ -38,8 +34,8 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 	private boolean genFragments;
 	private boolean genUnicode;
 
-	public AntlrDTNewWizardPage(IStructuredSelection selection) {
-		super("newPage", selection);
+	public AntlrNewWizardPage(DslBaseWizard wizard, IStructuredSelection selection) {
+		super("AntlrNewWizardPage", wizard, selection);
 	}
 
 	@Override
@@ -80,13 +76,13 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 		public void buttonPressed(TextButtonField field, String id, SelectionEvent e) {
 			switch (id) {
 				case PACKAGE:
-					IPackageFragment result = choosePackage();
-					pkgField.setText(result.getElementName());
+					String result = choosePackage();
+					pkgField.setText(result);
 					break;
 				case SUPER:
-					IType sType = chooseSuperClass();
-					superField.setText(sType.getElementName());
-					importTxt = sType.getFullyQualifiedName();
+					String sType = chooseSuperClass();
+					superField.setText(sType);
+					importTxt = sType;
 					break;
 			}
 		}
@@ -125,15 +121,5 @@ public class AntlrDTNewWizardPage extends DslContainerWizardPage {
 
 	public boolean getUnicode() {
 		return genUnicode;
-	}
-
-	@Override
-	public DslUI getDslUI() {
-		return AntlrUI.getDefault();
-	}
-
-	@Override
-	public DslCore getDslCore() {
-		return AntlrCore.getDefault();
 	}
 }

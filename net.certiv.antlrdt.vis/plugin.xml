@@ -24,12 +24,6 @@
             id="net.certiv.antlrdt.vis.preferences.page.PrefsPageGraphColoring"
             name="Graph Coloring">
       </page>
-      <page
-            category="net.certiv.antlrdt.vis.preferences.page.PrefsPageGraph"
-            class="net.certiv.antlrdt.vis.preferences.page.GraphToolTipsPage"
-            id="net.certiv.antlrdt.vis.preferences.page.PrefsPageGraphToolTips"
-            name="Tool Tips">
-      </page>
    </extension>
 
    <extension

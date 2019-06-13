@@ -30,8 +30,6 @@ import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.core.preferences.consts.Formatter;
-import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.eclipse.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslPresentationReconciler;
@@ -94,15 +92,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		if (getPrefsMgr().getTabStyle() == TabStyle.SPACES) {
-			return new String[] { Strings.dup(getPrefsMgr().getIndentationSize(), Strings.SPC) };
-		} else {
-			return new String[] { "\t" };
-		}
-	}
-
-	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new DslPresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -116,14 +105,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 		return reconciler;
 	}
-
-	// protected void buildRepairer(PresentationReconciler reconciler,
-	// AbstractBufferedRuleBasedScanner scanner,
-	// String token, TextAttribute namedAttribute) {
-	// DefaultDamagerRepairer dr = new EnhDamagerRepairer(scanner, namedAttribute);
-	// reconciler.setDamager(dr, token);
-	// reconciler.setRepairer(dr, token);
-	// }
 
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
@@ -158,16 +139,15 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer viewer, String contentType) {
 		String partitioning = getConfiguredDocumentPartitioning(viewer);
-		IAutoEditStrategy[] strategies;
 		switch (contentType) {
+
 			case Partitions.COMMENT_JD:
 			case Partitions.COMMENT_ML:
-				strategies = new IAutoEditStrategy[] { new AntlrDTAutoEditDocStrategy(partitioning) };
-				break;
+				return new IAutoEditStrategy[] { new AntlrDTAutoEditDocStrategy(partitioning) };
+
 			default:
-				strategies = new IAutoEditStrategy[] { new SmartAutoEditStrategy(partitioning) };
+				return new IAutoEditStrategy[] { new SmartAutoEditStrategy(partitioning) };
 		}
-		return strategies;
 	}
 
 	@Override

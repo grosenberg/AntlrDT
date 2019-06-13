@@ -13,11 +13,13 @@ public class AntlrContextType extends DslTemplateContextType {
 
 	public static final String GRAMMAR_CONTEXT_TYPE_ID = "grammar";
 	public static final String OPTIONS_CONTEXT_TYPE_ID = "options";
-	public static final String ACTIONS_CONTEXT_TYPE_ID = "java"; // the JDT context id
-	public static final String JAVADOC_CONTEXT_TYPE_ID = "javadoc"; // the JDT context id
+	// public static final String ACTIONS_CONTEXT_TYPE_ID = "java"; // the JDT context id
+	// public static final String JAVADOC_CONTEXT_TYPE_ID = "javadoc"; // the JDT context id
 
-	public static final String[] CONTEXT_TYPE_IDS = { GRAMMAR_CONTEXT_TYPE_ID, OPTIONS_CONTEXT_TYPE_ID,
-			ACTIONS_CONTEXT_TYPE_ID, JAVADOC_CONTEXT_TYPE_ID };
+	public static final String[] CONTEXT_TYPE_IDS = { //
+			GRAMMAR_CONTEXT_TYPE_ID, OPTIONS_CONTEXT_TYPE_ID,
+			// ACTIONS_CONTEXT_TYPE_ID, JAVADOC_CONTEXT_TYPE_ID //
+	};
 
 	public AntlrContextType() {
 		super();
