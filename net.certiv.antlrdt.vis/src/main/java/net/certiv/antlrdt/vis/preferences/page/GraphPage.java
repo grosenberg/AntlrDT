@@ -51,7 +51,7 @@ public class GraphPage extends AbstractFieldEditorPreferencePage {
 		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_ANIMATION_LIMIT), "Animation limit (reps)", comp, 0, 10, 1000,
 				10));
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PARSE_TIMEOUT), "Parsetree generation timout (ms)", comp, 0, 1000,
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PARSE_TIMEOUT), "Parsetree generation timeout (ms)", comp, 0, 1000,
 				100000, 500));
 
 		// ///////////////////////////////////////////////////////

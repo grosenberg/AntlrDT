@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+
+	<!-- Grammar -->
+
+	<template
+		name="import"
+		context="grammar"
+		description="Import statement"
+		id="antlr.import"
+		enabled="true"
+		autoinsert="false">import "${cursor}" ;</template>
+
+	<template
+		name="options"
+		context="grammar"
+		description="Options block"
+		id="antlr.options"
+		enabled="true"
+		autoinsert="true">options {
+	${cursor}
+}</template>
+
+	<template
+		name="tokens"
+		context="grammar"
+		deleted="false"
+		description="tokens block"
+		id="antlr.tokens"
+		enabled="true"
+		autoinsert="true">tokens {
+	${cursor}
+}</template>
+
+	<template
+		name="@header"
+		context="grammar"
+		description="Header block"
+		id="antlr.header"
+		enabled="true"
+		autoinsert="true">@header {
+	${cursor}
+}</template>
+
+	<template
+		name="@members"
+		context="grammar"
+		deleted="false"
+		description="Members block"
+		id="antlr.members"
+		enabled="true"
+		autoinsert="true">@members {
+	${cursor}
+}</template>
+
+	<template
+		name="action"
+		context="grammar"
+		description="Action block"
+		id="antlr.action"
+		enabled="true"
+		autoinsert="true">{ ${cursor} }	</template>
+
+	<template
+		name="predicate"
+		context="grammar"
+		description="Predicate"
+		id="antlr.predicate"
+		enabled="true"
+		autoinsert="true">{ ${cursor} }?	</template>
+	
+	<!-- Options -->
+
+	<template
+		name="tokenVocab"
+		context="options"
+		description="Token vocabulary"
+		id="antlr.tokenVocab"
+		enabled="true"
+		autoinsert="true">tokenVocab = ${vocabName} ; ${cursor}
+	</template>
+
+	<template
+		name="superClass"
+		context="options"
+		description="Parser superclass"
+		id="antlr.superClass"
+		enabled="true"
+		autoinsert="true">superClass = ${file} ; ${cursor}
+	</template>
+
+	<template
+		name="language"
+		context="options"
+		description="Target language"
+		id="antlr.language"
+		enabled="true"
+		autoinsert="true">language = ${cursor} ;	
+	</template>
+
+</templates>

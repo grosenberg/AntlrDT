@@ -68,7 +68,7 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 
 	@Override
 	protected ILabelDecorator getLabelDecorator() {
-		return new AntlrDTOutlineLabelDecorator();
+		return new AntlrStatementLabelProvider();
 	}
 
 	@Override

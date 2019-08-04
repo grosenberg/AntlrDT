@@ -1,7 +1,5 @@
 package net.certiv.antlrdt.ui.editor;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -25,12 +23,6 @@ public class AntlrReconcilingStrategy extends DslReconcilingStrategy {
 	@Override
 	public DslCore getDslCore() {
 		return AntlrCore.getDefault();
-	}
-
-	@Override
-	public void initialReconcile() {
-		deleteMarkers(true, IResource.DEPTH_INFINITE);
-		reconcile(new Region(0, getRecord().doc.getLength()));
 	}
 
 	@Override

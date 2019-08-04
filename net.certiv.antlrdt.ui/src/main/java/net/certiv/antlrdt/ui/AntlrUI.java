@@ -5,12 +5,12 @@ import org.osgi.framework.BundleContext;
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.editor.AntlrDTTextTools;
-import net.certiv.antlrdt.ui.templates.AntlrContextType;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
+import net.certiv.dsl.ui.templates.CompletionManager;
 
 public class AntlrUI extends DslUI {
 
@@ -21,6 +21,7 @@ public class AntlrUI extends DslUI {
 
 	private ImageManager imageMgr;
 	private DslTextTools textTools;
+	private CompletionManager compMgr;
 
 	public AntlrUI() {
 		super();
@@ -72,7 +73,6 @@ public class AntlrUI extends DslUI {
 		return imageMgr;
 	}
 
-	/** Returns the text tools */
 	@Override
 	public DslTextTools getTextTools() {
 		if (textTools == null) {
@@ -82,18 +82,15 @@ public class AntlrUI extends DslUI {
 	}
 
 	@Override
-	protected String getEditorId() {
-		return AntlrDTEditor.EDITOR_ID;
+	public CompletionManager getCompletionMgr() {
+		if (compMgr == null) {
+			compMgr = new AntlrCompletionManager(this, getEditorId());
+		}
+		return compMgr;
 	}
 
-	@Deprecated
 	@Override
-	protected String[] getDslContextTypes() {
-		return new String[] { //
-				AntlrContextType.GRAMMAR_CONTEXT_TYPE_ID, //
-				AntlrContextType.OPTIONS_CONTEXT_TYPE_ID, //
-				// AntlrContextType.ACTIONS_CONTEXT_TYPE_ID, //
-				// AntlrContextType.JAVADOC_CONTEXT_TYPE_ID //
-		};
+	protected String getEditorId() {
+		return AntlrDTEditor.EDITOR_ID;
 	}
 }

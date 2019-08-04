@@ -3,11 +3,6 @@
 	<name>net.certiv.antlrdt.vis</name>
 	<comment></comment>
 	<projects>
-		<project>net.certiv.antlrdt.core</project>
-		<project>net.certiv.antlrdt.ui</project>
-		<project>net.certiv.dsl.core</project>
-		<project>net.certiv.dsl.lib</project>
-		<project>net.certiv.fluent.dt</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

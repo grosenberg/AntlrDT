@@ -3,6 +3,7 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
@@ -54,6 +55,9 @@ public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfi
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
+
+	@Override
+	public void specializeContentAssistant(ContentAssistant assistant) {}
 
 	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {

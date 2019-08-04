@@ -14,7 +14,7 @@ import net.certiv.dsl.ui.editor.text.rules.CharSequenceRule;
 import net.certiv.dsl.ui.editor.text.rules.CharsRule;
 import net.certiv.dsl.ui.editor.text.rules.DslWordRule;
 
-public class ScannerKeyWord extends AbstractBufferedRuleBasedScanner {
+public class ScannerKeyword extends AbstractBufferedRuleBasedScanner {
 
 	public static final String[] KEYWORDS = { "grammar", "parser", "lexer", "options", "tokens", "import", "channels",
 			"EOF", "channel", "HIDDEN", "SKIP", "mode", "skip", "more", "pushMode", "popMode", "type", "@header",
@@ -28,7 +28,7 @@ public class ScannerKeyWord extends AbstractBufferedRuleBasedScanner {
 
 	private String[] tokenProperties;
 
-	public ScannerKeyWord(IDslPrefsManager store) {
+	public ScannerKeyword(IDslPrefsManager store) {
 		super(store);
 		initialize();
 	}

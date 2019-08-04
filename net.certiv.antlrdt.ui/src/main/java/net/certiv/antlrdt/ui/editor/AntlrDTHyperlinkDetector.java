@@ -1,5 +1,7 @@
 package net.certiv.antlrdt.ui.editor;
 
+import java.util.List;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
@@ -30,7 +32,7 @@ public class AntlrDTHyperlinkDetector extends DslHyperlinkDetector {
 
 	/** Filter/modify the elements for display on the popup */
 	@Override
-	public IStatement[] selectOpenableElements(IStatement[] elements) {
+	public List<IStatement> selectOpenableElements(List<IStatement> elements) {
 		return elements;
 	}
 

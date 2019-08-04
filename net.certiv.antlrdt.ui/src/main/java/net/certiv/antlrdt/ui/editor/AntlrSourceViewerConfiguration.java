@@ -1,5 +1,11 @@
 package net.certiv.antlrdt.ui.editor;
 
+import static net.certiv.dsl.ui.editor.text.completion.engines.IPrefixStops.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -10,19 +16,19 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.core.formatter.AntlrDTSourceFormatter;
 import net.certiv.antlrdt.ui.AntlrUI;
-import net.certiv.antlrdt.ui.editor.completion.AntlrCompletionProcessor;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
 import net.certiv.antlrdt.ui.editor.strategies.SmartAutoEditStrategy;
 import net.certiv.antlrdt.ui.editor.text.ScannerAction;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentJD;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentML;
 import net.certiv.antlrdt.ui.editor.text.ScannerCommentSL;
-import net.certiv.antlrdt.ui.editor.text.ScannerKeyWord;
+import net.certiv.antlrdt.ui.editor.text.ScannerKeyword;
 import net.certiv.antlrdt.ui.editor.text.ScannerString;
 import net.certiv.antlrdt.ui.formatter.strategies.ActionCodeFormattingStrategy;
 import net.certiv.dsl.core.DslCore;
@@ -30,12 +36,18 @@ import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.core.preferences.consts.Formatter;
+import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslPresentationReconciler;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
-import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
+import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
+import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
+import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.ICompletionEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.KeywordEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.TemplateEngine;
 import net.certiv.dsl.ui.formatter.strategies.DslFormattingStrategy;
 
 public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration {
@@ -44,7 +56,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	private ScannerCommentJD commentJDScanner;
 	private ScannerCommentML commentMLScanner;
 	private ScannerCommentSL commentSLScanner;
-	private ScannerKeyWord keyScanner;
+	private ScannerKeyword keyScanner;
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
 
@@ -73,7 +85,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		commentJDScanner = new ScannerCommentJD(store);
 		commentMLScanner = new ScannerCommentML(store);
 		commentSLScanner = new ScannerCommentSL(store);
-		keyScanner = new ScannerKeyWord(store);
+		keyScanner = new ScannerKeyword(store);
 		stringScanner = new ScannerString(store);
 		actionScanner = new ScannerAction(store);
 	}
@@ -89,6 +101,26 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 			doubleClickStrategy = new DoubleClickStrategy();
 		}
 		return doubleClickStrategy;
+	}
+
+	@Override
+	public void specializeContentAssistant(ContentAssistant assistant) {
+		AntlrStatementLabelProvider provider = new AntlrStatementLabelProvider();
+		DslImageManager imgMgr = getDslUI().getImageManager();
+		Image image = imgMgr.get(imgMgr.IMG_OBJS_KEYWORD);
+		Set<Character> stops = new HashSet<>(Arrays.asList(LBRACE, LBRACE, LPAREN, COLON, COMMA, SEMI, PIPE, AT));
+		// Set<AntlrContextType> types =
+		// AntlrContextType.create(AntlrContextType.GRAMMAR_ID,
+		// AntlrContextType.OPTIONS_ID);
+
+		ICompletionEngine keywords = new KeywordEngine(image, stops, ScannerKeyword.KEYWORDS);
+		ICompletionEngine fields = new FieldEngine(provider, stops);
+		ICompletionEngine templates = new TemplateEngine(provider, stops/* , types */);
+
+		CompletionCategory lang = new CompletionCategory("Antlr", true, false, keywords, fields);
+		CompletionCategory tmpl = new CompletionCategory("Antlr Templates", false, true, templates);
+		CompletionProcessor proc = new CompletionProcessor(getDslUI(), assistant, lang, tmpl);
+		assistant.setContentAssistProcessor(proc, IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
 	@Override
@@ -140,7 +172,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer viewer, String contentType) {
 		String partitioning = getConfiguredDocumentPartitioning(viewer);
 		switch (contentType) {
-
 			case Partitions.COMMENT_JD:
 			case Partitions.COMMENT_ML:
 				return new IAutoEditStrategy[] { new AntlrDTAutoEditDocStrategy(partitioning) };
@@ -161,13 +192,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 			formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
 		}
 		return formatter;
-	}
-
-	@Override
-	protected void alterContentAssistant(ContentAssistant assistant) {
-		DslCompletionProcessor processor = new AntlrCompletionProcessor(getEditor(), assistant,
-				IDocument.DEFAULT_CONTENT_TYPE);
-		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
 	@Override

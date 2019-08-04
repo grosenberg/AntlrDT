@@ -94,4 +94,5 @@ public class AntlrDTTextTools extends DslTextTools {
 	public String[] getStringAndCommentContentPartitions() {
 		return Partitions.STRING_AND_COMMENT_TYPES;
 	}
+
 }

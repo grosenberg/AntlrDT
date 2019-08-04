@@ -100,8 +100,7 @@ public abstract class StructureBuilder extends Processor {
 	}
 
 	/**
-	 * Called for action blocks. Block content is handled as an aggregate of native
-	 * code.
+	 * Called for action blocks. Block content is handled as an aggregate of native code.
 	 */
 	public void doAction() {
 		ActionContext ctx = (ActionContext) lastPathNode();
@@ -165,7 +164,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each token within the tokens block. */
 	public void doTokenStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Token, ctx, ctx.TOKEN_REF().getText());
+		String ref = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF().getText() : ctx.getText();
+		ModelData data = new ModelData(ModelType.Token, ctx, ref);
 		maker.statement(ctx, ctx.TOKEN_REF(), data);
 	}
 

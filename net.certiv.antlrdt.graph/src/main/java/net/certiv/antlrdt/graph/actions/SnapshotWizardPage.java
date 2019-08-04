@@ -257,7 +257,7 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	/**
 	 * Creates a new button with the given id.
 	 * <p>
-	 * The <code>Dialog</code> implementation of this framework method creates a standard push button,
+	 * The {@code Dialog} implementation of this framework method creates a standard push button,
 	 * registers for selection events including button presses and registers default buttons with its
 	 * shell. The button id is stored as the buttons client data. Note that the parent's layout is
 	 * assumed to be a GridLayout and the number of columns in this layout is incremented. Subclasses
@@ -265,11 +265,11 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	 * </p>
 	 *
 	 * @param parent the parent composite
-	 * @param id the id of the button (see <code>IDialogConstants.*_ID</code> constants for standard
+	 * @param id the id of the button (see {@code IDialogConstants.*_ID} constants for standard
 	 *            dialog button ids)
 	 * @param label the label from the button
-	 * @param defaultButton <code>true</code> if the button is to be the default button, and
-	 *            <code>false</code> otherwise
+	 * @param defaultButton {@code true} if the button is to be the default button, and
+	 *            {@code false} otherwise
 	 */
 	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		// increment the number of columns in the button bar
@@ -301,8 +301,8 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	/**
 	 * Validate the destination group.
 	 *
-	 * @return <code>true</code> if the group is valid. If not set the error message and return
-	 *         <code>false</code>.
+	 * @return {@code true} if the group is valid. If not set the error message and return
+	 *         {@code false}.
 	 */
 	protected boolean validateDestinationGroup() {
 		if (!validDestination()) {
@@ -334,7 +334,7 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	 * response.
 	 *
 	 * @param message the question to ask
-	 * @return <code>true</code> for Yes, and <code>false</code> for No
+	 * @return {@code true} for Yes, and {@code false} for No
 	 */
 	protected boolean queryYesNoQuestion(String message) {
 		MessageDialog dialog = new MessageDialog(getContainer().getShell(), "Question", (Image) null, message,
@@ -392,10 +392,10 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	/**
 	 * Returns whether this page is complete. This determination is made based upon the current contents
 	 * of this page's controls. Subclasses wishing to include their controls in this determination
-	 * should override the hook methods <code>validateSourceGroup</code> and/or
-	 * <code>validateOptionsGroup</code>.
+	 * should override the hook methods {@code validateSourceGroup} and/or
+	 * {@code validateOptionsGroup}.
 	 *
-	 * @return <code>true</code> if this page is complete, and <code>false</code> if incomplete
+	 * @return {@code true} if this page is complete, and {@code false} if incomplete
 	 * @see #validateSourceGroup
 	 * @see #validateOptionsGroup
 	 */
@@ -454,7 +454,7 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items and excessively long
 	 * histories. The assumption is made that all histories should be of length
-	 * <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
+	 * {@code WizardDataTransferPage.COMBO_HISTORY_LENGTH}.
 	 *
 	 * @param history the current history
 	 * @param newEntry the entry to add to the history
@@ -470,7 +470,7 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items and excessively long
 	 * histories. The assumption is made that all histories should be of length
-	 * <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
+	 * {@code WizardDataTransferPage.COMBO_HISTORY_LENGTH}.
 	 *
 	 * @param history the current history
 	 * @param newEntry the entry to add to the history
@@ -516,12 +516,12 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	}
 
 	/**
-	 * The <code>WizardDataTransfer</code> implementation of this <code>IOverwriteQuery</code> method
+	 * The {@code WizardDataTransfer} implementation of this {@code IOverwriteQuery} method
 	 * asks the user whether the existing resource at the given path should be overwritten.
 	 *
 	 * @param pathString
-	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>, <code>"ALL"</code>, or
-	 *         <code>"CANCEL"</code>
+	 * @return the user's reply: one of {@code "YES"}, {@code "NO"}, {@code "ALL"}, or
+	 *         {@code "CANCEL"}
 	 */
 	@Override
 	public String queryOverwrite(String pathString) {

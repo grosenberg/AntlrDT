@@ -8,11 +8,11 @@ import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.DslImageDescriptor;
-import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
+import net.certiv.dsl.ui.editor.StatementLabelProvider;
 
-public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
+public class AntlrStatementLabelProvider extends StatementLabelProvider {
 
-	public AntlrDTOutlineLabelDecorator() {
+	public AntlrStatementLabelProvider() {
 		super(AntlrUI.getDefault().getImageManager());
 	}
 
@@ -75,71 +75,71 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	@Override
 	public Image decorateImage(Image image) {
-		ImageManager aImgMgr = (ImageManager) imgMgr;
+		ImageManager mgr = (ImageManager) imgMgr;
 		ImageDescriptor desc = null;
 
 		switch (getElementKind()) {
 			case IDslElement.DSL_UNIT:
-				desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_PACKAGE);
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_PACKAGE);
 				break;
 
 			case IDslElement.MODULE:
-				desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJS_MODULE);
+				desc = mgr.getDescriptor(mgr.IMG_OBJS_MODULE);
 				break;
 
 			case IDslElement.DECLARATION:
-				desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJS_CORE);
+				desc = mgr.getDescriptor(mgr.IMG_OBJS_CORE);
 				break;
 
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
-				desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJS_STATEMENT);
+				desc = mgr.getDescriptor(mgr.IMG_OBJS_STATEMENT);
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					switch (data.mType) {
 						case Options:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_OPTION);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
 						case Option:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_ENUM);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_ENUM);
 							break;
 						case Tokens:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_PACKAGE);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_PACKAGE);
 							break;
 						case Token:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_MESSAGE);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_MESSAGE);
 							break;
 						case LexerRule:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_LEXER);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
 							if (hasOverlay(data.decoration & ModelData.FRAGMENT)) {
-								desc = createOverlayImageDescriptor(desc,
-										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_FRAGMENT), DslImageDescriptor.TOP_RIGHT);
+								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
+										DslImageDescriptor.TOP_RIGHT);
 							}
 							break;
 						case ParserRule:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_PARSER);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
 							if (hasOverlay(data.decoration & ModelData.PROTECTED)) {
-								desc = createOverlayImageDescriptor(desc,
-										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_PROTECTED), DslImageDescriptor.TOP_RIGHT);
+								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PROTECTED),
+										DslImageDescriptor.TOP_RIGHT);
 							} else if (hasOverlay(data.decoration & ModelData.PRIVATE)) {
-								desc = createOverlayImageDescriptor(desc,
-										aImgMgr.getDescriptor(aImgMgr.IMG_OVR_PRIVATE), DslImageDescriptor.TOP_RIGHT);
+								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PRIVATE),
+										DslImageDescriptor.TOP_RIGHT);
 							}
 							break;
 						case Mode:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_MODE);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_MODE);
 							break;
 						case AtAction:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_ACTION);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_ACTION);
 							break;
 						case LabelId:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_LABEL);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_LABEL);
 							break;
 						case Value:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJS_PROTECTED_METHOD);
+							desc = mgr.getDescriptor(mgr.IMG_OBJS_PROTECTED_METHOD);
 							break;
 						default:
-							desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJS_UNKNOWN);
+							desc = mgr.getDescriptor(mgr.IMG_OBJS_UNKNOWN);
 							break;
 					}
 				}
@@ -147,9 +147,9 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 
 			case IDslElement.BEG_BLOCK:
 				if (getStatement().getElementName().equals(":")) {
-					desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_RULE_COLON);
+					desc = mgr.getDescriptor(mgr.IMG_OBJ_RULE_COLON);
 				} else {
-					desc = aImgMgr.getDescriptor(aImgMgr.IMG_OBJ_EXTEND);
+					desc = mgr.getDescriptor(mgr.IMG_OBJ_EXTEND);
 				}
 				break;
 
@@ -160,6 +160,6 @@ public class AntlrDTOutlineLabelDecorator extends OutlineLabelDecorator {
 				desc = ImageDescriptor.getMissingImageDescriptor();
 
 		}
-		return aImgMgr.get(desc);
+		return mgr.get(desc);
 	}
 }

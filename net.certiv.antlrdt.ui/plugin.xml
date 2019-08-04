@@ -41,6 +41,21 @@
 				<equals value="net.certiv.antlrdt.ui.editor.AntlrDTEditor"/>
 			</with>
 		</definition>
+		
+		<definition id="net.certiv.antlrdt.extensions.definition">
+    		<with variable="selection">
+        		<count value="+">
+        		</count>
+        		<iterate operator="and">
+	        	   	<adapt type="org.eclipse.core.resources.IFile">
+    	        	  <test
+        	            property="org.eclipse.core.resources.extension"
+            	        value="g4">
+              		  </test>
+	           		</adapt>
+    	    	</iterate>
+     		</with>
+  		</definition>
 	</extension>
 	
 <!--
@@ -50,7 +65,7 @@
             canSearchEnclosingProjects="true"
             class="net.certiv.antlrdt.ui.search.AntlrSearchPage"
             enabled="true"
-            extensions="g:90"
+            extensions="g4:90"
             icon="icons/obj16/search_obj.png"
             id="net.certiv.antlrdt.ui.AntlrSearchPage"
             label="AntlrSearchPage"
@@ -170,13 +185,13 @@
            id="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
      </contextTypeRegistry>
       <contextType
-            class="net.certiv.antlrdt.ui.templates.AntlrContextType"
+            class="net.certiv.antlrdt.ui.templates.GrammarContextType"
             id="net.certiv.antlrdt.ui.templates.grammar"
             name="Grammar"
             registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
       </contextType>
       <contextType
-            class="net.certiv.antlrdt.ui.templates.AntlrContextType"
+            class="net.certiv.antlrdt.ui.templates.OptionsContextType"
             id="net.certiv.antlrdt.ui.templates.options"
             name="Options"
             registryId="net.certiv.antlrdt.ui.editor.AntlrDTEditor">
@@ -197,8 +212,8 @@
       </contextType>
 -->
      <include
-           file="src/main/resources/templates/templates.xml"
-           translations="src/main/resources/templates/templates.properties">
+           file="templates/templates.xml"
+           translations="templates/templates.properties">
      </include>
       <resolver
             class="net.certiv.antlrdt.ui.templates.VocabName"
@@ -289,13 +304,13 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="AntlrDTDsl Source"
-            description="AntlrDTDsl Source Actions"
+            name="Antlr Source"
+            description="Antlr Source Actions"
             id="net.certiv.antlrdt.ui.category.source">
       </category>
       <category
-            name="AntlrDTDsl Refactoring"
-            description="AntlrDTDsl Refactoring Actions"
+            name="Antlr Refactoring"
+            description="Antlr Refactoring Actions"
             id="net.certiv.antlrdt.ui.category.refactor">
       </category>
 
@@ -381,8 +396,9 @@
       </command>
       <command
             categoryId="net.certiv.antlrdt.ui.commands.category"
+            description="Remove Problem Markers"
             id="net.certiv.antlrdt.ui.cleanGrammarCommand"
-            name="Clean Grammar Problems">
+            name="Remove Problem Markers">
       </command>
    </extension>
 
