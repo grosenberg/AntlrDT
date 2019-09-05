@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.antlrdt.core.model.Target;
 
 /** Implementing functions for grammar path walker. */
 public abstract class PathAdaptor extends Processor {

@@ -3,6 +3,7 @@ package net.certiv.antlrdt.ui;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlrdt.core.AntlrCore;
+import net.certiv.antlrdt.ui.editor.AntlrCompletionManager;
 import net.certiv.antlrdt.ui.editor.AntlrDTEditor;
 import net.certiv.antlrdt.ui.editor.AntlrDTTextTools;
 import net.certiv.dsl.core.DslCore;

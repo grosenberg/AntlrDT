@@ -3,7 +3,7 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.antlrdt.core.parser.ModelData;
+import net.certiv.antlrdt.core.model.ModelData;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.model.IDslElement;

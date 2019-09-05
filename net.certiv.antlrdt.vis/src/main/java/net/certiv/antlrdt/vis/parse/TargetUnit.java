@@ -29,8 +29,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import net.certiv.antlrdt.core.model.Target;
 import net.certiv.antlrdt.core.parser.ITargetInfo;
-import net.certiv.antlrdt.core.parser.Target;
 import net.certiv.antlrdt.vis.model.TreeModel;
 import net.certiv.antlrdt.vis.views.parse.TreeProcessor;
 import net.certiv.antlrdt.vis.views.tokens.Trace;

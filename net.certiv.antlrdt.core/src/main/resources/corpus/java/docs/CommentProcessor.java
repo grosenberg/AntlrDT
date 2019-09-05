@@ -380,7 +380,7 @@ public class CommentProcessor extends AbstractProcessor {
 			// no space before certain tags
 			if (token.tag && !token.open) {
 				int end = line.length() - 1;
-				if (end > -1 && line.charAt(end) == Strings.SPC) {
+				if (end > -1 && line.charAt(end) == Chars.SPC) {
 					line.deleteCharAt(end);
 				}
 			}

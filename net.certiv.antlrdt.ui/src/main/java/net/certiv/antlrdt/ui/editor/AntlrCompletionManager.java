@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui;
+package net.certiv.antlrdt.ui.editor;
 
 import org.eclipse.jface.text.IAutoEditStrategy;
 

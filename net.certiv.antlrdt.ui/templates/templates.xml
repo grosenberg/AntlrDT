@@ -5,46 +5,49 @@
 	<!-- Grammar -->
 
 	<template
-		name="import"
-		context="grammar"
-		description="Import statement"
-		id="antlr.import"
-		enabled="true"
-		autoinsert="false">import "${cursor}" ;</template>
-
-	<template
-		name="options"
+		name="Options block"
 		context="grammar"
 		description="Options block"
 		id="antlr.options"
 		enabled="true"
 		autoinsert="true">options {
 	${cursor}
-}</template>
+}
+</template>
 
 	<template
-		name="tokens"
+		name="Tokens block"
 		context="grammar"
 		deleted="false"
-		description="tokens block"
+		description="Tokens block"
 		id="antlr.tokens"
 		enabled="true"
 		autoinsert="true">tokens {
 	${cursor}
-}</template>
+}
+</template>
 
 	<template
-		name="@header"
+		name="Import statement"
+		context="grammar"
+		description="Import statement"
+		id="antlr.import"
+		enabled="true"
+		autoinsert="true">import "${file}"${cursor} ; </template>
+
+	<template
+		name="Header block: @header"
 		context="grammar"
 		description="Header block"
 		id="antlr.header"
 		enabled="true"
 		autoinsert="true">@header {
 	${cursor}
-}</template>
+}
+</template>
 
 	<template
-		name="@members"
+		name="Members block: @members"
 		context="grammar"
 		deleted="false"
 		description="Members block"
@@ -52,10 +55,11 @@
 		enabled="true"
 		autoinsert="true">@members {
 	${cursor}
-}</template>
+}
+</template>
 
 	<template
-		name="action"
+		name="Action block"
 		context="grammar"
 		description="Action block"
 		id="antlr.action"
@@ -63,40 +67,37 @@
 		autoinsert="true">{ ${cursor} }	</template>
 
 	<template
-		name="predicate"
+		name="Predicate"
 		context="grammar"
 		description="Predicate"
 		id="antlr.predicate"
 		enabled="true"
-		autoinsert="true">{ ${cursor} }?	</template>
+		autoinsert="true">{ ${cursor} }? </template>
 	
 	<!-- Options -->
 
 	<template
-		name="tokenVocab"
+		name="Token vocabulary option"
 		context="options"
 		description="Token vocabulary"
 		id="antlr.tokenVocab"
 		enabled="true"
-		autoinsert="true">tokenVocab = ${vocabName} ; ${cursor}
-	</template>
+		autoinsert="true">tokenVocab = ${vocabName} ; ${cursor}</template>
 
 	<template
-		name="superClass"
+		name="Superclass option"
 		context="options"
-		description="Parser superclass"
+		description="Superclass option"
 		id="antlr.superClass"
 		enabled="true"
-		autoinsert="true">superClass = ${file} ; ${cursor}
-	</template>
+		autoinsert="true">superClass = ${file} ; ${cursor}</template>
 
 	<template
-		name="language"
+		name="Target language option"
 		context="options"
 		description="Target language"
 		id="antlr.language"
 		enabled="true"
-		autoinsert="true">language = ${cursor} ;	
-	</template>
+		autoinsert="true">language = ${cursor} ; </template>
 
 </templates>

@@ -76,6 +76,16 @@
 -->
 
    <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="Antlr Editor Context"
+            id="net.certiv.antlrdt.ui.antlrdtEditorScope"
+            name="Antlr Editor Content"
+            parentId="org.eclipse.ui.textEditorScope">
+      </context>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.editors">
       <editor
             name="Antlr grammar editor"
@@ -158,26 +168,17 @@
    </extension>
 
 
-   <extension
-         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
-      <hyperlinkDetector
-            activate="true"
-            class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
-            id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
-            name="Antlr grammar element hyperlink"
-            targetId="net.certiv.dsl.ui.codeUnit">
-      </hyperlinkDetector>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            description="Antlr Editor Context"
-            id="net.certiv.antlrdt.ui.antlrdtEditorScope"
-            name="Antlr Editor Content"
-            parentId="org.eclipse.ui.textEditorScope">
-      </context>
-   </extension>
+ <extension
+       point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+    <hyperlinkDetector
+          activate="true"
+          class="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+          description="Rule Detector"
+          id="net.certiv.antlrdt.ui.editor.AntlrDTHyperlinkDetector"
+          name="Rule Detector"
+          targetId="net.certiv.dsl.ui.codeUnit">
+    </hyperlinkDetector>
+ </extension>
    
   <extension
         point="org.eclipse.ui.editors.templates">

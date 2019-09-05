@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import net.certiv.antlrdt.core.model.Target;
 import net.certiv.antlrdt.core.parser.AntlrToken;
 import net.certiv.antlrdt.core.parser.IPathProcessor;
-import net.certiv.antlrdt.core.parser.Target;
 
 public class PathModel implements IPathProcessor, IModel {
 

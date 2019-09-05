@@ -262,7 +262,7 @@ public class SnapshotWizardPage extends WizardPage implements Listener, IOverwri
 	 * shell. The button id is stored as the buttons client data. Note that the parent's layout is
 	 * assumed to be a GridLayout and the number of columns in this layout is incremented. Subclasses
 	 * may override.
-	 * </p>
+	 * 
 	 *
 	 * @param parent the parent composite
 	 * @param id the id of the button (see {@code IDialogConstants.*_ID} constants for standard

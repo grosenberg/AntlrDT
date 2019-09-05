@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.core.parser;
+package net.certiv.antlrdt.core.model;
 
 public enum Target {
 	UNIT,

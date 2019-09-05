@@ -10,7 +10,7 @@ import net.certiv.antlrdt.vis.views.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.Chars;
 
 public class GrammarRecord {
 
@@ -74,11 +74,12 @@ public class GrammarRecord {
 	}
 
 	private void genPackageNames() {
-		ICodeUnit unit = AntlrCore.getDefault().getDslModel().create(grammar);
-		String pkgName = AntlrUtil.resolvePackageName(unit);
+		AntlrCore core = AntlrCore.getDefault();
+		ICodeUnit unit = core.getDslModel().create(grammar);
+		String pkgName = core.getLangManager().resolveGrammarPackage(unit);
 
 		String filename = grammar.getName();
-		int dot = filename.lastIndexOf('.');
+		int dot = filename.lastIndexOf(Chars.DOT);
 		filename = filename.substring(0, dot);
 
 		dot = -1;
@@ -128,7 +129,8 @@ public class GrammarRecord {
 
 	public void validate() {
 		store.setValue(null, recId + SNIPPET_DIR + PATH, snippetsDir.getPath());
-		if (snippetsDir.getName().trim().isEmpty()) {}
+		if (snippetsDir.getName().trim().isEmpty()) {
+		}
 
 		store.setValue(null, recId + SNIPPET_EXT + NAME, snippetsExt);
 

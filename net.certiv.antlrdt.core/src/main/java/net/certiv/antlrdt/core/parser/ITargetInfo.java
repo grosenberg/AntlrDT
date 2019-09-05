@@ -2,6 +2,8 @@ package net.certiv.antlrdt.core.parser;
 
 import org.eclipse.core.resources.IFile;
 
+import net.certiv.antlrdt.core.model.Target;
+
 public interface ITargetInfo {
 
 	/** Returns the definitional type of this target info. */

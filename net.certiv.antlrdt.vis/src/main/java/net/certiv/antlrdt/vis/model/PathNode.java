@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import net.certiv.antlrdt.core.model.Target;
 import net.certiv.antlrdt.core.parser.AntlrToken;
-import net.certiv.antlrdt.core.parser.Target;
 
 public class PathNode {
 

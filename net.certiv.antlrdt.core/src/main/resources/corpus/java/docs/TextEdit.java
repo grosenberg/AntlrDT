@@ -145,7 +145,7 @@ public class TextEdit implements ITextEdit, Comparator<TextEdit> {
 		int len = sb.length();
 		int end = len - nSpaces;
 		for (int idx = len - 1; idx > -1 && idx > end; idx--) {
-			if (sb.charAt(idx) != Strings.SPC) break;
+			if (sb.charAt(idx) != Chars.SPC) break;
 			sb.deleteCharAt(idx);
 		}
 		replacement = sb.toString();

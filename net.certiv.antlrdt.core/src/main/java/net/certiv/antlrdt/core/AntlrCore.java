@@ -4,17 +4,18 @@ import org.osgi.framework.BundleContext;
 
 import net.certiv.antlrdt.core.parser.AntlrSourceParser;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.lang.LangManager;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslSourceParser;
 
 public class AntlrCore extends DslCore {
 
-	public static final String[] EXTENSIONS = new String[] { "g4" };
-
 	// Should be unique, lower case, single word;
 	public static final String DSL_NAME = "antlr";
 
 	private static AntlrCore plugin;
+
+	private AntlrLangManager langMgr;
 
 	public AntlrCore() {
 		super();
@@ -55,14 +56,10 @@ public class AntlrCore extends DslCore {
 	}
 
 	@Override
-	public String[][] getLangSourceRoots() {
-		return new String[][] { //
-				{ "src/main/antlr4", null, "src/main/antlr4/import", "target/classes" }, // Maven
-		};
-	}
-
-	@Override
-	public String[] getDslFileExtensions() {
-		return EXTENSIONS;
+	public LangManager getLangManager() {
+		if (langMgr == null) {
+			langMgr = new AntlrLangManager(this);
+		}
+		return langMgr;
 	}
 }

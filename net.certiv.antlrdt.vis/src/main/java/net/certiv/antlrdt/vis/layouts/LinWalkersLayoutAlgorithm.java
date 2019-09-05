@@ -32,13 +32,13 @@ import net.certiv.dsl.core.preferences.IDslPrefsManager;
  * algorithm corrects performance issues in Walker's algorithm, which
  * generalizes Reingold and Tilford's method for tidy drawings of trees to
  * support trees with an arbitrary number of children at any given node.
- * </p>
+ * 
  * <p>
  * Derived from the <a href="http://prefuse.org">Prefuse</a> NodeLinkTreeLayout
  * implementation (BSD License). Modifications include adaption for use with
  * Zest, consistent handling of cyclic relations, and proper support for
  * multiple real root nodes.
- * </p>
+ * 
  *
  * @author <a href="http://jheer.org">jeffrey heer</a>
  * @author <a href="http://www.certiv.net">Gerald Rosenberg</a>

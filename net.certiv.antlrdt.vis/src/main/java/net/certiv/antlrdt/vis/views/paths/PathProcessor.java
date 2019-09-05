@@ -11,7 +11,7 @@ import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.vis.model.PathModel;
 import net.certiv.antlrdt.vis.model.PathNode;
 import net.certiv.antlrdt.vis.model.providers.PathContentProvider;
-import net.certiv.dsl.core.lang.LanguageManager;
+import net.certiv.dsl.core.lang.LangManager;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.DslModel;
 import net.certiv.dsl.core.model.ICodeUnit;
@@ -76,7 +76,7 @@ public class PathProcessor {
 		if (unit == null) return false;
 		if (unit.hasErrors()) return false;
 
-		LanguageManager mgr = core.getLanguageManager();
+		LangManager mgr = core.getLangManager();
 		if (!mgr.onSourceBuildPath(unit)) return false;
 
 		return true;

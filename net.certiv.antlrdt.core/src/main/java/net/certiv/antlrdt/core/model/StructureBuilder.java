@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.core.parser;
+package net.certiv.antlrdt.core.model;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -89,18 +89,20 @@ public abstract class StructureBuilder extends Processor {
 		maker.pushParent(stmt);
 		addField(ctx.id(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
 
-		// parser grammar has an implied import of the lexer grammar
+		// parser grammar has an implied import of the lexer grammar;
+		// add the implied import as a field of the grammar statement
 		if (type == ModelData.PARSER) {
 			String lexName = ctx.id().getText().replace("Parser", "Lexer");
-			ModelData implied = new ModelData(ModelType.Import, ctx, lexName);
-			maker.importStmt(ctx.id(), lexName, implied);
+			ModelData impData = new ModelData(ModelType.Import, ctx, lexName);
+			maker.field(ctx, lexName, Type.IMPORT_IMPLIED, Form.DECLARATION, Realm.GLOBAL, impData);
 		}
 
 		maker.popParent();
 	}
 
 	/**
-	 * Called for action blocks. Block content is handled as an aggregate of native code.
+	 * Called for action blocks. Block content is handled as an aggregate of native
+	 * code.
 	 */
 	public void doAction() {
 		ActionContext ctx = (ActionContext) lastPathNode();
@@ -119,7 +121,7 @@ public abstract class StructureBuilder extends Processor {
 		ModelData data = new ModelData(ModelType.Import, ctx, ctxId.getText());
 		ImportStmt stmt = maker.importStmt(ctx, ctxId, data);
 		maker.pushParent(stmt);
-		addField(ctxId, ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
+		addField(ctxId, ModelType.Import, Type.IMPORT, Form.DECLARATION, Realm.GLOBAL);
 		maker.popParent();
 	}
 
@@ -354,13 +356,11 @@ public abstract class StructureBuilder extends Processor {
 			maker.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof ChannelsSpecContext) {
-			// do nothing more
 
 		} else if (ctx instanceof OptionsSpecContext) {
-			// do nothing more
 
 		} else if (ctx instanceof TokensSpecContext) {
-			// do nothing more
+
 		}
 	}
 

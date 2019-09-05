@@ -50,7 +50,7 @@ import net.certiv.dsl.core.preferences.DslPrefsManager;
  * implementation (BSD License). Modifications include adaption for use with
  * GEF5, consistent handling of cyclic relations, and proper support for
  * multiple real root nodes.
- * </p>
+ * 
  *
  * @author <a href="http://jheer.org">jeffrey heer</a>
  * @author <a href="http://www.certiv.net">Gerald Rosenberg</a>

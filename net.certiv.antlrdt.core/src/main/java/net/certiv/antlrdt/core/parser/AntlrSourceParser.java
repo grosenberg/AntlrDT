@@ -54,7 +54,7 @@ public class AntlrSourceParser extends DslSourceParser {
 			visitor.setSourceName(getPackageName(record.unit));
 			visitor.setMaker(maker);
 			visitor.findAll();
-		} catch (IllegalArgumentException e) {
+		} catch (Exception e) {
 			getDslErrorListener().generalError("Model analysis: %s @%s:%s", e);
 		}
 	}
