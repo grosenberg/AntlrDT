@@ -16,21 +16,13 @@ import net.certiv.dsl.core.log.Log;
 
 /**
  * RemoveNature handler extends AbstractHandler, an IHandler base class.
- * 
+ *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class RemoveNatureHandler extends AbstractHandler {
 
-	/**
-	 * The constructor.
-	 */
-	public RemoveNatureHandler() {}
-
-	/**
-	 * the command has been executed, so extract extract the needed information from the application
-	 * context.
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection != null && selection instanceof IStructuredSelection) {
@@ -39,7 +31,7 @@ public class RemoveNatureHandler extends AbstractHandler {
 				if (element instanceof IProject) {
 					project = (IProject) element;
 				} else if (element instanceof IAdaptable) {
-					project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
+					project = ((IAdaptable) element).getAdapter(IProject.class);
 				}
 				if (project != null) {
 					toggleNature(project);
@@ -50,9 +42,9 @@ public class RemoveNatureHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Removes AntlrDT builder/nature on a project. Nature is automatically added when an AntlrDT
-	 * editor is opened within a project.
-	 * 
+	 * Removes AntlrDT builder/nature on a project. Nature is automatically added
+	 * when an AntlrDT editor is opened within a project.
+	 *
 	 * @param project to have sample nature removed
 	 */
 	private void toggleNature(IProject project) {
@@ -60,11 +52,11 @@ public class RemoveNatureHandler extends AbstractHandler {
 			IProjectDescription description = project.getDescription();
 			String[] natures = description.getNatureIds();
 
-			for (int i = 0; i < natures.length; ++i) {
-				if (AntlrCore.getDefault().getNatureId().equals(natures[i])) {
+			for (int idx = 0; idx < natures.length; idx++) {
+				if (AntlrCore.getDefault().getNatureId().equals(natures[idx])) {
 					String[] newNatures = new String[natures.length - 1];
-					System.arraycopy(natures, 0, newNatures, 0, i);
-					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
+					System.arraycopy(natures, 0, newNatures, 0, idx);
+					System.arraycopy(natures, idx + 1, newNatures, idx, natures.length - idx - 1);
 					description.setNatureIds(newNatures);
 					project.setDescription(description, null);
 					Log.info(this, "Antlr Builder Nature removed [project=" + project.getName() + "]");

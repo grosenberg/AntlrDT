@@ -3,7 +3,7 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.antlrdt.core.model.ModelData;
+import net.certiv.antlrdt.core.model.SpecData;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.core.model.IDslElement;
@@ -21,8 +21,8 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					return data.key;
+					SpecData data = (SpecData) getData();
+					return data.name;
 				}
 				return text;
 
@@ -32,33 +32,33 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 			case IDslElement.STATEMENT:
 			case IDslElement.FIELD:
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					switch (data.mType) {
+					SpecData data = (SpecData) getData();
+					switch (data.specType) {
 						case Option:
-							return data.key + " = " + data.value.getText();
+							return data.name + " = " + data.value.getText();
 
 						case Options:
 						case Channel:
 						case Import:
 						case Token:
-							return data.key;
+							return data.name;
 
 						case AtAction:
-							if (!data.key.isEmpty()) {
-								return data.key + "::" + data.value.getText();
+							if (!data.name.isEmpty()) {
+								return data.name + "::" + data.value.getText();
 							}
 							return data.value.getText();
 
 						case ParserRule:
 						case LexerRule:
 						case Value:
-							return data.key;
+							return data.name;
 
-						case LabelId:
-							return data.key + " (label)";
+						case Label:
+							return data.name + " (label)";
 
 						default:
-							return data.key + " (literal)";
+							return data.name + " (literal)";
 					}
 				}
 				return text;
@@ -95,8 +95,8 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 			case IDslElement.FIELD:
 				desc = mgr.getDescriptor(mgr.IMG_OBJS_STATEMENT);
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					switch (data.mType) {
+					SpecData data = (SpecData) getData();
+					switch (data.specType) {
 						case Options:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
@@ -111,17 +111,17 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 							break;
 						case LexerRule:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
-							if (hasOverlay(data.decoration & ModelData.FRAGMENT)) {
+							if (hasOverlay(data.decoration & SpecData.FRAGMENT)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
 										DslImageDescriptor.TOP_RIGHT);
 							}
 							break;
 						case ParserRule:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
-							if (hasOverlay(data.decoration & ModelData.PROTECTED)) {
+							if (hasOverlay(data.decoration & SpecData.PROTECTED)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PROTECTED),
 										DslImageDescriptor.TOP_RIGHT);
-							} else if (hasOverlay(data.decoration & ModelData.PRIVATE)) {
+							} else if (hasOverlay(data.decoration & SpecData.PRIVATE)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PRIVATE),
 										DslImageDescriptor.TOP_RIGHT);
 							}
@@ -132,7 +132,7 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 						case AtAction:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_ACTION);
 							break;
-						case LabelId:
+						case Label:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_LABEL);
 							break;
 						case Value:

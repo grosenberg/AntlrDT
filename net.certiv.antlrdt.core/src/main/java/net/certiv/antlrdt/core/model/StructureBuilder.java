@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ActionContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.AtomContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.BlockContext;
@@ -17,6 +18,7 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.GrammarTypeContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.IdContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerAtomContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerBlockContext;
+import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerCommandExprContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.LexerRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.ModeRuleSpecContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.OptionContext;
@@ -32,26 +34,24 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.TokensSpecContext;
 import net.certiv.dsl.core.model.Block;
 import net.certiv.dsl.core.model.DeclarationStmt;
 import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.core.model.IStatement.Form;
-import net.certiv.dsl.core.model.IStatement.Realm;
-import net.certiv.dsl.core.model.IStatement.Type;
+import net.certiv.dsl.core.model.IStatement.BaseType;
 import net.certiv.dsl.core.model.ImportStmt;
 import net.certiv.dsl.core.model.ModuleStmt;
 import net.certiv.dsl.core.model.Statement;
-import net.certiv.dsl.core.model.builder.DslModelMaker;
+import net.certiv.dsl.core.model.builder.ModelBuilder;
 
 /** Implementing functions for model tree walker. */
 public abstract class StructureBuilder extends Processor {
 
-	private DslModelMaker maker;
+	private ModelBuilder builder;
 	private String name = "<Undefined>"; // typically, the source file name
 
 	public StructureBuilder(ParseTree tree) {
 		super(tree);
 	}
 
-	public void setMaker(DslModelMaker maker) {
-		this.maker = maker;
+	public void setMaker(ModelBuilder builder) {
+		this.builder = builder;
 	}
 
 	public void setSourceName(String name) {
@@ -61,43 +61,43 @@ public abstract class StructureBuilder extends Processor {
 	/** Called on a GrammarSpecContext node. */
 	public void doModule() {
 		GrammarSpecContext ctx = (GrammarSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.GrammarRoot, ctx, name);
-		ModuleStmt module = maker.module(ctx, name, data);
-		maker.pushParent(module);
+		SpecData data = new SpecData(BaseType.UNIT, SpecType.GrammarRoot, ruleName(ctx), ctx, name);
+		ModuleStmt module = builder.module(ctx, name, data);
+		builder.pushParent(module);
 	}
 
 	/** Called on a grammar declaration context node. */
 	public void doDeclaration() {
 		DeclarationContext ctx = (DeclarationContext) lastPathNode();
 		GrammarTypeContext gtx = ctx.grammarType();
-		int type;
+		int qualifier;
 		String name = ctx.id().getText();
 		if (gtx.PARSER() != null) {
 			name += " [parser grammar]";
-			type = ModelData.PARSER;
+			qualifier = SpecData.PARSER;
 		} else if (gtx.LEXER() != null) {
 			name += " [lexer grammar]";
-			type = ModelData.LEXER;
+			qualifier = SpecData.LEXER;
 		} else {
 			name += " [combined grammar]";
-			type = ModelData.COMBINED;
+			qualifier = SpecData.COMBINED;
 		}
 
-		ModelData data = new ModelData(ModelType.Definition, ctx, name);
-		data.setDecoration(type);
-		DeclarationStmt stmt = maker.declaration(ctx, ctx.id(), data);
-		maker.pushParent(stmt);
-		addField(ctx.id(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
+		SpecData data = new SpecData(BaseType.DECLARATION, SpecType.Definition, ruleName(ctx), ctx, name);
+		data.setDecoration(qualifier);
+		DeclarationStmt stmt = builder.declaration(ctx, ctx.id(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx.id());
 
 		// parser grammar has an implied import of the lexer grammar;
 		// add the implied import as a field of the grammar statement
-		if (type == ModelData.PARSER) {
+		if (qualifier == SpecData.PARSER) {
 			String lexName = ctx.id().getText().replace("Parser", "Lexer");
-			ModelData impData = new ModelData(ModelType.Import, ctx, lexName);
-			maker.field(ctx, lexName, Type.IMPORT_IMPLIED, Form.DECLARATION, Realm.GLOBAL, impData);
+			data = new SpecData(BaseType.IMPORT_IMPLIED, SpecType.Import, ruleName(ctx), ctx, lexName);
+			builder.field(ctx, lexName, BaseType.IMPORT_IMPLIED, data);
 		}
 
-		maker.popParent();
+		builder.popParent();
 	}
 
 	/**
@@ -107,161 +107,165 @@ public abstract class StructureBuilder extends Processor {
 	public void doAction() {
 		ActionContext ctx = (ActionContext) lastPathNode();
 		String scope = ctx.actionScopeName() != null ? ctx.actionScopeName().getText() : "";
-		ModelData data = new ModelData(ModelType.AtAction, ctx, scope, ctx.id());
-		Statement stmt = maker.statement(ctx, ctx.id(), data);
-		maker.pushParent(stmt);
-		addField(ctx.id(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.BOUND);
-		maker.popParent();
+		SpecData data = new SpecData(BaseType.NATIVE, SpecType.AtAction, ruleName(ctx), ctx, scope, ctx.id());
+		Statement stmt = builder.statement(ctx, ctx.id(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx.id());
+		builder.popParent();
 	}
 
 	/** Called for each import statement; one import name per statement. */
 	public void doImportStatement() {
 		DelegateGrammarsContext ctx = (DelegateGrammarsContext) pathNodes().get(1);
 		IdContext ctxId = (IdContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Import, ctx, ctxId.getText());
-		ImportStmt stmt = maker.importStmt(ctx, ctxId, data);
-		maker.pushParent(stmt);
-		addField(ctxId, ModelType.Import, Type.IMPORT, Form.DECLARATION, Realm.GLOBAL);
-		maker.popParent();
+		SpecData data = new SpecData(BaseType.IMPORT, SpecType.Import, ruleName(ctx), ctx, ctxId.getText());
+		ImportStmt stmt = builder.importStmt(ctx, ctxId, data);
+		builder.pushParent(stmt);
+		addField(BaseType.IMPORT, SpecType.Import, ruleName(ctx), ctxId);
+		builder.popParent();
 	}
 
 	/** Called to begin the channnels block. */
 	public void doChannelsBlock() {
 		ChannelsSpecContext ctx = (ChannelsSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Channel, ctx, "Channels block");
-		Statement stmt = maker.statement(ctx, ctx, data);
-		maker.pushParent(stmt);
+		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Channel, ruleName(ctx), ctx, "Channels block");
+		Statement stmt = builder.statement(ctx, ctx, data);
+		builder.pushParent(stmt);
 	}
 
 	/** Called for each channel identifier within the block. */
 	public void doChannelsStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Value, ctx, ctx.getText());
-		maker.field(ctx, ctx, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL, data);
+		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx, ctx.getText());
+		builder.field(ctx, ctx, BaseType.LITERAL, data);
 	}
 
 	/** Called to begin the options block. */
 	public void doOptionsBlock() {
 		OptionsSpecContext ctx = (OptionsSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Options, ctx, "Options block");
-		Statement stmt = maker.statement(ctx, ctx.OPTIONS(), data);
-		maker.pushParent(stmt);
+		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Options, ruleName(ctx), ctx, "Options block");
+		Statement stmt = builder.statement(ctx, ctx.OPTIONS(), data);
+		builder.pushParent(stmt);
 	}
 
 	/** Called for each option within the options block. */
 	public void doOptionStatement() {
 		OptionContext ctx = (OptionContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Option, ctx, ctx.id().getText(), ctx.optionValue());
-		maker.statement(ctx.id(), ctx.id(), data);
+		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Option, ruleName(ctx), ctx, ctx.id().getText(),
+				ctx.optionValue());
+		builder.statement(ctx.id(), ctx.id(), data);
 	}
 
 	/** Called to begin the tokens block. */
 	public void doTokensBlock() {
 		TokensSpecContext ctx = (TokensSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Tokens, ctx, "Tokens block");
-		Statement stmt = maker.statement(ctx, ctx.TOKENS(), data);
-		maker.pushParent(stmt);
+		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Tokens, ruleName(ctx), ctx, "Tokens block");
+		Statement stmt = builder.statement(ctx, ctx.TOKENS(), data);
+		builder.pushParent(stmt);
 	}
 
 	/** Called for each token within the tokens block. */
 	public void doTokenStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
 		String ref = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF().getText() : ctx.getText();
-		ModelData data = new ModelData(ModelType.Token, ctx, ref);
-		maker.statement(ctx, ctx.TOKEN_REF(), data);
+		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Token, ruleName(ctx), ctx, ref);
+		builder.statement(ctx, ctx.TOKEN_REF(), data);
 	}
 
 	/** Called for a parser rule specification. */
 	public void begParserRule() {
 		ParserRuleSpecContext ctx = (ParserRuleSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.ParserRule, ctx, ctx.RULE_REF().getText());
-		data.setAspects(Type.TYPE, Form.DECLARATION, Realm.GLOBAL);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.ParserRule, ruleName(ctx), ctx, ctx.RULE_REF().getText());
 		RuleModifiersContext mods = ctx.ruleModifiers();
 		if (mods != null) {
 			for (RuleModifierContext mod : mods.ruleModifier()) {
 				if (mod.PROTECTED() != null) {
-					data.setDecoration(ModelData.PROTECTED);
+					data.setDecoration(SpecData.PROTECTED);
 				} else if (mod.PRIVATE() != null) {
-					data.setDecoration(ModelData.PRIVATE);
+					data.setDecoration(SpecData.PRIVATE);
 				} else if (mod.PUBLIC() != null) {
-					data.setDecoration(ModelData.PUBLIC);
+					data.setDecoration(SpecData.PUBLIC);
 				}
 			}
 		}
-		Statement stmt = maker.statement(ctx, ctx.RULE_REF(), data);
-		maker.pushParent(stmt);
-		addField(ctx.RULE_REF(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
+		Statement stmt = builder.statement(ctx, ctx.RULE_REF(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.RULE_REF());
 		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
 	/** Called for each lexer rule specification. */
 	public void begLexerRule() {
 		LexerRuleSpecContext ctx = (LexerRuleSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.LexerRule, ctx, ctx.TOKEN_REF().getText());
-		data.setAspects(Type.TYPE, Form.DECLARATION, Realm.GLOBAL);
-		Statement stmt = maker.statement(ctx, ctx.TOKEN_REF(), data);
-		maker.pushParent(stmt);
-		addField(ctx.TOKEN_REF(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, ctx.TOKEN_REF().getText());
+		Statement stmt = builder.statement(ctx, ctx.TOKEN_REF(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
 		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
-	/** Called for each lexer rule specification. */
+	/** Called for each fragment lexer rule specification. */
 	public void begFragmentRule() {
 		FragmentRuleSpecContext ctx = (FragmentRuleSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.LexerRule, ctx, ctx.TOKEN_REF().getText());
-		data.setAspects(Type.TYPE, Form.DECLARATION, Realm.GLOBAL);
-		data.setDecoration(ModelData.FRAGMENT);
-		Statement stmt = maker.statement(ctx, ctx.TOKEN_REF(), data);
-		maker.pushParent(stmt);
-		addField(ctx.TOKEN_REF(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, ctx.TOKEN_REF().getText());
+		data.setDecoration(SpecData.FRAGMENT);
+		Statement stmt = builder.statement(ctx, ctx.TOKEN_REF(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
 		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
 	/** Called to begin a mode block. */
 	public void begModeRule() {
 		ModeRuleSpecContext ctx = (ModeRuleSpecContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Mode, ctx, ctx.id().getText() + " [mode]");
-		Statement stmt = maker.statement(ctx, ctx.id(), data);
-		maker.pushParent(stmt);
+		String modeName = ctx.id().getText() + " [mode]";
+		SpecData data = new SpecData(BaseType.DECLARATION, SpecType.Mode, ruleName(ctx), ctx, modeName);
+		Statement stmt = builder.statement(ctx, ctx.id(), data);
+		builder.pushParent(stmt);
+		addField(BaseType.LITERAL, SpecType.ModeName, ctx.id().getText(), ctx.id());
 	}
 
 	public void endParserRule() {
-		if (maker.peekParent() instanceof Block) {
-			maker.popParent();
+		if (builder.peekParent() instanceof Block) {
+			builder.popParent();
 			ParserRuleSpecContext ctx = (ParserRuleSpecContext) lastPathNode();
-			maker.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
-		maker.popParent();
+		builder.popParent();
 	}
 
 	public void endLexerRule() {
-		if (maker.peekParent() instanceof Block) {
-			maker.popParent();
+		if (builder.peekParent() instanceof Block) {
+			builder.popParent();
 			LexerRuleSpecContext ctx = (LexerRuleSpecContext) lastPathNode();
-			maker.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
-		maker.popParent();
+		builder.popParent();
 	}
 
 	public void endFragmentRule() {
-		if (maker.peekParent() instanceof Block) {
-			maker.popParent();
+		if (builder.peekParent() instanceof Block) {
+			builder.popParent();
 			FragmentRuleSpecContext ctx = (FragmentRuleSpecContext) lastPathNode();
-			maker.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
-		maker.popParent();
+		builder.popParent();
 	}
 
 	public void endModeRule() {
-		maker.popParent();
+		builder.popParent();
+	}
+
+	public void doCommandExpr() {
+		LexerCommandExprContext ctx = (LexerCommandExprContext) lastPathNode();
+		addField(BaseType.LITERAL, SpecType.ModeName, ruleName(ctx), ctx);
 	}
 
 	public void doAtomRef() {
 		AtomContext ctx = (AtomContext) lastPathNode();
 		if (ctx.DOT() != null) {
-			ModelData data = new ModelData(ModelType.Value, ctx, ctx.DOT().getText());
-			data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-			maker.field(ctx, ctx.DOT(), data.type, data.form, data.realm, data);
+			SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.DOT().getText());
+			builder.field(ctx, ctx.DOT(), BaseType.TYPE, data);
 		}
 	}
 
@@ -269,26 +273,23 @@ public abstract class StructureBuilder extends Processor {
 		LexerAtomContext ctx = (LexerAtomContext) lastPathNode();
 		TerminalNode atom = ctx.charSet() != null ? ctx.charSet().LEXER_CHAR_SET() : ctx.DOT();
 		if (atom != null) {
-			ModelData data = new ModelData(ModelType.Value, ctx, atom.getText());
-			data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-			maker.field(ctx, atom, data.type, data.form, data.realm, data);
+			SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, atom.getText());
+			builder.field(ctx, atom, BaseType.TYPE, data);
 		}
 	}
 
 	/** Called for each parser rule referenced in a rule specification. */
 	public void doRuleRef() {
 		RulerefContext ctx = (RulerefContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Value, ctx, ctx.RULE_REF().getText());
-		data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-		maker.field(ctx, ctx.RULE_REF(), data.type, data.form, data.realm, data);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		builder.field(ctx, ctx.RULE_REF(), BaseType.TYPE, data);
 	}
 
 	/** Called for each label reference within a parser rule specification. */
 	public void doLabelRef() {
 		IdContext ctx = (IdContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.LabelId, ctx, ctx.RULE_REF().getText());
-		data.setAspects(Type.VARIABLE, Form.INFERRED, Realm.LOCAL);
-		maker.field(ctx, ctx.RULE_REF(), data.type, data.form, data.realm, data);
+		SpecData data = new SpecData(BaseType.VARIABLE, SpecType.Label, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		builder.field(ctx, ctx.RULE_REF(), BaseType.VARIABLE, data);
 	}
 
 	/**
@@ -297,16 +298,14 @@ public abstract class StructureBuilder extends Processor {
 	public void doTerminalRef() {
 		TerminalContext ctx = (TerminalContext) lastPathNode();
 		TerminalNode terminal = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF() : ctx.STRING_LITERAL();
-		ModelData data = new ModelData(ModelType.Value, ctx, terminal.getText());
-		data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-		maker.field(ctx, terminal, data.type, data.form, data.realm, data);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, terminal.getText());
+		builder.field(ctx, terminal, BaseType.TYPE, data);
 	}
 
 	public void doRangeRef() {
 		RangeContext ctx = (RangeContext) lastPathNode();
-		ModelData data = new ModelData(ModelType.Value, ctx, ctx.getText());
-		data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-		maker.field(ctx, ctx.STRING_LITERAL().get(0), data.type, data.form, data.realm, data);
+		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.getText());
+		builder.field(ctx, ctx.STRING_LITERAL().get(0), BaseType.TYPE, data);
 	}
 
 	public void doSetRef() {
@@ -320,9 +319,8 @@ public abstract class StructureBuilder extends Processor {
 			elem = ctx.charSet().LEXER_CHAR_SET();
 		}
 		if (elem != null) {
-			ModelData data = new ModelData(ModelType.LexerRule, ctx, elem.getText());
-			data.setAspects(Type.TYPE, Form.REFERENCE, Realm.GLOBAL);
-			maker.field(ctx, elem, data.type, data.form, data.realm, data);
+			SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, elem.getText());
+			builder.field(ctx, elem, BaseType.TYPE, data);
 		}
 	}
 
@@ -332,28 +330,28 @@ public abstract class StructureBuilder extends Processor {
 		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
 		if (ctx instanceof BlockContext) {
 			BlockContext cty = (BlockContext) lastPathNode();
-			stmt = maker.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			stmt = builder.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof LexerBlockContext) {
 			LexerBlockContext cty = (LexerBlockContext) lastPathNode();
-			stmt = maker.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			stmt = builder.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		}
-		if (stmt != null) maker.pushParent(stmt);
+		if (stmt != null) builder.pushParent(stmt);
 	}
 
 	/** Called to close a currently open block of statements. */
 	public void doEndBlock() {
-		maker.popParent();
+		builder.popParent();
 		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
 
 		if (ctx instanceof BlockContext) {
 			BlockContext cty = (BlockContext) ctx;
-			maker.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			builder.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof LexerBlockContext) {
 			LexerBlockContext cty = (LexerBlockContext) ctx;
-			maker.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			builder.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof ChannelsSpecContext) {
 
@@ -364,14 +362,18 @@ public abstract class StructureBuilder extends Processor {
 		}
 	}
 
-	private void addField(ParseTree ctx, ModelType mType, Type type, Form form, Realm realm) {
+	private void addField(BaseType baseType, SpecType specType, String rulename, ParseTree ctx) {
 		if (ctx != null) {
-			maker.field(ctx, ctx, type, form, realm, new ModelData(mType, ctx, ctx.getText()));
+			builder.field(ctx, ctx, baseType, new SpecData(baseType, specType, rulename, ctx, ctx.getText()));
 		}
 	}
 
 	private void addBlock(int blockType, TerminalNode beg, TerminalNode end) {
-		Block block = maker.block(blockType, beg, end, null);
-		if (block != null) maker.pushParent(block);
+		Block block = builder.block(blockType, beg, end, null);
+		if (block != null) builder.pushParent(block);
+	}
+
+	private String ruleName(ParserRuleContext ctx) {
+		return AntlrDT4Parser.ruleNames[ctx.getRuleIndex()];
 	}
 }

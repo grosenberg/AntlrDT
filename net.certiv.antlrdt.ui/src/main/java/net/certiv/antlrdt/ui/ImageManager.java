@@ -1,7 +1,8 @@
 package net.certiv.antlrdt.ui;
 
-import org.eclipse.jface.resource.ImageRegistry;
 import org.osgi.framework.Bundle;
+
+import org.eclipse.jface.resource.ImageRegistry;
 
 import net.certiv.dsl.ui.DslImageManager;
 

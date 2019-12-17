@@ -27,7 +27,7 @@ public class PrefsInitializer extends DslPrefsInit {
 		super.initializeDefaultPreferences();
 
 		setRGB(PrefsKey.EDITOR_ACTION_COLOR, new RGB(70, 150, 170));
-		setRGB(PrefsKey.EDITOR_ACTION_NAMED_COLOR, new RGB(220, 0, 0));
+		setRGB(PrefsKey.EDITOR_ACTION_NAME_COLOR, new RGB(220, 0, 0));
 
 		setBool(PrefsKey.EDITOR_FOLDING_COMMENT_ML, true);
 		setBool(PrefsKey.EDITOR_FOLDING_COMMENT_JD, false);

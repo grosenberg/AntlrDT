@@ -2,16 +2,11 @@ package net.certiv.antlrdt.core;
 
 import org.osgi.framework.BundleContext;
 
-import net.certiv.antlrdt.core.parser.AntlrSourceParser;
+import net.certiv.antlrdt.core.lang.AntlrLangManager;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.lang.LangManager;
-import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.parser.DslSourceParser;
+import net.certiv.dsl.core.lang.LanguageManager;
 
 public class AntlrCore extends DslCore {
-
-	// Should be unique, lower case, single word;
-	public static final String DSL_NAME = "antlr";
 
 	private static AntlrCore plugin;
 
@@ -48,15 +43,7 @@ public class AntlrCore extends DslCore {
 	}
 
 	@Override
-	public DslSourceParser createSourceParser(ICodeUnit unit, String contentType) {
-		if (DSL_NAME.equals(contentType) || getContentTypeId().equals(contentType)) {
-			return new AntlrSourceParser(unit.getParseRecord());
-		}
-		return null;
-	}
-
-	@Override
-	public LangManager getLangManager() {
+	public LanguageManager getLangManager() {
 		if (langMgr == null) {
 			langMgr = new AntlrLangManager(this);
 		}

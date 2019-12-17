@@ -392,14 +392,14 @@
       </category>
       <command
             categoryId="net.certiv.antlrdt.ui.commands.category"
-            id="net.certiv.antlrdt.ui.removeNatureCommand"
-            name="Remove AntlrDT Nature">
+            description="Clean grammar problem markers"
+            id="net.certiv.antlrdt.ui.cleanGrammarCommand"
+            name="Clean Problems">
       </command>
       <command
             categoryId="net.certiv.antlrdt.ui.commands.category"
-            description="Remove Problem Markers"
-            id="net.certiv.antlrdt.ui.cleanGrammarCommand"
-            name="Remove Problem Markers">
+            id="net.certiv.antlrdt.ui.removeNatureCommand"
+            name="Remove AntlrDT Nature">
       </command>
    </extension>
 
@@ -460,7 +460,7 @@
             class="net.certiv.antlrdt.ui.handlers.RemoveNatureHandler">
       </handler>
       <handler
-            class="net.certiv.antlrdt.ui.handlers.CleanGrammarHandler"
+            class="net.certiv.dsl.ui.handlers.CleanGrammarHandler"
             commandId="net.certiv.antlrdt.ui.cleanGrammarCommand">
       </handler>
 
@@ -610,10 +610,12 @@
 	<extension point="org.eclipse.ui.menus">
     	<menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
-            commandId="net.certiv.antlrdt.ui.cleanGrammarCommand"
-            id="net.certiv.antlrdt.ui.popups.cleanGrammarCommand">
+               commandId="net.certiv.antlrdt.ui.cleanGrammarCommand"
+               id="net.certiv.antlrdt.ui.popups.cleanGrammarCommand"
+               tooltip="Clean grammar problem markers">
             style="push">
-            <visibleWhen>
+            <visibleWhen
+                  checkEnabled="false">
 				<reference definitionId="net.certiv.antlrdt.activeContexts.definition"/>
 			</visibleWhen>
          </command>

@@ -8,21 +8,33 @@ import net.certiv.dsl.core.preferences.DslPrefsKey;
  */
 public class PrefsKey extends DslPrefsKey {
 
-	// @formatter:off
+	// rule-based colors
 	public static final String EDITOR_ACTION_COLOR = "{DSL_ID}" + ".action";
-	public static final String EDITOR_ACTION_BOLD = EDITOR_ACTION_COLOR + EDITOR_BOLD_SUFFIX;
-	public static final String EDITOR_ACTION_ITALIC = EDITOR_ACTION_COLOR + EDITOR_ITALIC_SUFFIX;
-	public static final String EDITOR_ACTION_STRIKETHROUGH = EDITOR_ACTION_COLOR + EDITOR_STRIKETHROUGH_SUFFIX;
-	public static final String EDITOR_ACTION_UNDERLINE = EDITOR_ACTION_COLOR + EDITOR_UNDERLINE_SUFFIX;
+	public static final String EDITOR_ACTION_BOLD = EDITOR_ACTION_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_ACTION_ITALIC = EDITOR_ACTION_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_ACTION_STRIKE = EDITOR_ACTION_COLOR + STRIKE_SUFFIX;
+	public static final String EDITOR_ACTION_UNDERLINE = EDITOR_ACTION_COLOR + UNDERLINE_SUFFIX;
 
-	public static final String EDITOR_ACTION_NAMED_COLOR = "{DSL_ID}" + ".actionNamed";
-	public static final String EDITOR_ACTION_NAMED_BOLD = EDITOR_ACTION_NAMED_COLOR + EDITOR_BOLD_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_ITALIC = EDITOR_ACTION_NAMED_COLOR + EDITOR_ITALIC_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_STRIKETHROUGH = EDITOR_ACTION_NAMED_COLOR
-			+ EDITOR_STRIKETHROUGH_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_UNDERLINE = EDITOR_ACTION_NAMED_COLOR + EDITOR_UNDERLINE_SUFFIX;
-	// @formatter:on
+	public static final String EDITOR_ACTION_NAME_COLOR = "{DSL_ID}" + ".actionName";
+	public static final String EDITOR_ACTION_NAME_BOLD = EDITOR_ACTION_NAME_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_ACTION_NAME_ITALIC = EDITOR_ACTION_NAME_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_ACTION_NAME_STRIKE = EDITOR_ACTION_NAME_COLOR + STRIKE_SUFFIX;
+	public static final String EDITOR_ACTION_NAME_UNDERLINE = EDITOR_ACTION_NAME_COLOR + UNDERLINE_SUFFIX;
 
+	// semantic colors
+	public static final String EDITOR_RULE_NAME_COLOR = "{DSL_ID}" + ".rulename";
+	public static final String EDITOR_RULE_NAME_BOLD = EDITOR_RULE_NAME_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_RULE_NAME_ITALIC = EDITOR_RULE_NAME_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_RULE_NAME_STRIKE = EDITOR_RULE_NAME_COLOR + STRIKE_SUFFIX;
+	public static final String EDITOR_RULE_NAME_UNDERLINE = EDITOR_RULE_NAME_COLOR + UNDERLINE_SUFFIX;
+
+	public static final String EDITOR_MODE_NAME_COLOR = "{DSL_ID}" + ".modename";
+	public static final String EDITOR_MODE_NAME_BOLD = EDITOR_MODE_NAME_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_MODE_NAME_ITALIC = EDITOR_MODE_NAME_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_MODE_NAME_STRIKE = EDITOR_MODE_NAME_COLOR + STRIKE_SUFFIX;
+	public static final String EDITOR_MODE_NAME_UNDERLINE = EDITOR_MODE_NAME_COLOR + UNDERLINE_SUFFIX;
+
+	// folding
 	public static final String EDITOR_FOLDING_COMMENT_ML = "{DSL_ID}" + ".editorFoldingCommentML";
 	public static final String EDITOR_FOLDING_COMMENT_JD = "{DSL_ID}" + ".editorFoldingCommentJD";
 	public static final String EDITOR_FOLDING_ACTION = "{DSL_ID}" + ".editorFoldingActions";
@@ -40,9 +52,6 @@ public class PrefsKey extends DslPrefsKey {
 	// formatter prefixes
 	private static final String FORMAT_SPACE = "{DSL_ID}" + ".formatSpace";
 	private static final String FORMAT_WRAP = "{DSL_ID}" + ".formatWrap";
-	// private static final String FORMAT_INDENT = "{DSL_ID}" + ".formatIndent";
-	// private static final String FORMAT_LIST = "{DSL_ID}" + ".formatList";
-	// private static final String FORMAT_STYLE = "{DSL_ID}" + ".formatStyle";
 
 	// header
 	public static final String SPACE_SEMI_HDR = FORMAT_SPACE + "SemiHdr";
@@ -173,4 +182,5 @@ public class PrefsKey extends DslPrefsKey {
 	public static final String PT_DEPTH_LIMIT = "{DSL_ID}" + ".ptDepthLimit";
 
 	public static final String PT_SHOW_GRID = "{DSL_ID}" + ".ptShowGrid";
+
 }

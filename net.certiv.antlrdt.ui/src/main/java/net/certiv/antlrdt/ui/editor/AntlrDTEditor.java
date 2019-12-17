@@ -9,7 +9,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.ui.AntlrUI;
-import net.certiv.antlrdt.ui.editor.folding.AntlrDTFoldingStructureProvider;
+import net.certiv.antlrdt.ui.editor.folding.AntlrFoldingStructureProvider;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.ui.DslUI;
@@ -86,7 +86,7 @@ public class AntlrDTEditor extends DslEditor {
 	@Override
 	protected IFoldingStructureProvider createFoldingStructureProvider() {
 		if (foldingProvider == null) {
-			foldingProvider = new AntlrDTFoldingStructureProvider();
+			foldingProvider = new AntlrFoldingStructureProvider();
 		}
 		return foldingProvider;
 	}

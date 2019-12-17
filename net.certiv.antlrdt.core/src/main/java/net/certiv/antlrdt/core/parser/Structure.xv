@@ -7,7 +7,7 @@ options {
 
 @header {
 	package net.certiv.antlrdt.core.parser.gen;
-	import net.certiv.antlrdt.core.parser.StructureBuilder;
+	import net.certiv.antlrdt.core.model.StructureBuilder;
 }
 
 structure
@@ -30,6 +30,10 @@ structure
 	| lexerRule
 	| fragmentRule
 	| modeRule
+	
+	| cmdExpr
+	| atomRef
+	| lexerAtomRef
 
 	| ruleRef
 	| labelRef
@@ -95,6 +99,7 @@ modeRule		: //modeRuleSpec
 						{ onExit:  endModeRule(); }
 				;
 
+cmdExpr			: //lexerCommandExpr	{ doCommandExpr(); }	;
 atomRef			: //atom				{ doAtomRef(); } 		;
 lexerAtomRef	: //lexerAtom			{ doLexerAtomRef(); } 	;
 

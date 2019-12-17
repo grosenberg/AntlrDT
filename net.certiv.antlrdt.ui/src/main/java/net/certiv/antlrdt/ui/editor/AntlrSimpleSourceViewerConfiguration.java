@@ -13,7 +13,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
+import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 
 public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfiguration {
 
@@ -88,7 +88,7 @@ public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfi
 	}
 
 	@Override
-	public DslReconciler getReconciler(ISourceViewer viewer) {
+	public Reconciler getReconciler(ISourceViewer viewer) {
 		return null;
 	}
 }

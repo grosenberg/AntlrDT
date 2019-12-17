@@ -13,7 +13,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
@@ -39,9 +38,10 @@ import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
-import net.certiv.dsl.ui.editor.DslPresentationReconciler;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
+import net.certiv.dsl.ui.editor.reconcile.CompositeDamagerRepairer;
+import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
+import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
 import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
 import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
@@ -56,9 +56,10 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	private ScannerCommentJD commentJDScanner;
 	private ScannerCommentML commentMLScanner;
 	private ScannerCommentSL commentSLScanner;
-	private ScannerKeyword keyScanner;
+	private ScannerKeyword keywordScanner;
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
+	private AntlrSemanaticAnalyzer grammarAnalyzer;
 
 	public AntlrSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store, ITextEditor editor,
 			String partitioning) {
@@ -85,9 +86,11 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		commentJDScanner = new ScannerCommentJD(store);
 		commentMLScanner = new ScannerCommentML(store);
 		commentSLScanner = new ScannerCommentSL(store);
-		keyScanner = new ScannerKeyword(store);
+		keywordScanner = new ScannerKeyword(store);
 		stringScanner = new ScannerString(store);
 		actionScanner = new ScannerAction(store);
+
+		grammarAnalyzer = new AntlrSemanaticAnalyzer(getDslUI());
 	}
 
 	@Override
@@ -124,14 +127,18 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		PresentationReconciler reconciler = new DslPresentationReconciler();
-		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
+		PresentationReconciler reconciler = new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
 
+		CompositeDamagerRepairer dr = new CompositeDamagerRepairer(IDocument.DEFAULT_CONTENT_TYPE);
+		dr.addScanner(keywordScanner);
+		dr.addAnalyzer(viewer, grammarAnalyzer);
+
+		buildRepairer(reconciler, dr, IDocument.DEFAULT_CONTENT_TYPE);
 		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
 		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
 		buildRepairer(reconciler, commentSLScanner, Partitions.COMMENT_SL);
-		buildRepairer(reconciler, keyScanner, IDocument.DEFAULT_CONTENT_TYPE);
 		buildRepairer(reconciler, stringScanner, Partitions.STRING);
 		buildRepairer(reconciler, actionScanner, Partitions.ACTION);
 
@@ -140,17 +147,20 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		if (keywordScanner.affectsBehavior(event)) keywordScanner.adaptToPreferenceChange(event);
+		if (grammarAnalyzer.affectsBehavior(event)) grammarAnalyzer.adaptToPreferenceChange(event);
+
 		if (commentJDScanner.affectsBehavior(event)) commentJDScanner.adaptToPreferenceChange(event);
 		if (commentMLScanner.affectsBehavior(event)) commentMLScanner.adaptToPreferenceChange(event);
 		if (commentSLScanner.affectsBehavior(event)) commentSLScanner.adaptToPreferenceChange(event);
-		if (keyScanner.affectsBehavior(event)) keyScanner.adaptToPreferenceChange(event);
 		if (stringScanner.affectsBehavior(event)) stringScanner.adaptToPreferenceChange(event);
 		if (actionScanner.affectsBehavior(event)) actionScanner.adaptToPreferenceChange(event);
 	}
 
 	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return keyScanner.affectsBehavior(event) //
+		return keywordScanner.affectsBehavior(event) //
+				|| grammarAnalyzer.affectsBehavior(event) //
 				|| actionScanner.affectsBehavior(event) //
 				|| stringScanner.affectsBehavior(event) //
 				|| commentJDScanner.affectsBehavior(event) //
@@ -159,8 +169,8 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public DslReconciler getReconciler(ISourceViewer viewer) {
-		DslReconciler reconciler = super.getReconciler(viewer);
+	public Reconciler getReconciler(ISourceViewer viewer) {
+		Reconciler reconciler = super.getReconciler(viewer);
 
 		AntlrReconcilingStrategy strategy = new AntlrReconcilingStrategy(getEditor(), viewer);
 		reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);

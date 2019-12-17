@@ -3,6 +3,7 @@ package net.certiv.antlrdt.core.parser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
+
 import org.eclipse.core.runtime.IPath;
 
 import net.certiv.antlrdt.core.AntlrCore;
@@ -13,9 +14,10 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.model.builder.DslModelMaker;
+import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
+import net.certiv.dsl.core.util.Chars;
 
 public class AntlrSourceParser extends DslSourceParser {
 
@@ -33,7 +35,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	@Override
 	public void parse() {
-		record.cs = CharStreams.fromString(record.doc.get());
+		record.cs = CharStreams.fromString(getContent(), record.unit.getFile().getName());
 		Lexer lexer = new AntlrDT4Lexer(record.cs);
 		lexer.setTokenFactory(TokenFactory);
 		lexer.removeErrorListeners();
@@ -48,12 +50,13 @@ public class AntlrSourceParser extends DslSourceParser {
 	}
 
 	@Override
-	public void analyzeStructure(DslModelMaker maker) {
+	public void analyzeStructure(ModelBuilder maker) {
 		try {
 			StructureVisitor visitor = new StructureVisitor(record.tree);
 			visitor.setSourceName(getPackageName(record.unit));
 			visitor.setMaker(maker);
 			visitor.findAll();
+
 		} catch (Exception e) {
 			getDslErrorListener().generalError("Model analysis: %s @%s:%s", e);
 		}
@@ -63,7 +66,7 @@ public class AntlrSourceParser extends DslSourceParser {
 		IPath path = unit.getProjectRelativePath();
 		IPath root = unit.getSourceRoot();
 		path = path.makeRelativeTo(root);
-		return path.toString().replace('/', '.');
+		return path.toString().replace(Chars.SLASH, Chars.DOT);
 	}
 
 	@Override

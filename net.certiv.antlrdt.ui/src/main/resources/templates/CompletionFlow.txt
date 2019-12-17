@@ -1,0 +1,25 @@
+# Command Flows
+
+@startuml
+'hide footbox
+skinparam sequenceArrowThickness 1.25
+skinparam backgroundColor #E8E8E8
+skinparam sequence {
+		ArrowColor DarkBlue
+		ActorBorderColor LightBlue
+		LifeLineBorderColor Black
+		LifeLineBackgroundColor White
+
+		ParticipantBorderColor DarkBlue
+		ParticipantBackgroundColor LightBlue
+		ParticipantFontName Verdana
+		ParticipantFontColor Black
+}
+
+object ContentAssist 
+
+
+
+
+
+@enduml

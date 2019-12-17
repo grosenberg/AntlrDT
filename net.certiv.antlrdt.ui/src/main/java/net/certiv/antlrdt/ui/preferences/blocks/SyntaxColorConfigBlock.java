@@ -42,7 +42,10 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 		keys.add(Editor.EDITOR_KEYWORDS_COLOR);
 		keys.add(Editor.EDITOR_STRING_COLOR);
 		keys.add(PrefsKey.EDITOR_ACTION_COLOR);
-		keys.add(PrefsKey.EDITOR_ACTION_NAMED_COLOR);
+		keys.add(PrefsKey.EDITOR_ACTION_NAME_COLOR);
+
+		keys.add(PrefsKey.EDITOR_RULE_NAME_COLOR);
+		keys.add(PrefsKey.EDITOR_MODE_NAME_COLOR);
 		return keys;
 	}
 
@@ -54,7 +57,10 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 		addColorPreference("Grammar", "Keywords", Editor.EDITOR_KEYWORDS_COLOR);
 		addColorPreference("Grammar", "Strings", Editor.EDITOR_STRING_COLOR);
 		addColorPreference("Action", "Action Blocks", PrefsKey.EDITOR_ACTION_COLOR);
-		addColorPreference("Action", "Action Names", PrefsKey.EDITOR_ACTION_NAMED_COLOR);
+		addColorPreference("Action", "Action Names", PrefsKey.EDITOR_ACTION_NAME_COLOR);
+
+		addColorPreference("Rules", "Rule Names", PrefsKey.EDITOR_RULE_NAME_COLOR);
+		addColorPreference("Modes", "Mode Names", PrefsKey.EDITOR_MODE_NAME_COLOR);
 	}
 
 	@Override

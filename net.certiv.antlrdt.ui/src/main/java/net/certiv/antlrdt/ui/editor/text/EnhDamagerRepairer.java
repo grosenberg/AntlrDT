@@ -18,17 +18,16 @@ public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 	protected TextAttribute leadingTextAttribute;
 
 	/**
-	 * Creates a damager/repairer that uses the given scanner and returns the given default text
-	 * attribute if the current token does not carry a text attribute.
+	 * Creates a damager/repairer that uses the given scanner and returns the given
+	 * default text attribute if the current token does not carry a text attribute.
 	 */
 	public EnhDamagerRepairer(ITokenScanner scanner, TextAttribute namedAttribute) {
 		super(scanner);
 		leadingTextAttribute = namedAttribute;
 	}
 
-	/**
-	 * Creates a two-tone presentation
-	 */
+	/** Creates a two-tone presentation */
+	@Override
 	public void createPresentation(TextPresentation presentation, ITypedRegion chRegion) {
 		if (leadingTextAttribute == null) {
 			super.createPresentation(presentation, chRegion);
@@ -36,8 +35,7 @@ public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 		} else {
 			ITypedRegion lRegion;
 			try {
-				lRegion = TextUtilities.getPartition(fDocument, Partitions.PARTITIONING, chRegion.getOffset(),
-						false);
+				lRegion = TextUtilities.getPartition(fDocument, Partitions.PARTITIONING, chRegion.getOffset(), false);
 			} catch (BadLocationException e) {
 				Log.error(this, "Region [offset=" + chRegion.getOffset() + ", len=" + chRegion.getLength() + ", type="
 						+ chRegion.getType() + "]", e);

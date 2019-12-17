@@ -77,7 +77,7 @@ public class AntlrDTBuilder extends DslBuilder {
 			monitor.beginTask(TASK, WORK_BUILD);
 			units.sort(NameComp);
 			for (ICodeUnit unit : units) {
-				DslParseRecord record = unit.getParseRecord();
+				DslParseRecord record = unit.getDefaultParseRecord();
 				record.getCollector().beginCollecting(unit.getResource(), record.markerId);
 				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
 				record.getCollector().endCollecting();
@@ -101,14 +101,17 @@ public class AntlrDTBuilder extends DslBuilder {
 
 			monitor.worked(1);
 
+			Log.info(this, String.format("Building %s -> %s", unit.getPath().toString(), output.toString()));
+
 			Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
 			tool.removeListeners();
-			tool.addListener(new ToolErrorListener(unit.getParseRecord()));
+			tool.addListener(new ToolErrorListener(unit.getDefaultParseRecord()));
 			monitor.worked(1);
 
 			// Prep and process the grammar file
 			Grammar g = tool.loadGrammar(pathname);
 			tool.process(g, true); // NOTE: can throw execeptions based on grammar eval
+			Log.info(this, "Built " + unit.getPath().toString());
 			CoreUtil.showStatusLineMessage("Built " + unit.getPath().toString(), false);
 			monitor.worked(1);
 
@@ -118,6 +121,7 @@ public class AntlrDTBuilder extends DslBuilder {
 
 		} catch (Exception | Error e) {
 			explain(Cause.UNIT, unit.getPath().toString());
+			Log.error(this, "Build failed " + unit.getPath().toString());
 			CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
 		}
 	}
@@ -134,14 +138,16 @@ public class AntlrDTBuilder extends DslBuilder {
 		IPath buildPath = null;
 		if (mgr.onSourceBuildPath(unit)) {
 			buildPath = mgr.resolveGrammarPackagePath(unit);
-			if (buildPath == null) {
-				buildPath = mgr.getSourceBuildOutputPath(unit);
-			}
 			if (buildPath != null) {
 				buildPath = unit.getProject().getLocation().append(unit.getSourceRoot()).append(buildPath);
-				Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(), buildPath));
+			} else {
+				buildPath = mgr.getSourceBuildOutputPath(unit);
+				if (buildPath != null) {
+					buildPath = unit.getProject().getLocation().append(buildPath);
+				}
 			}
 		}
+		Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(), buildPath));
 		return buildPath;
 	}
 

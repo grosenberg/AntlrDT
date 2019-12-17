@@ -62,11 +62,6 @@ public class AntlrUI extends DslUI {
 	}
 
 	@Override
-	public String getDslLanguageName() {
-		return AntlrCore.DSL_NAME;
-	}
-
-	@Override
 	public ImageManager getImageManager() {
 		if (imageMgr == null) {
 			imageMgr = new ImageManager();
