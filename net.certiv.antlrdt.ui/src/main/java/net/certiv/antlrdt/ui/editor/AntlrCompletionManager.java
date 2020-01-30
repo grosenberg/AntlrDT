@@ -2,7 +2,6 @@ package net.certiv.antlrdt.ui.editor;
 
 import org.eclipse.jface.text.IAutoEditStrategy;
 
-import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DefaultAutoEditSemicolonStrategy;
@@ -20,21 +19,20 @@ public class AntlrCompletionManager extends CompletionManager {
 
 	@Override
 	public String getContentAssistScope(IStatement stmt) {
-		switch (stmt.getKind()) {
-			case IDslElement.DSL_UNIT:
-			case IDslElement.MODULE:
-			case IDslElement.DECLARATION:
-			case IDslElement.IMPORT:
+		switch (stmt.getModelType()) {
+			case MODULE:
+			case DECLARATION:
+			case IMPORT:
 				return GRAMMAR;
 
-			case IDslElement.STATEMENT:
+			case STATEMENT:
 				if (stmt.getElementName().equals(OPTIONS)) return OPTIONS;
 				if (stmt.getElementName().equals(RULE)) return RULE;
 				return GRAMMAR;
 
-			case IDslElement.FIELD:
-			case IDslElement.BEG_BLOCK:
-			case IDslElement.END_BLOCK:
+			case FIELD:
+			case BEG_BLOCK:
+			case END_BLOCK:
 			default:
 				return null;
 		}

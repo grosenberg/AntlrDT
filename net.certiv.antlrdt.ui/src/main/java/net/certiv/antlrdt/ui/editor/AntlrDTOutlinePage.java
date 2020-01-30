@@ -17,9 +17,9 @@ import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
 import net.certiv.antlrdt.ui.editor.filter.RuleFilter;
 import net.certiv.antlrdt.ui.editor.filter.TokenFilter;
-import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.core.model.ISourceRef;
-import net.certiv.dsl.ui.editor.DslEditor;
+import net.certiv.dsl.core.model.ISourceUnit;
+import net.certiv.dsl.core.model.IStatement;
+import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.ui.editor.DslOutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
 import net.certiv.dsl.ui.viewsupport.DslFilterActionGroup;
@@ -29,41 +29,42 @@ public class AntlrDTOutlinePage extends DslOutlinePage {
 	protected class GrammarDataProvider extends OutlineDataProvider {
 
 		@Override
-		protected IDslElement[] filterChildren(ISourceRef node) {
-			List<IDslElement> filtered = new ArrayList<>();
-			IDslElement[] children = node.getChildren();
+		protected IStatement[] filterChildren(ISourceUnit node) {
+			List<IStatement> filtered = new ArrayList<>();
+			IStatement[] children = super.filterChildren(node);
 			for (int idx = 0; idx < children.length; idx++) {
-				IDslElement child = children[idx];
+				IStatement child = children[idx];
 				if (endBlock(child)) continue;
 				if (firstFieldOfStatement(idx, child)) continue;
 				if (impliedImport(child)) continue;
 
 				filtered.add(child);
 			}
-			return filtered.toArray(new IDslElement[filtered.size()]);
+			return filtered.toArray(new IStatement[filtered.size()]);
 		}
 
-		private boolean endBlock(IDslElement child) {
-			return child.getKind() == IDslElement.END_BLOCK;
+		private boolean endBlock(IStatement child) {
+			return child.getModelType() == ModelType.END_BLOCK;
 		}
 
-		private boolean firstFieldOfStatement(int idx, IDslElement child) {
-			if (idx == 0 && child.getKind() == IDslElement.FIELD) {
-				if (child.getParent() != null && (child.getParent().getKind() == IDslElement.STATEMENT
-						|| child.getParent().getKind() == IDslElement.DECLARATION)) {
+		private boolean firstFieldOfStatement(int idx, IStatement child) {
+			if (idx == 0 && child.getModelType() == ModelType.FIELD) {
+				if (child.getParent() != null && (child.getParent().getModelType() == ModelType.STATEMENT
+						|| child.getParent().getModelType() == ModelType.DECLARATION)) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		private boolean impliedImport(IDslElement child) {
-			return child.getKind() == IDslElement.IMPORT && child.getParent().getKind() == IDslElement.DECLARATION;
+		private boolean impliedImport(IStatement child) {
+			return child.getModelType() == ModelType.IMPORT
+					&& child.getParent().getModelType() == ModelType.DECLARATION;
 		}
 	}
 
-	public AntlrDTOutlinePage(DslEditor editor, IPreferenceStore store) {
-		super(AntlrUI.getDefault(), editor, store);
+	public AntlrDTOutlinePage(IPreferenceStore store) {
+		super(AntlrUI.getDefault(), store);
 	}
 
 	@Override

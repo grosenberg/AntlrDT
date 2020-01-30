@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.antlrdt.feature"
       label="AntlrDT"
-      version="4.9.0.qualifier"
+      version="4.10.0.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -44,6 +44,8 @@
       <import plugin="org.eclipse.ui.ide" version="3.15.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views" version="3.9.300" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.11.300" match="greaterOrEqual"/>
+      <import plugin="net.certiv.antlrdt.ui" version="4.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.commands"/>
       <import plugin="org.eclipse.core.filesystem" version="1.7.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi" version="3.13.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services" version="3.7.100" match="greaterOrEqual"/>
@@ -53,17 +55,13 @@
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.11.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.zest.core"/>
       <import plugin="org.eclipse.zest.layouts"/>
-      <import plugin="net.certiv.antlrdt.ui" version="4.9.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.commands"/>
       <import plugin="com.google.guava"/>
-      <import plugin="net.certiv.fluent.dt.ui"/>
-      <import plugin="net.certiv.dsl.jdt" version="0.9.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.17.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.17.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.launching" version="3.13.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.13.300" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.15.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="net.certiv.dsl.jdt.plugin" version="0.9.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.ui" version="3.15.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.15.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.launching" version="3.11.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.15.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

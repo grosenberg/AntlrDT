@@ -39,7 +39,6 @@ import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.editor.reconcile.CompositeDamagerRepairer;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
 import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
@@ -128,14 +127,11 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
-		PresentationReconciler reconciler = new PresentationReconciler();
+		PresentationReconciler reconciler = new PresentationReconciler(getDslUI());
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
 
-		CompositeDamagerRepairer dr = new CompositeDamagerRepairer(IDocument.DEFAULT_CONTENT_TYPE);
-		dr.addScanner(keywordScanner);
-		dr.addAnalyzer(viewer, grammarAnalyzer);
+		buildRepairer(getEditor(), viewer, reconciler, grammarAnalyzer, IDocument.DEFAULT_CONTENT_TYPE);
 
-		buildRepairer(reconciler, dr, IDocument.DEFAULT_CONTENT_TYPE);
 		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
 		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
 		buildRepairer(reconciler, commentSLScanner, Partitions.COMMENT_SL);
@@ -173,7 +169,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		Reconciler reconciler = super.getReconciler(viewer);
 
 		AntlrReconcilingStrategy strategy = new AntlrReconcilingStrategy(getEditor(), viewer);
-		reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.addReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
 
 		return reconciler;
 	}

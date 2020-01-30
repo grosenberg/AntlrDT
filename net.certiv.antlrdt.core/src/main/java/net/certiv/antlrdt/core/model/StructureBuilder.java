@@ -33,24 +33,25 @@ import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.TerminalContext;
 import net.certiv.antlrdt.core.parser.gen.AntlrDT4Parser.TokensSpecContext;
 import net.certiv.dsl.core.model.Block;
 import net.certiv.dsl.core.model.DeclarationStmt;
-import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.core.model.IStatement.BaseType;
+import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.ImportStmt;
+import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.ModuleStmt;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
+import net.certiv.dsl.core.util.Strings;
 
 /** Implementing functions for model tree walker. */
 public abstract class StructureBuilder extends Processor {
 
 	private ModelBuilder builder;
-	private String name = "<Undefined>"; // typically, the source file name
+	private String name = ModelBuilder.UNKNOWN;
 
 	public StructureBuilder(ParseTree tree) {
 		super(tree);
 	}
 
-	public void setMaker(ModelBuilder builder) {
+	public void setBuilder(ModelBuilder builder) {
 		this.builder = builder;
 	}
 
@@ -61,7 +62,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called on a GrammarSpecContext node. */
 	public void doModule() {
 		GrammarSpecContext ctx = (GrammarSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.UNIT, SpecType.GrammarRoot, ruleName(ctx), ctx, name);
+		Specialization data = new Specialization(ModelType.MODULE, SpecializedType.GrammarRoot, ruleName(ctx), ctx,
+				name);
 		ModuleStmt module = builder.module(ctx, name, data);
 		builder.pushParent(module);
 	}
@@ -74,27 +76,31 @@ public abstract class StructureBuilder extends Processor {
 		String name = ctx.id().getText();
 		if (gtx.PARSER() != null) {
 			name += " [parser grammar]";
-			qualifier = SpecData.PARSER;
+			qualifier = Specialization.PARSER;
 		} else if (gtx.LEXER() != null) {
 			name += " [lexer grammar]";
-			qualifier = SpecData.LEXER;
+			qualifier = Specialization.LEXER;
 		} else {
 			name += " [combined grammar]";
-			qualifier = SpecData.COMBINED;
+			qualifier = Specialization.COMBINED;
 		}
 
-		SpecData data = new SpecData(BaseType.DECLARATION, SpecType.Definition, ruleName(ctx), ctx, name);
+		Specialization data = new Specialization(ModelType.DECLARATION, SpecializedType.Definition, ruleName(ctx), ctx,
+				name);
 		data.setDecoration(qualifier);
 		DeclarationStmt stmt = builder.declaration(ctx, ctx.id(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx.id());
+
+		// add declaration name as a field
+		addField(ModelType.LITERAL, SpecializedType.Value, ruleName(ctx), ctx.id());
 
 		// parser grammar has an implied import of the lexer grammar;
-		// add the implied import as a field of the grammar statement
-		if (qualifier == SpecData.PARSER) {
+		// add a synthetic import as a child of the grammar statement
+		if (qualifier == Specialization.PARSER) {
 			String lexName = ctx.id().getText().replace("Parser", "Lexer");
-			data = new SpecData(BaseType.IMPORT_IMPLIED, SpecType.Import, ruleName(ctx), ctx, lexName);
-			builder.field(ctx, lexName, BaseType.IMPORT_IMPLIED, data);
+			data = new Specialization(ModelType.IMPORT, SpecializedType.Import, ruleName(ctx), ctx, lexName);
+			ImportStmt impStmt = builder.importStmt(ctx, lexName, data);
+			impStmt.setFlags(IStatement.SYNTHETIC);
 		}
 
 		builder.popParent();
@@ -106,11 +112,12 @@ public abstract class StructureBuilder extends Processor {
 	 */
 	public void doAction() {
 		ActionContext ctx = (ActionContext) lastPathNode();
-		String scope = ctx.actionScopeName() != null ? ctx.actionScopeName().getText() : "";
-		SpecData data = new SpecData(BaseType.NATIVE, SpecType.AtAction, ruleName(ctx), ctx, scope, ctx.id());
+		String scope = ctx.actionScopeName() != null ? ctx.actionScopeName().getText() : Strings.EMPTY;
+		Specialization data = new Specialization(ModelType.NATIVE, SpecializedType.AtAction, ruleName(ctx), ctx, scope,
+				ctx.id());
 		Statement stmt = builder.statement(ctx, ctx.id(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx.id());
+		addField(ModelType.LITERAL, SpecializedType.Value, ruleName(ctx), ctx.id());
 		builder.popParent();
 	}
 
@@ -118,17 +125,19 @@ public abstract class StructureBuilder extends Processor {
 	public void doImportStatement() {
 		DelegateGrammarsContext ctx = (DelegateGrammarsContext) pathNodes().get(1);
 		IdContext ctxId = (IdContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.IMPORT, SpecType.Import, ruleName(ctx), ctx, ctxId.getText());
+		Specialization data = new Specialization(ModelType.IMPORT, SpecializedType.Import, ruleName(ctx), ctx,
+				ctxId.getText());
 		ImportStmt stmt = builder.importStmt(ctx, ctxId, data);
 		builder.pushParent(stmt);
-		addField(BaseType.IMPORT, SpecType.Import, ruleName(ctx), ctxId);
+		addField(ModelType.IMPORT, SpecializedType.Import, ruleName(ctx), ctxId);
 		builder.popParent();
 	}
 
 	/** Called to begin the channnels block. */
 	public void doChannelsBlock() {
 		ChannelsSpecContext ctx = (ChannelsSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Channel, ruleName(ctx), ctx, "Channels block");
+		Specialization data = new Specialization(ModelType.BLOCK, SpecializedType.Channel, ruleName(ctx), ctx,
+				"Channels block");
 		Statement stmt = builder.statement(ctx, ctx, data);
 		builder.pushParent(stmt);
 	}
@@ -136,14 +145,16 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each channel identifier within the block. */
 	public void doChannelsStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Value, ruleName(ctx), ctx, ctx.getText());
-		builder.field(ctx, ctx, BaseType.LITERAL, data);
+		Specialization data = new Specialization(ModelType.LITERAL, SpecializedType.Value, ruleName(ctx), ctx,
+				ctx.getText());
+		builder.field(ctx, ctx, ModelType.LITERAL, data);
 	}
 
 	/** Called to begin the options block. */
 	public void doOptionsBlock() {
 		OptionsSpecContext ctx = (OptionsSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Options, ruleName(ctx), ctx, "Options block");
+		Specialization data = new Specialization(ModelType.BLOCK, SpecializedType.Options, ruleName(ctx), ctx,
+				"Options block");
 		Statement stmt = builder.statement(ctx, ctx.OPTIONS(), data);
 		builder.pushParent(stmt);
 	}
@@ -151,15 +162,16 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each option within the options block. */
 	public void doOptionStatement() {
 		OptionContext ctx = (OptionContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Option, ruleName(ctx), ctx, ctx.id().getText(),
-				ctx.optionValue());
+		Specialization data = new Specialization(ModelType.LITERAL, SpecializedType.Option, ruleName(ctx), ctx,
+				ctx.id().getText(), ctx.optionValue());
 		builder.statement(ctx.id(), ctx.id(), data);
 	}
 
 	/** Called to begin the tokens block. */
 	public void doTokensBlock() {
 		TokensSpecContext ctx = (TokensSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.BLOCK, SpecType.Tokens, ruleName(ctx), ctx, "Tokens block");
+		Specialization data = new Specialization(ModelType.BLOCK, SpecializedType.Tokens, ruleName(ctx), ctx,
+				"Tokens block");
 		Statement stmt = builder.statement(ctx, ctx.TOKENS(), data);
 		builder.pushParent(stmt);
 	}
@@ -168,68 +180,72 @@ public abstract class StructureBuilder extends Processor {
 	public void doTokenStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
 		String ref = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF().getText() : ctx.getText();
-		SpecData data = new SpecData(BaseType.LITERAL, SpecType.Token, ruleName(ctx), ctx, ref);
+		Specialization data = new Specialization(ModelType.LITERAL, SpecializedType.Token, ruleName(ctx), ctx, ref);
 		builder.statement(ctx, ctx.TOKEN_REF(), data);
 	}
 
 	/** Called for a parser rule specification. */
 	public void begParserRule() {
 		ParserRuleSpecContext ctx = (ParserRuleSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.ParserRule, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.ParserRule, ruleName(ctx), ctx,
+				ctx.RULE_REF().getText());
 		RuleModifiersContext mods = ctx.ruleModifiers();
 		if (mods != null) {
 			for (RuleModifierContext mod : mods.ruleModifier()) {
 				if (mod.PROTECTED() != null) {
-					data.setDecoration(SpecData.PROTECTED);
+					data.setDecoration(Specialization.PROTECTED);
 				} else if (mod.PRIVATE() != null) {
-					data.setDecoration(SpecData.PRIVATE);
+					data.setDecoration(Specialization.PRIVATE);
 				} else if (mod.PUBLIC() != null) {
-					data.setDecoration(SpecData.PUBLIC);
+					data.setDecoration(Specialization.PUBLIC);
 				}
 			}
 		}
 		Statement stmt = builder.statement(ctx, ctx.RULE_REF(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.RULE_REF());
-		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
+		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.RULE_REF());
+		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
 	/** Called for each lexer rule specification. */
 	public void begLexerRule() {
 		LexerRuleSpecContext ctx = (LexerRuleSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, ctx.TOKEN_REF().getText());
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.LexerRule, ruleName(ctx), ctx,
+				ctx.TOKEN_REF().getText());
 		Statement stmt = builder.statement(ctx, ctx.TOKEN_REF(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
-		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
+		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
+		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
 	/** Called for each fragment lexer rule specification. */
 	public void begFragmentRule() {
 		FragmentRuleSpecContext ctx = (FragmentRuleSpecContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, ctx.TOKEN_REF().getText());
-		data.setDecoration(SpecData.FRAGMENT);
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.LexerRule, ruleName(ctx), ctx,
+				ctx.TOKEN_REF().getText());
+		data.setDecoration(Specialization.FRAGMENT);
 		Statement stmt = builder.statement(ctx, ctx.TOKEN_REF(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
-		addBlock(IDslElement.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
+		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
+		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
 	/** Called to begin a mode block. */
 	public void begModeRule() {
 		ModeRuleSpecContext ctx = (ModeRuleSpecContext) lastPathNode();
 		String modeName = ctx.id().getText() + " [mode]";
-		SpecData data = new SpecData(BaseType.DECLARATION, SpecType.Mode, ruleName(ctx), ctx, modeName);
+		Specialization data = new Specialization(ModelType.DECLARATION, SpecializedType.Mode, ruleName(ctx), ctx,
+				modeName);
 		Statement stmt = builder.statement(ctx, ctx.id(), data);
 		builder.pushParent(stmt);
-		addField(BaseType.LITERAL, SpecType.ModeName, ctx.id().getText(), ctx.id());
+		addField(ModelType.LITERAL, SpecializedType.ModeName, ctx.id().getText(), ctx.id());
 	}
 
 	public void endParserRule() {
 		if (builder.peekParent() instanceof Block) {
 			builder.popParent();
 			ParserRuleSpecContext ctx = (ParserRuleSpecContext) lastPathNode();
-			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(ModelType.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
 		builder.popParent();
 	}
@@ -238,7 +254,7 @@ public abstract class StructureBuilder extends Processor {
 		if (builder.peekParent() instanceof Block) {
 			builder.popParent();
 			LexerRuleSpecContext ctx = (LexerRuleSpecContext) lastPathNode();
-			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(ModelType.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
 		builder.popParent();
 	}
@@ -247,7 +263,7 @@ public abstract class StructureBuilder extends Processor {
 		if (builder.peekParent() instanceof Block) {
 			builder.popParent();
 			FragmentRuleSpecContext ctx = (FragmentRuleSpecContext) lastPathNode();
-			builder.block(IDslElement.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
+			builder.block(ModelType.END_BLOCK, ctx.COLON(), ctx.SEMI(), null);
 		}
 		builder.popParent();
 	}
@@ -258,14 +274,15 @@ public abstract class StructureBuilder extends Processor {
 
 	public void doCommandExpr() {
 		LexerCommandExprContext ctx = (LexerCommandExprContext) lastPathNode();
-		addField(BaseType.LITERAL, SpecType.ModeName, ruleName(ctx), ctx);
+		addField(ModelType.LITERAL, SpecializedType.ModeName, ruleName(ctx), ctx);
 	}
 
 	public void doAtomRef() {
 		AtomContext ctx = (AtomContext) lastPathNode();
 		if (ctx.DOT() != null) {
-			SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.DOT().getText());
-			builder.field(ctx, ctx.DOT(), BaseType.TYPE, data);
+			Specialization data = new Specialization(ModelType.TYPE, SpecializedType.Value, ruleName(ctx), ctx,
+					ctx.DOT().getText());
+			builder.field(ctx, ctx.DOT(), ModelType.TYPE, data);
 		}
 	}
 
@@ -273,23 +290,26 @@ public abstract class StructureBuilder extends Processor {
 		LexerAtomContext ctx = (LexerAtomContext) lastPathNode();
 		TerminalNode atom = ctx.charSet() != null ? ctx.charSet().LEXER_CHAR_SET() : ctx.DOT();
 		if (atom != null) {
-			SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, atom.getText());
-			builder.field(ctx, atom, BaseType.TYPE, data);
+			Specialization data = new Specialization(ModelType.TYPE, SpecializedType.Value, ruleName(ctx), ctx,
+					atom.getText());
+			builder.field(ctx, atom, ModelType.TYPE, data);
 		}
 	}
 
 	/** Called for each parser rule referenced in a rule specification. */
 	public void doRuleRef() {
 		RulerefContext ctx = (RulerefContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.RULE_REF().getText());
-		builder.field(ctx, ctx.RULE_REF(), BaseType.TYPE, data);
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.Value, ruleName(ctx), ctx,
+				ctx.RULE_REF().getText());
+		builder.field(ctx, ctx.RULE_REF(), ModelType.TYPE, data);
 	}
 
 	/** Called for each label reference within a parser rule specification. */
 	public void doLabelRef() {
 		IdContext ctx = (IdContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.VARIABLE, SpecType.Label, ruleName(ctx), ctx, ctx.RULE_REF().getText());
-		builder.field(ctx, ctx.RULE_REF(), BaseType.VARIABLE, data);
+		Specialization data = new Specialization(ModelType.VARIABLE, SpecializedType.Label, ruleName(ctx), ctx,
+				ctx.RULE_REF().getText());
+		builder.field(ctx, ctx.RULE_REF(), ModelType.VARIABLE, data);
 	}
 
 	/**
@@ -298,14 +318,16 @@ public abstract class StructureBuilder extends Processor {
 	public void doTerminalRef() {
 		TerminalContext ctx = (TerminalContext) lastPathNode();
 		TerminalNode terminal = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF() : ctx.STRING_LITERAL();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, terminal.getText());
-		builder.field(ctx, terminal, BaseType.TYPE, data);
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.Value, ruleName(ctx), ctx,
+				terminal.getText());
+		builder.field(ctx, terminal, ModelType.TYPE, data);
 	}
 
 	public void doRangeRef() {
 		RangeContext ctx = (RangeContext) lastPathNode();
-		SpecData data = new SpecData(BaseType.TYPE, SpecType.Value, ruleName(ctx), ctx, ctx.getText());
-		builder.field(ctx, ctx.STRING_LITERAL().get(0), BaseType.TYPE, data);
+		Specialization data = new Specialization(ModelType.TYPE, SpecializedType.Value, ruleName(ctx), ctx,
+				ctx.getText());
+		builder.field(ctx, ctx.STRING_LITERAL().get(0), ModelType.TYPE, data);
 	}
 
 	public void doSetRef() {
@@ -319,8 +341,9 @@ public abstract class StructureBuilder extends Processor {
 			elem = ctx.charSet().LEXER_CHAR_SET();
 		}
 		if (elem != null) {
-			SpecData data = new SpecData(BaseType.TYPE, SpecType.LexerRule, ruleName(ctx), ctx, elem.getText());
-			builder.field(ctx, elem, BaseType.TYPE, data);
+			Specialization data = new Specialization(ModelType.TYPE, SpecializedType.LexerRule, ruleName(ctx), ctx,
+					elem.getText());
+			builder.field(ctx, elem, ModelType.TYPE, data);
 		}
 	}
 
@@ -330,11 +353,11 @@ public abstract class StructureBuilder extends Processor {
 		ParserRuleContext ctx = (ParserRuleContext) lastPathNode();
 		if (ctx instanceof BlockContext) {
 			BlockContext cty = (BlockContext) lastPathNode();
-			stmt = builder.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			stmt = builder.block(ModelType.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof LexerBlockContext) {
 			LexerBlockContext cty = (LexerBlockContext) lastPathNode();
-			stmt = builder.block(IDslElement.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			stmt = builder.block(ModelType.BEG_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		}
 		if (stmt != null) builder.pushParent(stmt);
@@ -347,11 +370,11 @@ public abstract class StructureBuilder extends Processor {
 
 		if (ctx instanceof BlockContext) {
 			BlockContext cty = (BlockContext) ctx;
-			builder.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			builder.block(ModelType.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof LexerBlockContext) {
 			LexerBlockContext cty = (LexerBlockContext) ctx;
-			builder.block(IDslElement.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
+			builder.block(ModelType.END_BLOCK, cty.LPAREN(), cty.RPAREN(), null);
 
 		} else if (ctx instanceof ChannelsSpecContext) {
 
@@ -362,14 +385,15 @@ public abstract class StructureBuilder extends Processor {
 		}
 	}
 
-	private void addField(BaseType baseType, SpecType specType, String rulename, ParseTree ctx) {
+	private void addField(ModelType modelType, SpecializedType specializedType, String rulename, ParseTree ctx) {
 		if (ctx != null) {
-			builder.field(ctx, ctx, baseType, new SpecData(baseType, specType, rulename, ctx, ctx.getText()));
+			builder.field(ctx, ctx, modelType,
+					new Specialization(modelType, specializedType, rulename, ctx, ctx.getText()));
 		}
 	}
 
-	private void addBlock(int blockType, TerminalNode beg, TerminalNode end) {
-		Block block = builder.block(blockType, beg, end, null);
+	private void addBlock(ModelType kind, TerminalNode beg, TerminalNode end) {
+		Block block = builder.block(kind, beg, end, null);
 		if (block != null) builder.pushParent(block);
 	}
 

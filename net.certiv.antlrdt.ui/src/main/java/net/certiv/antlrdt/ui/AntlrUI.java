@@ -86,7 +86,7 @@ public class AntlrUI extends DslUI {
 	}
 
 	@Override
-	protected String getEditorId() {
+	public String getEditorId() {
 		return AntlrDTEditor.EDITOR_ID;
 	}
 }

@@ -70,7 +70,7 @@ import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.ui.util.PartAdaptor;
+import net.certiv.dsl.ui.util.PartAdaptor2;
 import net.certiv.dsl.ui.util.WorkbenchAdaptor;
 
 public class PathView extends ViewPart implements IAdjustableViewPart, ISelectionListener {
@@ -332,7 +332,7 @@ public class PathView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 	private void addListeners(final PathView view) {
 
-		final PartAdaptor partAdaptor = new PartAdaptor() {
+		final PartAdaptor2 partAdaptor = new PartAdaptor2() {
 
 			private boolean viewVisible = true;
 

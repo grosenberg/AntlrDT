@@ -1,9 +1,12 @@
 package net.certiv.antlrdt.core.builder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
@@ -40,12 +43,15 @@ import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslParseRecord;
+import net.certiv.dsl.core.parser.problems.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Strings;
 
-public class AntlrDTBuilder extends DslBuilder {
+public class AntlrBuilder extends DslBuilder {
 
 	private static final String TASK = "Antlr build";
+	private static final String TOKENS = ".tokens";
 
 	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
 
@@ -55,7 +61,7 @@ public class AntlrDTBuilder extends DslBuilder {
 		}
 	};
 
-	public AntlrDTBuilder() {
+	public AntlrBuilder() {
 		super();
 	}
 
@@ -70,6 +76,34 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	@Override
+	protected List<ICodeUnit> filterBuildableUnits(List<ICodeUnit> units) {
+		Set<ICodeUnit> changed = new HashSet<>();
+		for (ICodeUnit unit : units) {
+			if (isChanged(unit)) {
+				changed.add(unit);
+				changed.addAll(related(unit, null));
+			}
+		}
+		return new ArrayList<>(changed);
+	}
+
+	private boolean isChanged(ICodeUnit unit) {
+		IPath unitLoc = unit.getLocation();
+		String ext = unitLoc.getFileExtension();
+		String tokensName = unitLoc.lastSegment().replace(Strings.DOT + ext, TOKENS);
+
+		IPath outPath = mgr.getBuildOutputPath(unit);
+		IPath loc = unit.getDslProject().getLocation();
+		File tokensFile = loc.append(outPath).append(tokensName).toFile();
+		if (!tokensFile.exists()) return true;
+
+		long unitTime = unitLoc.toFile().lastModified();
+		long tokensTime = tokensFile.lastModified();
+		boolean stale = unitTime > tokensTime;
+		return stale;
+	}
+
+	@Override
 	protected IStatus buildUnits(List<ICodeUnit> units, IProgressMonitor monitor, int ticks) throws CoreException {
 		if (units.isEmpty()) return Status.OK_STATUS;
 
@@ -77,10 +111,7 @@ public class AntlrDTBuilder extends DslBuilder {
 			monitor.beginTask(TASK, WORK_BUILD);
 			units.sort(NameComp);
 			for (ICodeUnit unit : units) {
-				DslParseRecord record = unit.getDefaultParseRecord();
-				record.getCollector().beginCollecting(unit.getResource(), record.markerId);
 				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
-				record.getCollector().endCollecting();
 			}
 			return Status.OK_STATUS;
 
@@ -90,64 +121,78 @@ public class AntlrDTBuilder extends DslBuilder {
 	}
 
 	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) {
+		IPath unitPath = unit.getPath();
+		String pathname = unit.getLocation().toString();
+		IPath output = determineBuildPath(unit);
+		monitor.worked(1);
+
+		if (output == null) {
+			explain(Cause.PATH, unitPath.toString());
+			CoreUtil.showStatusLineMessage("Skipped  " + unitPath.toString(), false);
+			return;
+		}
+
+		IPath dest = output.makeRelativeTo(unitPath);
+		Log.info(this, "Building %s -> %s", unitPath.lastSegment(), dest);
+
+		DslParseRecord record = unit.getDefaultParseRecord();
+		DslProblemCollector collector = record.getCollector();
+		collector.beginCollecting(unit.getResource(), record.markerId);
+
+		Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
+		tool.removeListeners();
+		tool.addListener(new ToolErrorListener(record));
+		monitor.worked(1);
+
+		Throwable err = null;
 		try {
-			String pathname = unit.getLocation().toString();
-			IPath output = determineBuildPath(unit);
-			if (output == null) {
-				explain(Cause.PATH, unit.getPath().toString());
-				CoreUtil.showStatusLineMessage("No build  " + unit.getPath().toString(), false);
-				return;
-			}
+			Grammar g = tool.loadGrammar(pathname); // pre-process the grammar file
+			tool.process(g, true); // can throw execeptions based on grammar eval
+			record.getCollector().endCollecting();
 
+		} catch (Exception | Error e) {
+			record.getCollector().endCollecting();
+			err = e;
+		}
+
+		if (err != null || record.hasProblems()) {
+			String failMsg = "Build error " + unitPath.toString();
+			CoreUtil.showStatusLineMessage(failMsg, true);
+			if (err != null) Log.error(this, failMsg, err);
+			if (record.hasProblems()) explain(Cause.ERRORS, unitPath.toString());
 			monitor.worked(1);
 
-			Log.info(this, String.format("Building %s -> %s", unit.getPath().toString(), output.toString()));
-
-			Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
-			tool.removeListeners();
-			tool.addListener(new ToolErrorListener(unit.getDefaultParseRecord()));
-			monitor.worked(1);
-
-			// Prep and process the grammar file
-			Grammar g = tool.loadGrammar(pathname);
-			tool.process(g, true); // NOTE: can throw execeptions based on grammar eval
-			Log.info(this, "Built " + unit.getPath().toString());
-			CoreUtil.showStatusLineMessage("Built " + unit.getPath().toString(), false);
+		} else {
+			String msg = "Built " + unitPath.toString();
+			CoreUtil.showStatusLineMessage(msg, false);
 			monitor.worked(1);
 
 			IPath folder = unit.getProject().getLocation().append(unit.getSourceRoot()).append(output);
 			postCompileCleanup(unit, folder, monitor);
 			monitor.worked(1);
-
-		} catch (Exception | Error e) {
-			explain(Cause.UNIT, unit.getPath().toString());
-			Log.error(this, "Build failed " + unit.getPath().toString());
-			CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
 		}
 	}
 
 	/**
 	 * Returns an output build path for the given grammar code unit. The build path
 	 * will be a filesystem absolute path or {@code null}. A {@code null} return
-	 * indicates that no build will occur.
+	 * indicates that the given unit is not on a valid build path and, therefore, no
+	 * the unit should not be built.
 	 *
 	 * @param file the grammar IFile
 	 * @return a filesystem absolute path to the build folder or {@code null}
 	 */
 	private IPath determineBuildPath(ICodeUnit unit) {
-		IPath buildPath = null;
-		if (mgr.onSourceBuildPath(unit)) {
-			buildPath = mgr.resolveGrammarPackagePath(unit);
-			if (buildPath != null) {
-				buildPath = unit.getProject().getLocation().append(unit.getSourceRoot()).append(buildPath);
-			} else {
-				buildPath = mgr.getSourceBuildOutputPath(unit);
-				if (buildPath != null) {
-					buildPath = unit.getProject().getLocation().append(buildPath);
-				}
-			}
+		if (!mgr.onSourceBuildPath(unit)) return null;
+
+		IPath buildPath = mgr.getGrammarInternalPackagePath(unit);
+		if (buildPath != null) {
+			buildPath = unit.getSourceRoot().append(buildPath);
+		} else {
+			buildPath = mgr.getBuildOutputPath(unit);
 		}
-		Log.info(this, String.format("Build path '%s' -> '%s'", unit.getProjectRelativePath(), buildPath));
+
+		buildPath = unit.getProject().getLocation().append(buildPath);
 		return buildPath;
 	}
 
@@ -189,7 +234,7 @@ public class AntlrDTBuilder extends DslBuilder {
 						if (res.getType() == IResource.FILE) {
 							if (res.getFileExtension().equals("g4")) {
 								continue;
-							} else if (res.getName().equals(name + ".tokens")) {
+							} else if (res.getName().equals(name + TOKENS)) {
 								res.setDerived(true, monitor);
 							} else if (res.getName().startsWith(name + "Parser")) {
 								res.setDerived(true, monitor);

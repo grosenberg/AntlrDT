@@ -80,7 +80,7 @@ public class AntlrDTEditor extends DslEditor {
 
 	@Override
 	protected AntlrDTOutlinePage doCreateOutlinePage() {
-		return new AntlrDTOutlinePage(this, getPreferenceStore());
+		return new AntlrDTOutlinePage(getPreferenceStore());
 	}
 
 	@Override

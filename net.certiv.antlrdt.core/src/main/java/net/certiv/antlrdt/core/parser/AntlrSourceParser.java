@@ -34,31 +34,47 @@ public class AntlrSourceParser extends DslSourceParser {
 	}
 
 	@Override
-	public void parse() {
-		record.cs = CharStreams.fromString(getContent(), record.unit.getFile().getName());
-		Lexer lexer = new AntlrDT4Lexer(record.cs);
-		lexer.setTokenFactory(TokenFactory);
-		lexer.removeErrorListeners();
-		lexer.addErrorListener(getDslErrorListener());
-
-		record.ts = new CommonTokenStream(lexer);
-		record.parser = new AntlrDT4Parser(record.ts);
-		record.parser.setTokenFactory(TokenFactory);
-		record.parser.removeErrorListeners();
-		record.parser.addErrorListener(getDslErrorListener());
-		record.tree = ((AntlrDT4Parser) record.parser).grammarSpec();
+	public boolean doAnalysis() {
+		return true;
 	}
 
 	@Override
-	public void analyzeStructure(ModelBuilder maker) {
+	public Throwable parse() {
+		try {
+			record.cs = CharStreams.fromString(getContent(), record.unit.getFile().getName());
+			Lexer lexer = new AntlrDT4Lexer(record.cs);
+			lexer.setTokenFactory(TokenFactory);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(getDslErrorListener());
+
+			record.ts = new CommonTokenStream(lexer);
+			record.parser = new AntlrDT4Parser(record.ts);
+			record.parser.setTokenFactory(TokenFactory);
+			record.parser.removeErrorListeners();
+			record.parser.addErrorListener(getDslErrorListener());
+			record.tree = ((AntlrDT4Parser) record.parser).grammarSpec();
+			return null;
+
+		} catch (Exception | Error e) {
+			getDslErrorListener().generalError(ERR_PARSER, e);
+			return e;
+		}
+	}
+
+	@Override
+	public Throwable analyze(ModelBuilder builder) {
 		try {
 			StructureVisitor visitor = new StructureVisitor(record.tree);
 			visitor.setSourceName(getPackageName(record.unit));
-			visitor.setMaker(maker);
+			visitor.setBuilder(builder);
+			builder.beginAnalysis();
 			visitor.findAll();
+			builder.endAnalysis();
+			return null;
 
-		} catch (Exception e) {
-			getDslErrorListener().generalError("Model analysis: %s @%s:%s", e);
+		} catch (Exception | Error e) {
+			getDslErrorListener().generalError(ERR_ANALYSIS, e);
+			return e;
 		}
 	}
 
@@ -67,10 +83,5 @@ public class AntlrSourceParser extends DslSourceParser {
 		IPath root = unit.getSourceRoot();
 		path = path.makeRelativeTo(root);
 		return path.toString().replace(Chars.SLASH, Chars.DOT);
-	}
-
-	@Override
-	public boolean modelContributor() {
-		return true;
 	}
 }

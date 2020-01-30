@@ -1,6 +1,7 @@
 package net.certiv.antlrdt.vis.util;
 
 import org.antlr.v4.runtime.Token;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -13,10 +14,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.vis.views.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.ui.util.EditorUtil;
@@ -33,7 +34,7 @@ public class VisUtil {
 	}
 
 	private static ITextEditor openSourceFile(Source source) {
-		IWorkbenchWindow window = AntlrUI.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IFile file = workspaceRoot.getFileForLocation(new Path(source.getPathname()));

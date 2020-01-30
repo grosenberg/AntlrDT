@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.certiv.antlrdt.core.AntlrCore;
-import net.certiv.antlrdt.core.builder.AntlrDTBuilder;
+import net.certiv.antlrdt.core.builder.AntlrBuilder;
 import net.certiv.antlrdt.core.parser.gen.PathVisitor;
 import net.certiv.antlrdt.vis.model.PathModel;
 import net.certiv.antlrdt.vis.model.PathNode;
@@ -68,7 +68,7 @@ public class PathProcessor {
 			if (ok) units.add(related);
 		}
 		List<ICodeUnit> results = new ArrayList<>(units);
-		results.sort(AntlrDTBuilder.NameComp);
+		results.sort(AntlrBuilder.NameComp);
 		return results;
 	}
 

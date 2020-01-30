@@ -14,7 +14,6 @@ import net.certiv.dsl.core.lang.RootEntry;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.dsl.core.util.Chars;
-import net.certiv.dsl.core.util.Strings;
 
 public class AntlrLangManager extends LanguageManager {
 
@@ -25,6 +24,12 @@ public class AntlrLangManager extends LanguageManager {
 	private static final String SRC = "src/main/antlr4";
 	private static final String[] EXC = { "attic", "bin", "lib", "src/main/antlr4/import" };
 	private static final String OUT = "target/classes";
+
+	/** Prefix mark identifying a relative output root entry */
+	public static final String MARK_RELATIVE = "$$";
+
+	// default output source root path - source relative
+	private static final String DEF_OUT = MARK_RELATIVE + "/gen";
 
 	public AntlrLangManager(DslCore core) {
 		super(core);
@@ -46,13 +51,22 @@ public class AntlrLangManager extends LanguageManager {
 	}
 
 	@Override
-	public Imports getImportsSpec() {
-		return Imports.SPEC;
+	public List<RootEntry> getLangSourceRoots() {
+		return Arrays.asList(RootEntry.source(SRC).exclude(EXC).out(OUT), RootEntry.output(DEF_OUT));
 	}
 
 	@Override
-	public List<RootEntry> getLangSourceRoots() {
-		return Arrays.asList(RootEntry.source(SRC).exclude(EXC).out(OUT));
+	public IPath getBuildOutputPath(ICodeUnit unit) {
+		IPath path = super.getBuildOutputPath(unit);
+		if (path != null && path.segment(0).equals(MARK_RELATIVE)) {
+			path = unit.getProjectRelativePath().removeLastSegments(1).append(path.removeFirstSegments(1));
+		}
+		return path;
+	}
+
+	@Override
+	public Imports getImportsSpec() {
+		return Imports.SPEC;
 	}
 
 	@Override
@@ -60,16 +74,5 @@ public class AntlrLangManager extends LanguageManager {
 		IPath path = new Path(name.replace(Chars.DOT, Chars.SLASH));
 		path = path.addFileExtension(EXTENSIONS.get(0));
 		return Arrays.asList(path);
-	}
-
-	@Override
-	public IPath resolveGrammarPackagePath(ICodeUnit unit) {
-		String pkg = resolveGrammarPackage(unit);
-		if (!Strings.empty(pkg)) {
-			return new Path(pkg.replace(Chars.DOT, Chars.SLASH));
-		}
-
-		if (unit.getSourceRoot() == null) return null;
-		return unit.getProjectRelativePath().removeLastSegments(1);
 	}
 }

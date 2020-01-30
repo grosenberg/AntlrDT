@@ -3,10 +3,9 @@ package net.certiv.antlrdt.ui.editor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.antlrdt.core.model.SpecData;
+import net.certiv.antlrdt.core.model.Specialization;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
-import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.DslImageDescriptor;
 import net.certiv.dsl.ui.editor.StatementLabelProvider;
 
@@ -18,22 +17,22 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 
 	@Override
 	public String decorateText(String text) {
-		switch (getElementKind()) {
-			case IDslElement.MODULE:
+		switch (getStatementType()) {
+			case MODULE:
 				if (hasData()) {
-					SpecData data = (SpecData) getData();
+					Specialization data = (Specialization) getData();
 					return data.name;
 				}
 				return text;
 
-			case IDslElement.DECLARATION:
+			case DECLARATION:
 				return text;
 
-			case IDslElement.STATEMENT:
-			case IDslElement.FIELD:
+			case STATEMENT:
+			case FIELD:
 				if (hasData()) {
-					SpecData data = (SpecData) getData();
-					switch (data.specType) {
+					Specialization data = (Specialization) getData();
+					switch (data.specializedType) {
 						case Option:
 							return data.name + " = " + data.value.getText();
 
@@ -63,14 +62,15 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 				}
 				return text;
 
-			case IDslElement.BEG_BLOCK:
+			case BEG_BLOCK:
 				if (text.equals(":")) return "Rule elements";
 				return "Alt group";
 
-			case IDslElement.END_BLOCK:
-				return null;
+			case END_BLOCK:
+			default:
+				break;
 		}
-		return text + " [" + getElementKind() + "]";
+		return text + " [" + getStatementType() + "]";
 	}
 
 	@Override
@@ -78,25 +78,21 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 		ImageManager mgr = (ImageManager) imgMgr;
 		ImageDescriptor desc = null;
 
-		switch (getElementKind()) {
-			case IDslElement.DSL_UNIT:
-				desc = mgr.getDescriptor(mgr.IMG_OBJ_PACKAGE);
-				break;
-
-			case IDslElement.MODULE:
+		switch (getStatementType()) {
+			case MODULE:
 				desc = mgr.getDescriptor(mgr.IMG_OBJS_MODULE);
 				break;
 
-			case IDslElement.DECLARATION:
+			case DECLARATION:
 				desc = mgr.getDescriptor(mgr.IMG_OBJS_CORE);
 				break;
 
-			case IDslElement.STATEMENT:
-			case IDslElement.FIELD:
+			case STATEMENT:
+			case FIELD:
 				desc = mgr.getDescriptor(mgr.IMG_OBJS_STATEMENT);
 				if (hasData()) {
-					SpecData data = (SpecData) getData();
-					switch (data.specType) {
+					Specialization data = (Specialization) getData();
+					switch (data.specializedType) {
 						case Options:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
@@ -111,17 +107,17 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 							break;
 						case LexerRule:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
-							if (hasOverlay(data.decoration & SpecData.FRAGMENT)) {
+							if (hasOverlay(data.decoration & Specialization.FRAGMENT)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
 										DslImageDescriptor.TOP_RIGHT);
 							}
 							break;
 						case ParserRule:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
-							if (hasOverlay(data.decoration & SpecData.PROTECTED)) {
+							if (hasOverlay(data.decoration & Specialization.PROTECTED)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PROTECTED),
 										DslImageDescriptor.TOP_RIGHT);
-							} else if (hasOverlay(data.decoration & SpecData.PRIVATE)) {
+							} else if (hasOverlay(data.decoration & Specialization.PRIVATE)) {
 								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_PRIVATE),
 										DslImageDescriptor.TOP_RIGHT);
 							}
@@ -145,7 +141,7 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 				}
 				break;
 
-			case IDslElement.BEG_BLOCK:
+			case BEG_BLOCK:
 				if (getStatement().getElementName().equals(":")) {
 					desc = mgr.getDescriptor(mgr.IMG_OBJ_RULE_COLON);
 				} else {
@@ -153,7 +149,7 @@ public class AntlrStatementLabelProvider extends StatementLabelProvider {
 				}
 				break;
 
-			case IDslElement.END_BLOCK:
+			case END_BLOCK:
 				break;
 
 			default:

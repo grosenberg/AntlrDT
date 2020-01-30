@@ -84,7 +84,7 @@ import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.IContextMenuConstants;
 import net.certiv.dsl.ui.actions.GotoAction;
-import net.certiv.dsl.ui.util.PartAdaptor;
+import net.certiv.dsl.ui.util.PartAdaptor2;
 import net.certiv.dsl.ui.util.WorkbenchAdaptor;
 
 public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectionListener/* , IShowInTarget */ {
@@ -476,7 +476,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 
 	private void addListeners(final TreeView view) {
 
-		final PartAdaptor partAdaptor = new PartAdaptor() {
+		final PartAdaptor2 partAdaptor = new PartAdaptor2() {
 
 			private boolean viewVisible = true;
 

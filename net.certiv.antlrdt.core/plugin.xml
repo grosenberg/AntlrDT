@@ -32,7 +32,7 @@
       <builder
             hasNature="true">
          <run
-               class="net.certiv.antlrdt.core.builder.AntlrDTBuilder">
+               class="net.certiv.antlrdt.core.builder.AntlrBuilder">
          </run>
       </builder>
    </extension>

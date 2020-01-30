@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -51,7 +52,7 @@ import net.certiv.antlrdt.vis.views.parse.TreeView;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.ui.util.PartAdaptor;
+import net.certiv.dsl.ui.util.PartAdaptor2;
 import net.certiv.dsl.ui.util.WorkbenchAdaptor;
 
 public class TokensView extends ViewPart {
@@ -504,7 +505,7 @@ public class TokensView extends ViewPart {
 	}
 
 	private void addListeners(final TokensView view) {
-		final PartAdaptor partAdaptor = new PartAdaptor() {
+		final PartAdaptor2 partAdaptor = new PartAdaptor2() {
 
 			private boolean viewVisible = true;
 
