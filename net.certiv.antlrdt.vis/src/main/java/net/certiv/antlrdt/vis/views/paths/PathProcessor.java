@@ -63,7 +63,7 @@ public class PathProcessor {
 		units.add(unit);
 
 		DslModel model = core.getDslModel();
-		for (ICodeUnit related : model.getRelated(unit)) {
+		for (ICodeUnit related : model.getDescendant(unit)) {
 			boolean ok = valid(related);
 			if (ok) units.add(related);
 		}

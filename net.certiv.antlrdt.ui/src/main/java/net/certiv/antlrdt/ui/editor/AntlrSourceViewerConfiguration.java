@@ -40,7 +40,6 @@ import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
-import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
 import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
 import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
@@ -126,22 +125,6 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
-		PresentationReconciler reconciler = new PresentationReconciler(getDslUI());
-		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
-
-		buildRepairer(getEditor(), viewer, reconciler, grammarAnalyzer, IDocument.DEFAULT_CONTENT_TYPE);
-
-		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
-		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
-		buildRepairer(reconciler, commentSLScanner, Partitions.COMMENT_SL);
-		buildRepairer(reconciler, stringScanner, Partitions.STRING);
-		buildRepairer(reconciler, actionScanner, Partitions.ACTION);
-
-		return reconciler;
-	}
-
-	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (keywordScanner.affectsBehavior(event)) keywordScanner.adaptToPreferenceChange(event);
 		if (grammarAnalyzer.affectsBehavior(event)) grammarAnalyzer.adaptToPreferenceChange(event);
@@ -165,11 +148,17 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	}
 
 	@Override
-	public Reconciler getReconciler(ISourceViewer viewer) {
-		Reconciler reconciler = super.getReconciler(viewer);
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer viewer) {
+		PresentationReconciler reconciler = new PresentationReconciler(getDslUI());
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
 
-		AntlrReconcilingStrategy strategy = new AntlrReconcilingStrategy(getEditor(), viewer);
-		reconciler.addReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
+		buildRepairer(getEditor(), viewer, reconciler, grammarAnalyzer, IDocument.DEFAULT_CONTENT_TYPE);
+
+		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
+		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
+		buildRepairer(reconciler, commentSLScanner, Partitions.COMMENT_SL);
+		buildRepairer(reconciler, stringScanner, Partitions.STRING);
+		buildRepairer(reconciler, actionScanner, Partitions.ACTION);
 
 		return reconciler;
 	}

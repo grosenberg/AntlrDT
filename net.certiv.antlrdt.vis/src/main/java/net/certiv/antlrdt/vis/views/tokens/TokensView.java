@@ -52,7 +52,7 @@ import net.certiv.antlrdt.vis.views.parse.TreeView;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.ui.util.PartAdaptor2;
+import net.certiv.dsl.core.util.eclipse.PartAdaptor2;
 import net.certiv.dsl.ui.util.WorkbenchAdaptor;
 
 public class TokensView extends ViewPart {

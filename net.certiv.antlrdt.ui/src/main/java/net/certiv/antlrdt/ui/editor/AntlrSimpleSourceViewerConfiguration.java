@@ -13,7 +13,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 
 public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfiguration {
 
@@ -84,11 +83,6 @@ public class AntlrSimpleSourceViewerConfiguration extends AntlrSourceViewerConfi
 
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		return null;
-	}
-
-	@Override
-	public Reconciler getReconciler(ISourceViewer viewer) {
 		return null;
 	}
 }
