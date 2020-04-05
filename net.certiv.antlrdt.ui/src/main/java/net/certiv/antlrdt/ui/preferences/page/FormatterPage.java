@@ -1,7 +1,6 @@
 package net.certiv.antlrdt.ui.preferences.page;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.ui.AntlrUI;
@@ -12,6 +11,7 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.dsl.ui.preferences.pages.DslFormatterPreferencePage;
@@ -38,7 +38,7 @@ public class FormatterPage extends DslFormatterPreferencePage {
 
 	@Override
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
-			IPreferenceStore store, ITextEditor editor, boolean configureFormatter) {
+			IPreferenceStore store, DslEditor editor, boolean configureFormatter) {
 
 		return new AntlrSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) store, editor,
 				Partitions.PARTITIONING, configureFormatter);

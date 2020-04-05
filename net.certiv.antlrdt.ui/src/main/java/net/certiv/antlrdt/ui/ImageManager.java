@@ -4,12 +4,13 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.jface.resource.ImageRegistry;
 
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.ui.DslImageManager;
 
 public class ImageManager extends DslImageManager {
 
 	private static final Bundle locBundle = AntlrUI.getDefault().getBundle();
-	private static final String locPrefix = locBundle.getSymbolicName() + '.';
+	private static final String locPrefix = locBundle.getSymbolicName() + Chars.DOT;
 
 	public final String IMG_OBJ_BUFFER = create(locBundle, OBJ, locPrefix + "buffer.png");
 	public final String IMG_OBJ_MESSAGE = create(locBundle, OBJ, locPrefix + "message_obj.png");

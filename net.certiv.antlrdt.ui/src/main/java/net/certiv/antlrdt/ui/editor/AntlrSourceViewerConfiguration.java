@@ -16,11 +16,11 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.AntlrCore;
-import net.certiv.antlrdt.core.formatter.AntlrDTSourceFormatter;
+import net.certiv.antlrdt.core.formatter.AntlrSourceFormatter;
 import net.certiv.antlrdt.ui.AntlrUI;
+import net.certiv.antlrdt.ui.editor.outline.AntlrStatementLabelProvider;
 import net.certiv.antlrdt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
 import net.certiv.antlrdt.ui.editor.strategies.SmartAutoEditStrategy;
 import net.certiv.antlrdt.ui.editor.text.ScannerAction;
@@ -38,6 +38,7 @@ import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
+import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
@@ -51,17 +52,19 @@ import net.certiv.dsl.ui.formatter.strategies.DslFormattingStrategy;
 public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration {
 
 	private DoubleClickStrategy doubleClickStrategy;
+
+	private AntlrSemanaticAnalyzer grammarAnalyzer;
+
 	private ScannerCommentJD commentJDScanner;
 	private ScannerCommentML commentMLScanner;
 	private ScannerCommentSL commentSLScanner;
 	private ScannerKeyword keywordScanner;
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
-	private AntlrSemanaticAnalyzer grammarAnalyzer;
 
-	public AntlrSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store, ITextEditor editor,
+	public AntlrSourceViewerConfiguration(IColorManager colorMgr, IDslPrefsManager store, DslEditor editor,
 			String partitioning) {
-		super(colorManager, store, editor, partitioning);
+		super(AntlrCore.getDefault(), colorMgr, store, editor, partitioning);
 	}
 
 	@Override
@@ -153,7 +156,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
 
 		buildRepairer(getEditor(), viewer, reconciler, grammarAnalyzer, IDocument.DEFAULT_CONTENT_TYPE);
-
+		buildRepairer(reconciler, keywordScanner, IDocument.DEFAULT_CONTENT_TYPE);
 		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
 		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
 		buildRepairer(reconciler, commentSLScanner, Partitions.COMMENT_SL);
@@ -180,7 +183,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	public IContentFormatter getContentFormatter(ISourceViewer viewer) {
 		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(viewer);
 
-		AntlrDTSourceFormatter srcFormatter = new AntlrDTSourceFormatter();
+		AntlrSourceFormatter srcFormatter = new AntlrSourceFormatter();
 		formatter.setMasterStrategy(new DslFormattingStrategy(getPrefsMgr(), srcFormatter));
 
 		if (getPrefsMgr().getBoolean(Formatter.FORMATTER_NATIVE_ENABLE)) {

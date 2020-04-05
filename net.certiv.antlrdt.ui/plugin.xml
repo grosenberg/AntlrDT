@@ -129,15 +129,15 @@
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AnnotationImageProvider"
             annotationType="net.certiv.antlrdt.ui.error">
       </specification>
       <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AnnotationImageProvider"
             annotationType="net.certiv.antlrdt.ui.warning">
       </specification>
       <specification
-            annotationImageProvider="net.certiv.antlrdt.ui.editor.AntlrDTAnnotationImageProvider"
+            annotationImageProvider="net.certiv.antlrdt.ui.editor.AnnotationImageProvider"
             annotationType="net.certiv.antlrdt.ui.info">
       </specification>
       <specification

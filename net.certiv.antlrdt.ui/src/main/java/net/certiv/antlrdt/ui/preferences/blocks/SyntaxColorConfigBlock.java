@@ -9,7 +9,6 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlrdt.core.preferences.PrefsKey;
 import net.certiv.antlrdt.ui.AntlrUI;
@@ -21,6 +20,7 @@ import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.core.preferences.consts.Editor;
+import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewer;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.preferences.blocks.AbstractSyntaxColorConfigBlock;
@@ -73,7 +73,7 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 
 	@Override
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorMgr,
-			IDslPrefsManager store, ITextEditor editor, boolean configFormatter) {
+			IDslPrefsManager store, DslEditor editor, boolean configFormatter) {
 		return new AntlrSimpleSourceViewerConfiguration(colorMgr, store, editor, Partitions.PARTITIONING,
 				configFormatter);
 	}
@@ -87,4 +87,14 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	protected InputStream getPreviewContentStream() {
 		return getClass().getResourceAsStream(PREVIEW_FILE_NAME);
 	}
+
+	// @Override
+	// protected Class<?> getPreviewClass() {
+	// return getClass();
+	// }
+	//
+	// @Override
+	// protected String getPreviewFilename() {
+	// return PREVIEW_FILE_NAME;
+	// }
 }

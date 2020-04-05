@@ -25,7 +25,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	public AntlrSourceParser(DslParseRecord record) {
 		super(record);
-		Log.setLevel(this, LogLevel.Info);
+		Log.setLevel(this, LogLevel.Debug);
 	}
 
 	@Override

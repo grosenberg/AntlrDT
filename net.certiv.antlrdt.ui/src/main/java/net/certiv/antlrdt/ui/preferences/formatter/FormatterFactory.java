@@ -3,7 +3,7 @@ package net.certiv.antlrdt.ui.preferences.formatter;
 import java.net.URL;
 
 import net.certiv.antlrdt.core.AntlrCore;
-import net.certiv.antlrdt.core.formatter.AntlrDTSourceFormatter;
+import net.certiv.antlrdt.core.formatter.AntlrSourceFormatter;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.formatter.IDslCodeFormatter;
@@ -43,7 +43,7 @@ public class FormatterFactory extends DslFormatterFactory {
 	@Override
 	public IDslCodeFormatter createFormatter() {
 		if (formatter == null) {
-			formatter = new AntlrDTSourceFormatter();
+			formatter = new AntlrSourceFormatter();
 		}
 		return formatter;
 	}

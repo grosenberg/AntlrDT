@@ -41,8 +41,7 @@
          id="net.certiv.antlrdt.core.problem"
          name="Grammar Problem"
          point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.problemmarker"/>
-      <persistent value="true"/>
+      <super type="net.certiv.dsl.core.marker.problem"/>
    </extension>
       
    <extension

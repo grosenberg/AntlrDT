@@ -10,6 +10,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.editor.folding.AntlrFoldingStructureProvider;
+import net.certiv.antlrdt.ui.editor.outline.AntlrDTOutlinePage;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.ui.DslUI;

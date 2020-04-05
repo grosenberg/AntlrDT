@@ -4,9 +4,9 @@ import net.certiv.antlrdt.core.AntlrCore;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.formatter.DslCodeFormatter;
 
-public class AntlrDTSourceFormatter extends DslCodeFormatter {
+public class AntlrSourceFormatter extends DslCodeFormatter {
 
-	public AntlrDTSourceFormatter() {
+	public AntlrSourceFormatter() {
 		super();
 	}
 

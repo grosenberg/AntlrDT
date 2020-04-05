@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.editor;
+package net.certiv.antlrdt.ui.editor.outline;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -7,9 +7,9 @@ import net.certiv.antlrdt.core.model.Specialization;
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
 import net.certiv.dsl.ui.DslImageDescriptor;
-import net.certiv.dsl.ui.editor.StatementLabelProvider;
+import net.certiv.dsl.ui.editor.outline.OutlineLabelProvider;
 
-public class AntlrStatementLabelProvider extends StatementLabelProvider {
+public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 
 	public AntlrStatementLabelProvider() {
 		super(AntlrUI.getDefault().getImageManager());

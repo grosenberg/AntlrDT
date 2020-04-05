@@ -1,4 +1,4 @@
-package net.certiv.antlrdt.ui.editor;
+package net.certiv.antlrdt.ui.editor.outline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.eclipse.ui.IActionBars;
 
 import net.certiv.antlrdt.ui.AntlrUI;
 import net.certiv.antlrdt.ui.ImageManager;
+import net.certiv.antlrdt.ui.editor.ActionMessages;
 import net.certiv.antlrdt.ui.editor.filter.AtFilter;
 import net.certiv.antlrdt.ui.editor.filter.OptionsFilter;
 import net.certiv.antlrdt.ui.editor.filter.RuleFilter;
@@ -20,11 +21,11 @@ import net.certiv.antlrdt.ui.editor.filter.TokenFilter;
 import net.certiv.dsl.core.model.ISourceUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.ModelType;
-import net.certiv.dsl.ui.editor.DslOutlinePage;
+import net.certiv.dsl.ui.editor.outline.OutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
 import net.certiv.dsl.ui.viewsupport.DslFilterActionGroup;
 
-public class AntlrDTOutlinePage extends DslOutlinePage {
+public class AntlrDTOutlinePage extends OutlinePage {
 
 	protected class GrammarDataProvider extends OutlineDataProvider {
 

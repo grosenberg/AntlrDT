@@ -6,7 +6,7 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.AbstractAnnotationImageProvider;
 
-public class AntlrDTAnnotationImageProvider extends AbstractAnnotationImageProvider {
+public class AnnotationImageProvider extends AbstractAnnotationImageProvider {
 
 	@Override
 	public DslUI getDslUI() {
