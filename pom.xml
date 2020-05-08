@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -8,11 +7,11 @@
 	<packaging>pom</packaging>
 
 	<groupId>net.certiv</groupId>
-	<artifactId>net.certiv.antlrdt</artifactId>
+	<artifactId>net.certiv.antlr.dt</artifactId>
 	<version>4.10.0-SNAPSHOT</version>
 
-	<name>net.certiv.antlrdt :: parent</name>
-	<description>net.certiv.antlrdt parent</description>
+	<name>net.certiv.antlr.dt :: parent</name>
+	<description>net.certiv.antlr.dt parent</description>
 	<organization>
 		<name>Certiv Analytics</name>
 		<url>www.certiv.net</url>
@@ -21,9 +20,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<tycho.version>1.3.0</tycho.version>
 		<java.version>1.8</java.version>
-		<eclipse-repo.url>http://download.eclipse.org/releases/2019-12</eclipse-repo.url>
+		<tycho.version>1.6.0</tycho.version>
+		<eclipse-repo.url>https://download.eclipse.org/releases/2020-03</eclipse-repo.url>
 		<certiv-repo.url>file:/D:/DevFiles/Eclipse/Update</certiv-repo.url>
 	</properties>
 
@@ -40,6 +39,7 @@
 		</repository>
 	</repositories>
 
+
 	<build>
 		<plugins>
 			<plugin>
@@ -48,7 +48,7 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<encoding>UTF-8</encoding>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
@@ -125,10 +125,11 @@
 	</profiles>
 
 	<modules>
-		<module>net.certiv.antlrdt.core</module>
-		<module>net.certiv.antlrdt.ui</module>
-		<module>net.certiv.antlrdt.vis</module>
-		<module>net.certiv.antlrdt.feature</module>
-		<module>net.certiv.antlrdt.site</module>
+		<module>net.certiv.antlr.dt.core</module>
+		<module>net.certiv.antlr.dt.ui</module>
+		<!-- <module>net.certiv.antlr.dt.diagram</module> -->
+		<module>net.certiv.antlr.dt.vis</module> 
+		<module>net.certiv.antlr.dt.feature</module>
+		<module>net.certiv.antlr.dt.site</module>
 	</modules>
 </project>

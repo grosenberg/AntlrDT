@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="net.certiv.antlr.dt.activeEditor">
+			<with variable="activePartId">
+				<equals value="net.certiv.antlr.dt.ui.editor.AntlrEditor"/>
+			</with>
+		</definition>
+	</extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlr.dt.vis.preferences.page.GraphPage"
+            id="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraph"
+            name="ParseTree Display">
+      </page>
+      <page
+            category="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraph"
+            class="net.certiv.antlr.dt.vis.preferences.page.GraphColoringPage"
+            id="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraphColoring"
+            name="Graph Coloring">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="net.certiv.antlr.dt.ui.commands.category"
+            id="net.certiv.antlr.dt.vis.openTokensViewCmd"
+            name="Open Tokens View">
+      </command>
+      <command
+            categoryId="net.certiv.antlr.dt.ui.commands.category"
+            id="net.certiv.antlr.dt.vis.openPathsViewCmd"
+            name="Open Paths View">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="net.certiv.antlr.dt.vis.handlers.OpenTokensViewHandler"
+            commandId="net.certiv.antlr.dt.vis.openTokensViewCmd">
+      </handler>
+      <handler
+            class="net.certiv.antlr.dt.vis.handlers.OpenPathsViewHandler"
+            commandId="net.certiv.antlr.dt.vis.openPathsViewCmd">
+      </handler>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="net.certiv.antlr.dt.vis.toolbar">
+            <command
+                  commandId="net.certiv.antlr.dt.vis.openTokensViewCmd"
+                  icon="icons/obj16/view.png"
+                  label="Tokens View"
+                  style="push"
+                  tooltip="Open Tokens View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlr.dt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlr.dt.vis.openPathsViewCmd"
+                  icon="icons/obj16/hierarchy_co.png"
+                  label="Paths View"
+                  style="push"
+                  tooltip="Open Paths View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlr.dt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+
+		  </toolbar>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.views.tokens.TokensView"
+            icon="icons/obj16/view.png"
+            id="net.certiv.antlr.dt.vis.views.tokens.TokensView"
+            inject="false"
+            name="Tokens View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.views.parse.TreeView"
+            icon="icons/obj16/tree.png"
+            id="net.certiv.antlr.dt.vis.views.tree.TreeView"
+            inject="false"
+            name="Parse Tree View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.views.paths.PathView"
+            icon="icons/obj16/hierarchy_co.png"
+            id="net.certiv.antlr.dt.vis.views.paths.PathView"
+            inject="false"
+            name="Paths View"
+            restorable="false">
+      </view>
+   </extension>
+
+</plugin>

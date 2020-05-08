@@ -1,0 +1,110 @@
+xvisitor grammar Structure;
+
+options {
+	superClass = StructureBuilder;
+	parserClass = AntlrDT4Parser ;
+}
+
+@header {
+	package net.certiv.antlr.dt.core.parser.gen;
+	import net.certiv.antlr.dt.core.model.StructureBuilder;
+}
+
+structure
+	: grammarSpec
+	| declaration
+	| atAction
+	| importStatement
+	| channelsStatement
+	| optionStatement
+	| tokenStatement
+
+	| channelsBlock
+	| optionsBlock
+	| tokensBlock
+
+	| ruleBlock
+	| lexerBlock
+
+	| parserRule
+	| lexerRule
+	| fragmentRule
+	| modeRule
+
+	| cmdExpr
+	| atomRef
+	| lexerAtomRef
+
+	| ruleRef
+	| labelRef
+	| terminalRef
+	| rangeRef
+	| setRef
+	;
+
+grammarSpec			: /grammarSpec 							{ onEntry: doModule(); } 	;
+declaration			: /grammarSpec/declaration				{ doDeclaration(); } 		;
+atAction			: /grammarSpec/prequelConstruct/action	{ doAction(); }				;
+importStatement		: //delegateGrammars//id				{ doImportStatement(); }	;
+channelsStatement	: //channelsSpec//id					{ doChannelsStatement(); }	;
+optionStatement		: //prequelConstruct/optionsSpec/option	{ doOptionStatement(); }	;
+tokenStatement		: //tokensSpec//id						{ doTokenStatement(); }		;
+
+channelsBlock	: //channelsSpec
+						{ onEntry: doChannelsBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
+
+optionsBlock	: //prequelConstruct/optionsSpec
+						{ onEntry: doOptionsBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
+
+tokensBlock		: //tokensSpec
+						{ onEntry: doTokensBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
+
+# parentheticals
+
+ruleBlock		: //block
+						{ onEntry: doBegBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
+
+lexerBlock		: //lexerBlock
+						{ onEntry: doBegBlock(); }
+						{ onExit:  doEndBlock(); }
+				;
+
+# rules
+
+parserRule		: //parserRuleSpec
+						{ onEntry: begParserRule(); }
+						{ onExit:  endParserRule(); }
+				;
+
+lexerRule		: //lexerRuleSpec
+						{ onEntry: begLexerRule(); }
+						{ onExit:  endLexerRule(); }
+				;
+
+fragmentRule	: //fragmentRuleSpec
+						{ onEntry: begFragmentRule(); }
+						{ onExit:  endFragmentRule(); }
+				;
+
+modeRule		: //modeRuleSpec
+						{ onEntry: begModeRule(); }
+						{ onExit:  endModeRule(); }
+				;
+
+cmdExpr			: //lexerCommandExpr	{ doCommandExpr(); }	;
+atomRef			: //atom				{ doAtomRef(); } 		;
+lexerAtomRef	: //lexerAtom			{ doLexerAtomRef(); } 	;
+
+ruleRef			: //ruleref				{ doRuleRef(); }		;
+labelRef		: //labeledElement/id	{ doLabelRef(); }		;
+terminalRef		: //terminal			{ doTerminalRef(); }	;
+rangeRef		: //range				{ doRangeRef(); }		;
+setRef			: //setElement			{ doSetRef(); }			;

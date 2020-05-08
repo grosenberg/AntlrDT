@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AntlrDT Diagram
+Bundle-SymbolicName: net.certiv.antlr.dt.diagram;singleton:=true
+Bundle-Version: 4.10.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: net.certiv.antlr.dt.diagram.DiagramUI
+Bundle-Vendor: Certiv Analytics
+Bundle-Localization: plugin
+Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.10.0",
+ net.certiv.antlr.dt.ui;bundle-version="4.10.0",
+ net.certiv.dsl.core;bundle-version="0.10.0",
+ net.certiv.dsl.lib;bundle-version="0.10.0",
+ net.certiv.dsl.ui;bundle-version="0.10.0",
+ org.eclipse.core.resources;bundle-version="3.13.700",
+ org.eclipse.core.runtime;bundle-version="3.17.100",
+ org.eclipse.ui.editors;bundle-version="3.13.100",
+ org.eclipse.ui.ide;bundle-version="3.17.0",
+ org.eclipse.jface,
+ org.eclipse.jface.text;bundle-version="3.16.200",
+ org.eclipse.osgi,
+ org.eclipse.text,
+ org.eclipse.ui;bundle-version="3.116.0",
+ org.eclipse.ui.forms;bundle-version="3.9.0",
+ org.eclipse.ui.workbench
+Bundle-ActivationPolicy: lazy
+Eclipse-RegisterBuddy: net.certiv.dsl.lib
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: net.certiv.antlr.dt.diagram

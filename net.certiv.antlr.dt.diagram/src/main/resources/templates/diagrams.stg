@@ -1,0 +1,40 @@
+/**
+ * Diagram group template file for Antlr grammars.
+ */
+
+diagram(name, graph, nodes, edges) ::= <<
+digraph <name>  {
+	<graph>
+
+	<nodes; separator="\n">
+
+	<edges; separator="\n">
+}
+>>
+
+graph(rankdir, title, fontname, fontsize) ::= <%
+	graph [ 
+		<if(rankdir)>rankdir=<rankdir> <endif>
+		<if(title)>label="<title>" <endif>
+		<if(fontname)>fontname="<fontname>" <endif>
+		<if(fontsize)>fontsize=<fontsize> <endif>
+	];
+%>
+
+node(name, shape, color, label, fontname, fontsize) ::= <%
+	<name> [ 
+		<if(shape)>shape=<shape> <endif>
+		<if(color)>color="<color>" <endif>
+		<if(label)>label="<label>" <endif>
+		<if(fontname)>fontname="<fontname>" <endif>
+		<if(fontsize)>fontsize=<fontsize> <endif>
+	];
+%>
+
+edge(source, target, style, color, arrowhead) ::= <%
+	<source> -> <target> [ 
+		<if(style)>style="<style>" <endif>
+		<if(color)>color="<color>" <endif>
+		<if(arrowhead)>arrowhead=<arrowhead> <endif>
+	];
+%>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="net.certiv.antlr.dt.activeEditor">
+			<with variable="activePartId">
+				<equals value="net.certiv.antlr.dt.ui.editor.AntlrEditor"/>
+			</with>
+		</definition>
+	</extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            class="net.certiv.antlr.dt.diagram.preferences.page.DiagramPage"
+            id="net.certiv.antlr.dt.diagram.preferences.page.PrefsPageDiagram"
+            name="ParseTree Display">
+      </page>
+      <page
+            category="net.certiv.antlr.dt.diagram.preferences.page.PrefsPageDiagram"
+            class="net.certiv.antlr.dt.diagram.preferences.page.DiagramColoringPage"
+            id="net.certiv.antlr.dt.diagram.preferences.page.PrefsPageDiagramColoring"
+            name="Diagram Coloring">
+      </page>
+      <page
+            category="net.certiv.antlr.dt.diagram.preferences.page.PrefsPageDiagram"
+            class="net.certiv.antlr.dt.diagram.preferences.page.DiagramToolTipsPage"
+            id="net.certiv.antlr.dt.diagram.preferences.page.PrefsPageDiagramToolTips"
+            name="Tool Tips">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Diagram Category"
+            id="net.certiv.antlr.dt.diagram.commands.category">
+      </category>
+      <command
+            categoryId="net.certiv.antlr.dt.diagram.commands.category"
+            id="net.certiv.antlr.dt.diagram.openTokensViewCmd"
+            name="Open Tokens View">
+      </command>
+      <command
+            categoryId="net.certiv.antlr.dt.diagram.commands.category"
+            id="net.certiv.antlr.dt.diagram.openPathsViewCmd"
+            name="Open Paths View">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="net.certiv.antlr.dt.diagram.handlers.OpenTokensViewHandler"
+            commandId="net.certiv.antlr.dt.diagram.openTokensViewCmd">
+      </handler>
+      <handler
+            class="net.certiv.antlr.dt.diagram.handlers.OpenPathsViewHandler"
+            commandId="net.certiv.antlr.dt.diagram.openPathsViewCmd">
+      </handler>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="net.certiv.antlr.dt.diagram.toolbar">
+            <command
+                  commandId="net.certiv.antlr.dt.diagram.openTokensViewCmd"
+                  icon="icons/obj16/view.png"
+                  label="Tokens View"
+                  style="push"
+                  tooltip="Open Tokens View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlr.dt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+            <command
+                  commandId="net.certiv.antlr.dt.diagram.openPathsViewCmd"
+                  icon="icons/obj16/hierarchy_co.png"
+                  label="Paths View"
+                  style="push"
+                  tooltip="Open Paths View">
+	            <visibleWhen
+    	              checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlr.dt.activeEditor">
+	               </reference>
+    	        </visibleWhen>
+            </command>
+
+		  </toolbar>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.diagram.view.tokens.TokensView"
+            icon="icons/obj16/view.png"
+            id="net.certiv.antlr.dt.diagram.view.tokens.TokenView"
+            inject="false"
+            name="Tokens View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.diagram.view.tree.TreeView"
+            icon="icons/obj16/tree.png"
+            id="net.certiv.antlr.dt.diagram.view.tree.TreeView"
+            inject="false"
+            name="Parse Tree View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.diagram.view.tree.PathsView"
+            icon="icons/obj16/hierarchy_co.png"
+            id="net.certiv.antlr.dt.diagram.view.tree.PathsView"
+            inject="false"
+            name="Paths View"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.certiv.antlr.dt.diagram.preferences.PrefInit">
+      </initializer>
+   </extension>
+
+<!--
+   <extension
+         point="org.eclipse.elk.core.layoutProviders">
+      <provider
+            class="net.certiv.antlr.dt.diagram.elk.TreeLayoutMetaDataProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.elk.core.service.layoutConnectors">
+      <setup
+            class="net.certiv.antlr.dt.diagram.elk.ElkLayoutSetup">
+      </setup>
+   </extension>
+-->
+
+</plugin>
