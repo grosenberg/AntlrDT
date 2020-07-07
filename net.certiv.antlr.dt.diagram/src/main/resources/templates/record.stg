@@ -1,0 +1,21 @@
+delimiters "«", "»"
+
+table(node) ::= ««
+	<table «node:attrList()»>
+		«node.rows:rowDef()»
+	</table>
+»»
+
+rowDef(row) ::= «%
+	<tr>
+		«row.cells:cellDef()»
+	</tr>
+%»
+
+cellDef(cell) ::= «%
+	<td «cell.attrList()»>«cell.text»</td>
+%»
+
+attrList(obj) ::= «%
+	«obj.attrs:{attr | «attr.key»=\"«attr.value»\"}; separator=\", \"»
+%»

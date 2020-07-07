@@ -1,7 +1,7 @@
 package net.certiv.antlr.dt.vis.parse;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +24,22 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 
+import net.certiv.antlr.dt.core.AntlrCore;
+import net.certiv.antlr.dt.core.console.Aspect;
 import net.certiv.antlr.dt.core.model.Target;
 import net.certiv.antlr.dt.core.parser.ITargetInfo;
+import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.vis.model.TreeModel;
-import net.certiv.antlr.dt.vis.views.parse.TreeProcessor;
 import net.certiv.antlr.dt.vis.views.tokens.Trace;
+import net.certiv.antlr.dt.vis.views.tree.TreeProcessor;
+import net.certiv.dsl.core.console.CS;
+import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.util.ExceptUtil;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.dsl.jdt.util.JdtUtil;
 
@@ -43,25 +48,27 @@ class TargetUnit implements ITargetInfo {
 	private static final Class<?>[] lexParams = new Class[] { CharStream.class };
 	private static final Class<?>[] parserParams = new Class[] { TokenStream.class };
 
-	private GrammarRecord record;
+	private TargetAssembly assembly;
 	private IFile grammar;
 	private Class<?> parserClass;
 	private Class<?> lexerClass;
 
 	private Class<?> factoryClass;
-	@SuppressWarnings("unused") private Class<?> tokenClass;
 	private Class<?> errorClass; // parser error handler
 
 	private TreeModel model;
 	private ParseTree tree;
-	private List<Token> tokens;
 	private CodePointCharStream input;
-	private List<ErrorRecord> errors;
+
+	private List<Token> tokens = new ArrayList<>();
+	private List<ProblemRecord> problems = new ArrayList<>();
+	private List<ConsoleRecord> errors = new ArrayList<>();
+	private List<String[]> trace = new ArrayList<>();
+
 	private String[] ruleNames;
 	private String[] tokenNames;
 	private String[] modeNames;
 	private String mainRuleName;
-	private List<String[]> trace = new ArrayList<>();
 
 	private Thread thread;
 	private boolean terminate;
@@ -126,12 +133,12 @@ class TargetUnit implements ITargetInfo {
 	 * Loads and holds the classes that corresponding to the current editor content: the
 	 * source grammar.
 	 *
-	 * @param record a data record describing the source grammar
+	 * @param assembly a data record describing the source grammar
 	 * @param srcGrammar the source grammar file
 	 * @param content the content of the source grammar file
 	 */
-	public TargetUnit(GrammarRecord record, IFile grammar, String content) {
-		this.record = record;
+	public TargetUnit(TargetAssembly assembly, IFile grammar, String content) {
+		this.assembly = assembly;
 		this.grammar = grammar;
 		this.content = content;
 	}
@@ -139,20 +146,26 @@ class TargetUnit implements ITargetInfo {
 	public void exec() {
 		thread = Thread.currentThread();
 		ClassLoader parent = thread.getContextClassLoader();
-		IProject project = record.getProject();
+		IProject project = assembly.getProject();
 
 		try (DynamicLoader loader = DynamicLoader.create(project, parent)) {
 			thread.setContextClassLoader(loader);
-			if (buildClasses(loader)) generate(content);
-		} catch (IOException e) {
-			Log.info(this, "Restoring classloader after failure");
+			if (buildClasses(loader)) {
+				generate(content);
+			}
+
+		} catch (ClassCastException ex) {
+			reportError(Aspect.BUILDER, ex, "Type error %s", ex.getMessage());
+
+		} catch (Exception ex) {
+			reportError(Aspect.BUILDER, ex, "Caught error %s", ex.getMessage());
+
 		} finally {
 			thread.setContextClassLoader(parent);
 		}
 	}
 
 	public void terminate() {
-		Log.warn(this, "Terminating Parse.");
 		terminate = true;
 	}
 
@@ -168,6 +181,10 @@ class TargetUnit implements ITargetInfo {
 		String desc = String.format(" - %s: token %s", kind.toString(), node.getSymbol().toString());
 		trace.add(new String[] { String.valueOf(trace.size() + 1), desc });
 		Log.info(this, desc);
+	}
+
+	public boolean isValid() {
+		return tree != null;
 	}
 
 	public TreeModel getModel() {
@@ -186,7 +203,11 @@ class TargetUnit implements ITargetInfo {
 		return tokens;
 	}
 
-	public List<ErrorRecord> getErrors() {
+	public List<ProblemRecord> getProblems() {
+		return problems;
+	}
+
+	public List<ConsoleRecord> getErrors() {
 		return errors;
 	}
 
@@ -221,118 +242,180 @@ class TargetUnit implements ITargetInfo {
 	}
 
 	private boolean buildClasses(DynamicLoader loader) {
-		parserClass = loadFqClass(loader, record.getParserFQName());
-		lexerClass = loadFqClass(loader, record.getLexerFQName());
-		factoryClass = loadClass(loader, record.getTokenFactory().getPathname());
-		tokenClass = loadClass(loader, record.getCustomToken().getPathname());
-		errorClass = loadClass(loader, record.getErrorStrategy().getPathname());
+		parserClass = loadFqClass(Aspect.PARSER, loader, assembly.getParserFQName());
+		lexerClass = loadFqClass(Aspect.LEXER, loader, assembly.getLexerFQName());
+		factoryClass = loadClass(Aspect.FACTORY, loader, assembly.getTokenFactory().getPathname());
+		errorClass = loadClass(Aspect.STRATEGY, loader, assembly.getErrorStrategy().getPathname());
 		return parserClass != null && lexerClass != null;
 	}
 
-	private Class<?> loadFqClass(DynamicLoader loader, String fqName) {
-		if (fqName.isEmpty()) return null;
-		Log.info(this, "Loading " + fqName);
+	private Class<?> loadFqClass(Aspect aspect, DynamicLoader loader, String fqName) {
+		report(aspect, "Loading class for '%s'.", fqName);
+		if (fqName.isEmpty()) {
+			reportError(aspect, null, "%s classname is 'null'; fix source grammar errors.", aspect);
+			return null;
+		}
+
+		if (fqName.startsWith("null.")) {
+			reportError(aspect, null, "%s classname is uninitialized; re-save the source grammar.", aspect);
+			return null;
+		}
+
 		try {
 			return loader.loadClass(fqName);
 		} catch (ClassNotFoundException e) {
-			Log.error(this, "Failed to load class '" + fqName + "' (" + e.getMessage() + ")");
+			reportError(aspect, e, "%s: failed to load class '%s' (%s)", aspect, fqName, e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
-	private Class<?> loadClass(DynamicLoader loader, String name) {
+	private Class<?> loadClass(Aspect aspect, DynamicLoader loader, String name) {
 		if (name.isEmpty()) return null;
-		IProject project = record.getProject();
+
+		IProject project = assembly.getProject();
 		String fqname = JdtUtil.determineFQName(project, name);
-		if (fqname == null) return null;
-		return loadFqClass(loader, fqname);
+		if (fqname == null) {
+			reportError(aspect, null, "%s: failed to determing package name for '%s'", aspect, name);
+			return null;
+		}
+		return loadFqClass(aspect, loader, fqname);
 	}
 
-	@SuppressWarnings("deprecation")
-	private void generate(String sourceText) {
-		if (sourceText.length() == 0) return;
-		input = CharStreams.fromString(sourceText);
-		Object[] lexInput = new Object[] { input };
-
-		// lexer
-
-		Lexer lexer;
-		try {
-			Constructor<?> lexerConstructor = lexerClass.getConstructor(lexParams);
-			lexer = (Lexer) lexerConstructor.newInstance(lexInput);
-			tokenNames = lexer.getTokenNames();
-			modeNames = lexer.getModeNames();
-
-			Log.info(this, "Lexer constructed ...");
-		} catch (Exception e) {
-			Log.error(this, "Failed to instantiate lexer (" + e.getMessage() + ")");
+	private void generate(String content) {
+		if (content.isEmpty()) {
+			reportError(Aspect.LEXER, null, "No grammar content to evaluate!");
 			return;
 		}
 
+		input = CharStreams.fromString(content);
+		problems = new ArrayList<>();
+
+		// lexer
+
+		report(Aspect.LEXER, "Constructing '%s'", lexerClass.getSimpleName());
+		Lexer lexer = null;
+		try {
+			Constructor<?> ctor = lexerClass.getConstructor(lexParams);
+			lexer = (Lexer) ctor.newInstance(input);
+			lexer.addErrorListener(new ErrorListener(Aspect.LEXER, problems));
+			tokenNames = getTokenNames(lexer);
+			modeNames = lexer.getModeNames();
+
+		} catch (NoSuchMethodException ex) {
+			reportEx(Aspect.LEXER, Aspect.NO_METHOD, ex);
+		} catch (SecurityException ex) {
+			reportEx(Aspect.LEXER, Aspect.SECURITY, ex);
+		} catch (InstantiationException ex) {
+			reportEx(Aspect.LEXER, Aspect.INSTANCE, ex);
+		} catch (IllegalAccessException ex) {
+			reportEx(Aspect.LEXER, Aspect.NO_ACCESS, ex);
+		} catch (IllegalArgumentException ex) {
+			reportEx(Aspect.LEXER, Aspect.NO_ARG, ex);
+		} catch (InvocationTargetException ex) {
+			reportEx(Aspect.LEXER, Aspect.INVOKE, ex);
+		}
+		if (lexer == null) return;
+
 		// token factory
 
-		errors = new ArrayList<>();
 		TokenFactory<?> tokenFactory = null;
 		if (factoryClass != null) {
+			report(Aspect.LEXER, "Constructing '%s'", factoryClass.getSimpleName());
 			try {
-				Constructor<?> factoryConstructor = factoryClass.getConstructor((Class<?>[]) null);
-				tokenFactory = (TokenFactory<?>) factoryConstructor.newInstance((Object[]) null);
+				Constructor<?> ctor = factoryClass.getConstructor((Class<?>[]) null);
+				tokenFactory = (TokenFactory<?>) ctor.newInstance((Object[]) null);
 				lexer.setTokenFactory(tokenFactory);
-				lexer.addErrorListener(new ErrorListener(ErrorSrc.LEXER, errors));
-				Log.info(this, "Token factory added ...");
-			} catch (Exception e) {
-				Log.error(this, "Failed to instantiate token factory (" + e.getMessage() + ")");
-				return;
+
+			} catch (NoSuchMethodException ex) {
+				reportEx(Aspect.FACTORY, Aspect.NO_METHOD, ex);
+			} catch (SecurityException ex) {
+				reportEx(Aspect.FACTORY, Aspect.SECURITY, ex);
+			} catch (InstantiationException ex) {
+				reportEx(Aspect.FACTORY, Aspect.INSTANCE, ex);
+			} catch (IllegalAccessException ex) {
+				reportEx(Aspect.FACTORY, Aspect.NO_ACCESS, ex);
+			} catch (IllegalArgumentException ex) {
+				reportEx(Aspect.FACTORY, Aspect.NO_ARG, ex);
+			} catch (InvocationTargetException ex) {
+				reportEx(Aspect.FACTORY, Aspect.INVOKE, ex);
 			}
 		}
 
 		// token stream
 
+		report(Aspect.LEXER, "Filling token stream.");
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		tokenStream.fill();
 		tokens = tokenStream.getTokens();
-		Object[] parserInput = new Object[] { tokenStream };
-		Log.info(this, "Token stream generated ...");
-
-		// parser
-
-		Parser parser;
-		try {
-			Constructor<?> parserConstructor = parserClass.getConstructor(parserParams);
-			parser = (Parser) parserConstructor.newInstance(parserInput);
-			ruleNames = parser.getRuleNames();
-
-			parser.removeErrorListeners();
-			parser.addErrorListener(new ErrorListener(ErrorSrc.PARSER, errors));
-			if (factoryClass != null) parser.setTokenFactory(tokenFactory);
-
-			parser.addParseListener(new ParseTerminator());
-			if (record.getTraceParser()) parser.addParseListener(new TraceListener());
-
-			Log.info(this, "Parser constructed ...");
-		} catch (Exception e) {
-			Log.error(this, "Failed to instantiate parser (" + e.getMessage() + ")");
-			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", e.getMessage());
+		if (tokens.isEmpty()) {
+			reportError(Aspect.LEXER, null, "No tokens generated! The lexer appears to have recognized nothing.");
 			return;
 		}
 
-		if (ruleNames == null || ruleNames.length == 0) return;
+		// parser
+
+		report(Aspect.PARSER, "Constructing '%s'", parserClass.getSimpleName());
+		Parser parser = null;
+		try {
+			Constructor<?> ctor = parserClass.getConstructor(parserParams);
+			parser = (Parser) ctor.newInstance(tokenStream);
+			ruleNames = parser.getRuleNames();
+
+			parser.removeErrorListeners();
+			parser.addErrorListener(new ErrorListener(Aspect.PARSER, problems));
+			if (factoryClass != null) parser.setTokenFactory(tokenFactory);
+
+			parser.addParseListener(new ParseTerminator());
+			if (assembly.getTraceParser()) parser.addParseListener(new TraceListener());
+
+			Log.info(this, "Parser constructed ...");
+
+		} catch (NoSuchMethodException ex) {
+			reportEx(Aspect.PARSER, Aspect.NO_METHOD, ex);
+		} catch (SecurityException ex) {
+			reportEx(Aspect.PARSER, Aspect.SECURITY, ex);
+		} catch (InstantiationException ex) {
+			reportEx(Aspect.PARSER, Aspect.INSTANCE, ex);
+		} catch (IllegalAccessException ex) {
+			reportEx(Aspect.PARSER, Aspect.NO_ACCESS, ex);
+		} catch (IllegalArgumentException ex) {
+			reportEx(Aspect.PARSER, Aspect.NO_ARG, ex);
+		} catch (InvocationTargetException ex) {
+			reportEx(Aspect.PARSER, Aspect.INVOKE, ex);
+		}
+		if (parser == null) return;
+
+		if (ruleNames == null || ruleNames.length == 0) {
+			reportError(Aspect.LEXER, null, "No rule names generated! Parser appears to be empty.");
+			return;
+		}
 
 		// error strategy
 
 		if (errorClass != null) {
+			report(Aspect.PARSER, "Constructing '%s'", errorClass.getSimpleName());
 			try {
-				Constructor<?> errorConstructor = errorClass.getConstructor((Class<?>[]) null);
-				ANTLRErrorStrategy errorStrategy = (ANTLRErrorStrategy) errorConstructor.newInstance((Object[]) null);
-				parser.setErrorHandler(errorStrategy);
+				Constructor<?> ctor = errorClass.getConstructor((Class<?>[]) null);
+				ANTLRErrorStrategy strategy = (ANTLRErrorStrategy) ctor.newInstance((Object[]) null);
+				parser.setErrorHandler(strategy);
 				Log.info(this, "Error strategy added ...");
-			} catch (Exception e) {
-				Log.error(this, "Failed to instantiate error strategy (" + e.getMessage() + ")");
-				return;
+
+			} catch (NoSuchMethodException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.NO_METHOD, ex);
+			} catch (SecurityException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.SECURITY, ex);
+			} catch (InstantiationException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.INSTANCE, ex);
+			} catch (IllegalAccessException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.NO_ACCESS, ex);
+			} catch (IllegalArgumentException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.NO_ARG, ex);
+			} catch (InvocationTargetException ex) {
+				reportEx(Aspect.STRATEGY, Aspect.INVOKE, ex);
 			}
 		}
 
-		// find first parser rule
+		// select first parser rule
 
 		Method[] methods = parserClass.getMethods();
 		Method mainRule = null;
@@ -344,24 +427,54 @@ class TargetUnit implements ITargetInfo {
 			}
 		}
 		if (mainRule == null) {
-			Log.info(this, "Failed to identify a main rule");
+			reportError(Aspect.PARSER, null, "Failed to identify the main rule!");
 			return;
 		}
-		Log.info(this, "Main rule selected (" + mainRuleName + ") ...");
+		report(Aspect.PARSER, "Using '%s' as the main rule.", mainRuleName);
+
+		// generate the parse tree
 
 		try {
-			Log.info(this, "Building tree ...");
 			tree = (ParseTree) mainRule.invoke(parser);
-			Log.info(this, "Tree generated.");
-		} catch (Exception e) {
-			Log.error(this, "Failed generating parse tree (" + e.getMessage() + ")", e);
+
+		} catch (IllegalAccessException ex) {
+			reportEx(Aspect.TREE, Aspect.NO_ACCESS, ex);
+		} catch (IllegalArgumentException ex) {
+			reportEx(Aspect.TREE, Aspect.NO_ARG, ex);
+		} catch (InvocationTargetException ex) {
+			reportEx(Aspect.TREE, Aspect.INVOKE, ex);
 		}
 
-		if (tree != null) {
-			Log.info(this, "Generating graph model...");
-			model = new TreeModel();
-			model.setVocab(ruleNames, tokenNames);
-			ParseTreeWalker.DEFAULT.walk(new TreeProcessor(model), tree);
+		if (tree == null) {
+			reportError(Aspect.TREE, null, "No parse tree generated!");
 		}
+
+		model = new TreeModel();
+		model.setVocab(ruleNames, tokenNames);
+		ParseTreeWalker.DEFAULT.walk(new TreeProcessor(model), tree);
+		report(Aspect.TREE, "Parse tree generated!");
+	}
+
+	private void reportEx(Aspect aspect, Aspect type, Exception ex) {
+		reportError(aspect, ex, "Failed due to '%s' exception: %s.", type, ExceptUtil.getMessage(ex));
+	}
+
+	private void reportError(Aspect aspect, Throwable ex, String fmt, Object... args) {
+		errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt, args));
+		if (ex != null) {
+			Throwable cause = ex.getCause();
+			if (cause != null) { // handle nested errors
+				reportError(aspect, cause, "Caused by:\n\t%s", cause.getMessage());
+			}
+		}
+	}
+
+	private void report(Aspect aspect, String format, Object... args) {
+		AntlrUI.getDefault().consoleAppend(aspect, CS.INFO, format, args);
+	}
+
+	@SuppressWarnings("deprecation")
+	private String[] getTokenNames(Lexer lexer) {
+		return lexer.getTokenNames();
 	}
 }

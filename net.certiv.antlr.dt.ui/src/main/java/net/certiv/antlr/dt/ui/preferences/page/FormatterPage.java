@@ -8,7 +8,7 @@ import net.certiv.antlr.dt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlr.dt.ui.editor.Partitions;
 import net.certiv.antlr.dt.ui.preferences.formatter.FormatterFactory;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
@@ -37,7 +37,7 @@ public class FormatterPage extends DslFormatterPreferencePage {
 	}
 
 	@Override
-	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
+	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(DslColorRegistry colorManager,
 			IPreferenceStore store, DslEditor editor, boolean configureFormatter) {
 
 		return new AntlrSimpleSourceViewerConfiguration(colorManager, (IPrefsManager) store, editor,

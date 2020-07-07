@@ -22,7 +22,7 @@ public class AntlrCore extends DslCore {
 
 	@Override
 	public DslCore getDslCore() {
-		return getDefault();
+		return this;
 	}
 
 	@Override

@@ -3,19 +3,21 @@ Automatic-Module-Name: net.certiv.antlr.dt.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT UI
 Bundle-SymbolicName: net.certiv.antlr.dt.ui;singleton:=true
-Bundle-Version: 4.10.0.qualifier
+Bundle-Version: 4.11.0.qualifier
 Bundle-Activator: net.certiv.antlr.dt.ui.AntlrUI
-Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.10.0",
- net.certiv.dsl.jdt.plugin;bundle-version="0.10.0",
- net.certiv.dsl.ui;bundle-version="0.10.0",
- net.certiv.dsl.core;bundle-version="0.10.0",
- net.certiv.dsl.lib;bundle-version="0.10.0",
+Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.11.0",
+ net.certiv.dsl.jdt.plugin;bundle-version="0.11.0",
+ net.certiv.dsl.ui;bundle-version="0.11.0",
+ net.certiv.dsl.core;bundle-version="0.11.0",
+ net.certiv.dsl.lib;bundle-version="0.11.0",
  org.eclipse.core.filebuffers;bundle-version="3.6.500",
  org.eclipse.core.resources;bundle-version="3.13.200",
  org.eclipse.core.runtime;bundle-version="3.15.100",
  org.eclipse.jdt.core;bundle-version="3.16.0",
  org.eclipse.jface.text;bundle-version="3.15.0",
+ org.eclipse.osgi.services;bundle-version="3.8.0",
  org.eclipse.ui;bundle-version="3.111.0",
+ org.eclipse.ui.console;bundle-version="3.9.100",
  org.eclipse.ui.editors;bundle-version="3.11.400",
  org.eclipse.ui.forms;bundle-version="3.7.400",
  org.eclipse.ui.ide;bundle-version="3.15.0",
@@ -28,4 +30,6 @@ Bundle-Localization: plugin
 Bundle-ClassPath: .
 Eclipse-RegisterBuddy: net.certiv.dsl.lib
 Export-Package: net.certiv.antlr.dt.ui,
- net.certiv.antlr.dt.ui.editor
+ net.certiv.antlr.dt.ui.console,
+ net.certiv.antlr.dt.ui.editor,
+ net.certiv.antlr.dt.ui.editor.filter

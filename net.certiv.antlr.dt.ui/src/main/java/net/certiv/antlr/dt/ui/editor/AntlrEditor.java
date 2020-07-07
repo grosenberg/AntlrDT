@@ -97,7 +97,7 @@ public class AntlrEditor extends DslEditor {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension = (IDocumentExtension3) document;
 			if (extension.getDocumentPartitioner(Partitions.PARTITIONING) == null) {
-				AntlrDTDocumentSetupParticipant participant = new AntlrDTDocumentSetupParticipant();
+				AntlrDocumentSetupParticipant participant = new AntlrDocumentSetupParticipant();
 				participant.setup(document);
 			}
 		}

@@ -12,12 +12,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.DslColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
-import net.certiv.dsl.ui.preferences.editors.BooleanFieldEditor;
+import net.certiv.dsl.ui.preferences.editors.CheckboxFieldEditor;
 import net.certiv.dsl.ui.preferences.pages.AbstractFieldEditorPreferencePage;
 import net.certiv.dsl.ui.util.SWTFactory;
 
@@ -25,9 +25,9 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 	private Composite buildComp;
 	private boolean enabled;
-	private BooleanFieldEditor builderEn;
-	private BooleanFieldEditor projRestriction;
-	private BooleanFieldEditor curpathRestriction;
+	private CheckboxFieldEditor builderEn;
+	private CheckboxFieldEditor projRestriction;
+	private CheckboxFieldEditor curpathRestriction;
 	private Composite actionsComp;
 
 	public BuilderPage() {
@@ -43,7 +43,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 		buildComp = SWTFactory.createGroupComposite(parent, 2, 3, "Builder Options");
 
-		builderEn = new BooleanFieldEditor(bind(Builder.BUILDER_ENABLE), "Enable Builder", buildComp);
+		builderEn = new CheckboxFieldEditor(bind(Builder.BUILDER_ENABLE), "Enable Builder", buildComp);
 		builderEn.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -56,7 +56,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 		});
 		addField(builderEn);
 
-		projRestriction = new BooleanFieldEditor(bind(Builder.BUILDER_RESTRICT_TO_ACTIVE_PROJECT),
+		projRestriction = new CheckboxFieldEditor(bind(Builder.BUILDER_RESTRICT_TO_ACTIVE_PROJECT),
 				"Restrict builds to grammars within the current project", buildComp);
 		projRestriction.addSelectionListener(new SelectionAdapter() {
 
@@ -64,7 +64,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = ((Button) e.getSource()).getSelection();
 				if (!selected) {
-					curpathRestriction.setBooleanValue(selected);
+					curpathRestriction.setValue(selected);
 				}
 			}
 		});
@@ -74,9 +74,9 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 		actionsComp = SWTFactory.createGroupComposite(parent, 2, 3, "Post-Build Actions");
 
-		addField(new BooleanFieldEditor(bind(Builder.BUILDER_REFRESH), "Refresh project", actionsComp));
-		addField(new BooleanFieldEditor(bind(Builder.BUILDER_ORGANIZE), "Organize imports *", actionsComp));
-		addField(new BooleanFieldEditor(bind(Builder.BUILDER_FORMAT), "Format generated source *", actionsComp));
+		addField(new CheckboxFieldEditor(bind(Builder.BUILDER_REFRESH), "Refresh project", actionsComp));
+		addField(new CheckboxFieldEditor(bind(Builder.BUILDER_ORGANIZE), "Organize imports *", actionsComp));
+		addField(new CheckboxFieldEditor(bind(Builder.BUILDER_FORMAT), "Format generated source *", actionsComp));
 		Label notice = new Label(actionsComp, SWT.NONE);
 		notice.setText("        * requires the generated files to within a source package directory");
 	}
@@ -103,7 +103,7 @@ public class BuilderPage extends AbstractFieldEditorPreferencePage {
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
-			PrefsDeltaManager delta, FormToolkit formkit, DslColorManager colorMgr) {
+			PrefsDeltaManager delta, FormToolkit formkit, DslColorRegistry reg) {
 		return null;
 	}
 

@@ -21,18 +21,17 @@ public class GrammarBlock {
 	}
 
 	private void createGrammarBlock(TokensView view, Composite parent) {
-
-		Group srcGroup = new Group(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(srcGroup);
+		Group group = new Group(parent, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, false).span(1, 1).applyTo(group);
 		GridLayoutFactory.fillDefaults().numColumns(2).margins(4, 4).spacing(TokensView.hSp, TokensView.vSp)
-				.applyTo(srcGroup);
-		srcGroup.setText("Grammar");
+				.applyTo(group);
+		group.setText("Grammar");
 
-		text = new Text(srcGroup, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+		text = new Text(group, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
 		decorator = view.createDecoration(text);
 		GridDataFactory.fillDefaults().indent(6, 0).align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(text);
 
-		Button buttonSelect = new Button(srcGroup, SWT.PUSH);
+		Button buttonSelect = new Button(group, SWT.PUSH);
 		buttonSelect.setText(" Integration ");
 		GridDataFactory.fillDefaults().hint(80, SWT.DEFAULT).applyTo(buttonSelect);
 		buttonSelect.addSelectionListener(new SelectionAdapter() {
@@ -57,5 +56,14 @@ public class GrammarBlock {
 
 	public ControlDecoration getDecorator() {
 		return decorator;
+	}
+
+	public void hideDecoration() {
+		decorator.hide();
+	}
+
+	public void showDecoration(String msg) {
+		decorator.setDescriptionText(msg);
+		decorator.show();
 	}
 }

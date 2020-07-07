@@ -11,7 +11,7 @@ import org.antlr.v4.tool.ast.GrammarRootAST;
 import org.eclipse.core.runtime.IPath;
 
 import net.certiv.antlr.dt.core.AntlrCore;
-import net.certiv.antlr.dt.core.builder.AntlrBuilder;
+import net.certiv.antlr.dt.core.builder.BuildUtil;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlr.dt.core.parser.gen.StructureVisitor;
@@ -19,6 +19,7 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
+import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
 import net.certiv.dsl.core.parser.DslParseRecord;
@@ -45,65 +46,49 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	@Override
 	public Throwable parse() {
+		DslErrorListener auditor = getErrorListener();
 		try {
-
 			String name = record.unit.getFile().getName();
 			String content = getContent();
-			DslErrorListener errs = getErrorListener();
 
-			record.cs = CharStreams.fromString(content, name);
-			Lexer lexer = new AntlrDT4Lexer(record.cs);
+			record.setCharStream(CharStreams.fromString(content, name));
+			Lexer lexer = new AntlrDT4Lexer(record.getCharStream());
 			lexer.setTokenFactory(TokenFactory);
 			lexer.removeErrorListeners();
-			lexer.addErrorListener(errs);
+			lexer.addErrorListener(auditor);
 
-			record.ts = new CommonTokenStream(lexer);
-			record.parser = new AntlrDT4Parser(record.ts);
-			record.parser.setTokenFactory(TokenFactory);
-			record.parser.removeErrorListeners();
-			record.parser.addErrorListener(errs);
-			record.tree = ((AntlrDT4Parser) record.parser).grammarSpec();
+			record.setTokenStream(new CommonTokenStream(lexer));
+			AntlrDT4Parser parser = new AntlrDT4Parser(record.getTokenStream());
+			parser.setTokenFactory(TokenFactory);
+			parser.removeErrorListeners();
+			parser.addErrorListener(auditor);
+			record.setParser(parser);
+			record.setTree(parser.grammarSpec());
 
 			lint(record, name, content);
 
 			return null;
 
 		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_PARSER, e);
-			return e;
-		}
-	}
-
-	@Override
-	public Throwable analyze(ModelBuilder builder) {
-		try {
-			StructureVisitor visitor = new StructureVisitor(record.tree);
-			visitor.setSourceName(record.unit.getPackageName());
-			visitor.setBuilder(builder);
-			builder.beginAnalysis();
-			visitor.findAll();
-			builder.endAnalysis();
-			return null;
-
-		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_ANALYSIS, e);
+			auditor.generalError(ERR_PARSER, e);
 			return e;
 		}
 	}
 
 	/**
-	 * Convenience method to lint a string representing an ANTLR grammar.
+	 * Convenience method to lint a string representing an ANTLR grammar. Caution: called
+	 * after the source is parsed, but before the new model is built; any existing model
+	 * might be invalid.
 	 * <p>
-	 * Has Antlr3 dependency.
+	 * Has an indirect Antlr3 dependency.
 	 *
 	 * @param record the parse record instance to receive errors/warnings
 	 * @param name the display/filename of the grammar
 	 * @param content the grammar source content
+	 * @throws ModelException exception code details cause
 	 */
-	public void lint(DslParseRecord record, String name, String content) {
-		IPath output = AntlrBuilder.determineBuildPath(record.unit.getLanguageMgr(), record.unit);
-		if (output == null) return;
-
+	public void lint(DslParseRecord record, String name, String content) throws ModelException {
+		IPath output = BuildUtil.resolveOutputPath(record);
 		Tool tool = new Tool(new String[] { "-o", output.toString() });
 		tool.removeListeners();
 		tool.addListener(new ToolErrorListener(record));
@@ -113,5 +98,22 @@ public class AntlrSourceParser extends DslSourceParser {
 		Grammar g = tool.createGrammar(ast);
 		g.fileName = name;
 		tool.process(g, false);
+	}
+
+	@Override
+	public Throwable analyze(ModelBuilder builder) {
+		try {
+			StructureVisitor visitor = new StructureVisitor(record.getTree());
+			visitor.setBuilder(builder);
+			builder.beginAnalysis();
+			visitor.findAll();
+			builder.endAnalysis();
+
+			return null;
+
+		} catch (Exception | Error e) {
+			getErrorListener().generalError(ERR_ANALYSIS, e);
+			return e;
+		}
 	}
 }

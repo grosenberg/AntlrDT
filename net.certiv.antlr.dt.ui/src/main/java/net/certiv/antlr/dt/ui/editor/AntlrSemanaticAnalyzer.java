@@ -12,14 +12,18 @@ public class AntlrSemanaticAnalyzer extends SemanticAnalyzer {
 	public AntlrSemanaticAnalyzer(DslUI ui) {
 		super(ui, AntlrLangManager.DSL_NAME);
 
-		addKey(SpecializedType.RuleName, PrefsKey.EDITOR_RULE_NAME_COLOR);
+		addKey(SpecializedType.ParserRuleName, PrefsKey.EDITOR_RULE_NAME_COLOR);
+		addKey(SpecializedType.LexerRuleName, PrefsKey.EDITOR_RULE_NAME_COLOR);
+		addKey(SpecializedType.FragmentRuleName, PrefsKey.EDITOR_RULE_NAME_COLOR);
 		addKey(SpecializedType.ModeName, PrefsKey.EDITOR_MODE_NAME_COLOR);
 	}
 
 	@Override
 	protected boolean qualified(IStatement stmt) {
 		switch ((SpecializedType) stmt.getSpecializedType()) {
-			case RuleName:
+			case ParserRuleName:
+			case LexerRuleName:
+			case FragmentRuleName:
 			case ModeName:
 				return true;
 

@@ -13,9 +13,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
-import net.certiv.antlr.dt.vis.views.tokens.providers.ListViewerContentProvider;
-import net.certiv.antlr.dt.vis.views.tokens.providers.TraceViewerLabelProvider;
-
 public class TraceDialog extends StatusDialog {
 
 	private static final int flags = SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL;
@@ -47,7 +44,7 @@ public class TraceDialog extends StatusDialog {
 		traceGroup.setText("Parser trace");
 
 		traceViewer = new TableViewer(traceGroup, flags);
-		traceViewer.setContentProvider(new ListViewerContentProvider());
+		traceViewer.setContentProvider(new TokensViewContentProvider());
 		traceViewer.setLabelProvider(new TraceViewerLabelProvider(parent.getDisplay()));
 		traceViewer.getTable().setHeaderVisible(true);
 		traceViewer.getTable().setLinesVisible(true);

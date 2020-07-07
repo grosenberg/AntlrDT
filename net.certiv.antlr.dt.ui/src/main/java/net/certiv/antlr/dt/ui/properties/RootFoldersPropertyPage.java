@@ -31,7 +31,7 @@ public class RootFoldersPropertyPage extends AbstractPropertyPage {
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(PrefsDeltaManager delta) {
-		return new RootConfigBlock(this, delta, getFormkit(), getColorMgr(), getProject());
+		return new RootConfigBlock(this, delta, getFormkit(), getColorRegistry(), getProject());
 	}
 
 	private IDslProject getProject() {

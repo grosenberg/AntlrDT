@@ -1,8 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2016 - 2018 Certiv Analytics and others. All rights reserved.
- * This program and the accompanying materials are made available under the
+ * Copyright (c) 2016 - 2020 Certiv Analytics.
+ * All rights reserved.
+ *
+ * This program and theaccompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this
- * distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
+ * distribution, and is available athttp://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
 package net.certiv.antlr.dt.diagram.convert;
 
@@ -35,6 +37,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.model.SpecializedType;
+import net.certiv.antlr.dt.diagram.preferences.Prefs;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
@@ -49,7 +52,6 @@ import net.certiv.dsl.core.util.TextUtils;
 import net.certiv.dsl.core.util.exec.Cmd;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.fluent.dt.core.model.SpecUtil;
-import net.certiv.fluent.dt.core.preferences.Prefs;
 
 public class PdfGen {
 

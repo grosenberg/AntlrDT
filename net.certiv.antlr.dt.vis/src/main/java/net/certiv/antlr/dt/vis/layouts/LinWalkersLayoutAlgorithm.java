@@ -20,25 +20,23 @@ import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 
 /**
- * TreeLayout that computes a tidy layout of a node-link tree diagram. This
- * algorithm lays out a rooted tree such that each depth level of the tree is on
- * a shared line. The orientation of the tree can be set such that the tree goes
- * left-to-right (default), right-to-left, top-to-bottom, or bottom-to-top.
+ * TreeLayout that computes a tidy layout of a node-link tree diagram. This algorithm lays
+ * out a rooted tree such that each depth level of the tree is on a shared line. The
+ * orientation of the tree can be set such that the tree goes left-to-right (default),
+ * right-to-left, top-to-bottom, or bottom-to-top.
  * <p>
- * The algorithm used is that of Christoph Buchheim, Michael Junger, and
- * Sebastian Leipert from their research paper
- * <a href="http://citeseer.ist.psu.edu/buchheim02improving.html"> Improving
- * Walker's Algorithm to Run in Linear Time</a>, Graph Drawing 2002. This
- * algorithm corrects performance issues in Walker's algorithm, which
- * generalizes Reingold and Tilford's method for tidy drawings of trees to
- * support trees with an arbitrary number of children at any given node.
- *
+ * The algorithm used is that of Christoph Buchheim, Michael Junger, and Sebastian Leipert
+ * from their research paper
+ * <a href="http://citeseer.ist.psu.edu/buchheim02improving.html"> Improving Walker's
+ * Algorithm to Run in Linear Time</a>, Graph Drawing 2002. This algorithm corrects
+ * performance issues in Walker's algorithm, which generalizes Reingold and Tilford's
+ * method for tidy drawings of trees to support trees with an arbitrary number of children
+ * at any given node.
  * <p>
  * Derived from the <a href="http://prefuse.org">Prefuse</a> NodeLinkTreeLayout
- * implementation (BSD License). Modifications include adaption for use with
- * Zest, consistent handling of cyclic relations, and proper support for
- * multiple real root nodes.
- *
+ * implementation (BSD License). Modifications include adaption for use with Zest,
+ * consistent handling of cyclic relations, and proper support for multiple real root
+ * nodes.
  *
  * @author <a href="http://jheer.org">jeffrey heer</a>
  * @author <a href="http://www.certiv.net">Gerald Rosenberg</a>
@@ -90,14 +88,14 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	 * Set the orientation of the tree layout.
 	 *
 	 * @param orientation the orientation value. One of
-	 *                        {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
-	 *                        ,
-	 *                        {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
-	 *                        ,
-	 *                        {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
-	 *                        , or
-	 *                        {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
-	 *                        .
+	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
+	 *            ,
+	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
+	 *            ,
+	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
+	 *            , or
+	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
+	 *            .
 	 */
 	public void setOrientation(int orientation) {
 		if (orientation < 0 || orientation >= ORIENTATION_COUNT) {
@@ -133,16 +131,17 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 
-		Log.info(this, "Starting layout ...");
+		Log.debug(this, "Starting layout ...");
 
-		m_bspace = getPrefs().getInt(PrefsKey.PT_SIBLING_SPACING); // between sibling nodes
+		m_bspace = getPrefs().getInt(PrefsKey.PT_SIBLING_SPACING); // between sibling
+																	 // nodes
 		m_tspace = getPrefs().getInt(PrefsKey.PT_SUBTREE_SPACING); // between subtrees
 		m_dspace = getPrefs().getInt(PrefsKey.PT_DEPTH_SPACING); // between depth levels
 		m_offset = getPrefs().getInt(PrefsKey.PT_ROOT_OFFSET); // offset for root node
 
 		int eCnt = entitiesToLayout.length;
 		int rCnt = relationshipsToConsider.length;
-		Log.info(this, "Content [entities=" + eCnt + ", relations=" + rCnt + "]");
+		Log.debug(this, "Content [entities=" + eCnt + ", relations=" + rCnt + "]");
 
 		ArrayList<InternalNode> entitiesList = convert(entitiesToLayout);
 		ArrayList<InternalRelationship> relationshipList = convert(relationshipsToConsider);
@@ -171,7 +170,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		Params npRoot = getParams(root);
 		secondWalk(root, null, -npRoot.prelim, 0);
 
-		Log.info(this, "Layout complete.");
+		Log.debug(this, "Layout complete.");
 	}
 
 	private InternalNode constructVirtualLayout(ArrayList<InternalNode> entitiesList,
@@ -211,7 +210,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		InternalNode virtRoot = null;
 		if (roots.size() > 1) {
-			Log.info(this, "Adding virtual root for multiple real roots ...");
+			Log.debug(this, "Adding virtual root for multiple real roots ...");
 			virtRoot = new InternalNode(new VirtualRootNode());
 			new Params(virtRoot);
 			for (InternalNode root : roots) {
@@ -532,8 +531,8 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		private ArrayList<InternalNode> childList = new ArrayList<>();
 
 		public Params(InternalNode item) {
-			this.self = item;
-			this.self.setAttributeInLayout(PARAMS, this);
+			self = item;
+			self.setAttributeInLayout(PARAMS, this);
 			number = -1;
 			Log.setLevel(this, LogLevel.Info);
 		}
@@ -550,7 +549,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		/** adds an immediate connected child */
 		public void addChild(InternalNode childData) {
-			this.childList.add(childData);
+			childList.add(childData);
 		}
 
 		public void removeChild(InternalNode target) {
@@ -706,32 +705,32 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		private Object internalNode;
 
 		public VirtualRootNode() {
-			this.name = "VirtualRoot";
-			this.x = 0;
-			this.y = 0;
-			this.width = 0;
-			this.height = 0;
-			this.attributes = new HashMap<>();
+			name = "VirtualRoot";
+			x = 0;
+			y = 0;
+			width = 0;
+			height = 0;
+			attributes = new HashMap<>();
 		}
 
 		@Override
 		public double getHeightInLayout() {
-			return this.height;
+			return height;
 		}
 
 		@Override
 		public double getWidthInLayout() {
-			return this.width;
+			return width;
 		}
 
 		@Override
 		public double getXInLayout() {
-			return this.x;
+			return x;
 		}
 
 		@Override
 		public double getYInLayout() {
-			return this.y;
+			return y;
 		}
 
 		@Override
@@ -741,7 +740,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		@Override
 		public void setLayoutInformation(Object internalEntity) {
-			this.internalNode = internalEntity;
+			internalNode = internalEntity;
 		}
 
 		@Override

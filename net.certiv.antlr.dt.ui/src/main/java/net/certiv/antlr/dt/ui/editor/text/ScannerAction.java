@@ -10,15 +10,16 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.editor.Partitions;
 import net.certiv.dsl.core.preferences.IPrefsManager;
-import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.scanners.DslRuleBasedScanner;
+import net.certiv.dsl.ui.editor.semantic.StylesManager;
 import net.certiv.dsl.ui.editor.text.rules.BalancedBraceRule;
 
-public class ScannerAction extends AbstractBufferedRuleBasedScanner {
+public class ScannerAction extends DslRuleBasedScanner {
 
 	private String[] tokenProperties;
 
-	public ScannerAction(IPrefsManager store) {
-		super(store);
+	public ScannerAction(IPrefsManager store, StylesManager stylesMgr) {
+		super(store, stylesMgr);
 		initialize();
 	}
 
@@ -35,7 +36,7 @@ public class ScannerAction extends AbstractBufferedRuleBasedScanner {
 		IToken token = getToken(bind(PrefsKey.EDITOR_ACTION_COLOR));
 		setDefaultReturnToken(token);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		rules.add(new BalancedBraceRule(Partitions.PREFIXES, Partitions.PREDICATES, token));
 		rules.add(new WhitespaceRule(new WhitespaceDetector()));
 		return rules;

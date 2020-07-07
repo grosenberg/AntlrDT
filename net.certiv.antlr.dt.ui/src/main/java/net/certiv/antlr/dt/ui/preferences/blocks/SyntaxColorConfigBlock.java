@@ -15,8 +15,7 @@ import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.editor.AntlrSimpleSourceViewerConfiguration;
 import net.certiv.antlr.dt.ui.editor.Partitions;
 import net.certiv.antlr.dt.ui.preferences.page.SyntaxColorPage;
-import net.certiv.dsl.core.color.DslColorManager;
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.core.preferences.consts.Editor;
@@ -30,8 +29,8 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	private static final String PREVIEW_FILE_NAME = "ColorPreview.g4";
 
 	public SyntaxColorConfigBlock(SyntaxColorPage page, PrefsDeltaManager delta, FormToolkit formkit,
-			DslColorManager colorMgr) {
-		super(page, delta, formkit, colorMgr);
+			DslColorRegistry reg) {
+		super(page, delta, formkit, reg);
 	}
 
 	@Override
@@ -40,6 +39,7 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 		keys.add(Editor.EDITOR_COMMENT_BL_COLOR);
 		keys.add(Editor.EDITOR_COMMENT_LN_COLOR);
 		keys.add(Editor.EDITOR_KEYWORDS_COLOR);
+		keys.add(Editor.EDITOR_SYMBOLS_COLOR);
 		keys.add(Editor.EDITOR_STRING_COLOR);
 		keys.add(PrefsKey.EDITOR_ACTION_COLOR);
 		keys.add(PrefsKey.EDITOR_ACTION_NAME_COLOR);
@@ -55,12 +55,12 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 		addColorPreference("Comments", "Block", Editor.EDITOR_COMMENT_BL_COLOR);
 		addColorPreference("Comments", "Single line", Editor.EDITOR_COMMENT_LN_COLOR);
 		addColorPreference("Grammar", "Keywords", Editor.EDITOR_KEYWORDS_COLOR);
+		addColorPreference("Grammar", "Mode Names", PrefsKey.EDITOR_MODE_NAME_COLOR);
+		addColorPreference("Grammar", "Rule Names", PrefsKey.EDITOR_RULE_NAME_COLOR);
 		addColorPreference("Grammar", "Strings", Editor.EDITOR_STRING_COLOR);
+		addColorPreference("Grammar", "Symbols", Editor.EDITOR_SYMBOLS_COLOR);
 		addColorPreference("Action", "Action Blocks", PrefsKey.EDITOR_ACTION_COLOR);
 		addColorPreference("Action", "Action Names", PrefsKey.EDITOR_ACTION_NAME_COLOR);
-
-		addColorPreference("Rules", "Rule Names", PrefsKey.EDITOR_RULE_NAME_COLOR);
-		addColorPreference("Modes", "Mode Names", PrefsKey.EDITOR_MODE_NAME_COLOR);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	}
 
 	@Override
-	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorMgr,
+	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(DslColorRegistry colorMgr,
 			IPrefsManager store, DslEditor editor, boolean configFormatter) {
 		return new AntlrSimpleSourceViewerConfiguration(colorMgr, store, editor, Partitions.PARTITIONING,
 				configFormatter);

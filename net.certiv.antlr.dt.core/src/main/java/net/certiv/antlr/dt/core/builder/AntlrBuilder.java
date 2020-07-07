@@ -35,18 +35,21 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlr.dt.core.AntlrCore;
+import net.certiv.antlr.dt.core.console.Aspect;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
-import net.certiv.dsl.core.lang.LanguageManager;
+import net.certiv.dsl.core.console.CS;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.problems.ProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.Strings;
 
 public class AntlrBuilder extends DslBuilder {
 
@@ -81,7 +84,7 @@ public class AntlrBuilder extends DslBuilder {
 		for (ICodeUnit unit : units) {
 			if (!unit.isConsistent()) {
 				changed.add(unit);
-				changed.addAll(related(unit, null));
+				changed.addAll(findRelated(unit, null));
 			}
 		}
 		return new ArrayList<>(changed);
@@ -104,79 +107,90 @@ public class AntlrBuilder extends DslBuilder {
 		}
 	}
 
-	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) {
-		IPath unitPath = unit.getPath();
-		String pathname = unit.getLocation().toString();
-		IPath output = determineBuildPath(mgr, unit);
-		monitor.worked(1);
+	private Throwable compileGrammar(ICodeUnit unit, IProgressMonitor monitor) throws ModelException {
+		if (!lock(unit)) return null;
 
-		if (output == null) {
-			explain(Cause.PATH_ERR, unitPath.toString());
-			CoreUtil.showStatusLineMessage("Skipped  " + unitPath.toString(), false);
-			return;
-		}
-
-		IPath dest = output.makeRelativeTo(unitPath);
-		Log.info(this, "Building %s -> %s", unitPath.lastSegment(), dest);
-
-		DslParseRecord record = unit.getDefaultParseRecord();
-		ProblemCollector collector = record.getCollector();
-		collector.beginCollecting(unit.getResource(), record.markerId);
-
-		Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
-		tool.removeListeners();
-		tool.addListener(new ToolErrorListener(record));
-		monitor.worked(1);
-
-		Throwable err = null;
 		try {
-			Grammar g = tool.loadGrammar(pathname); // pre-process the grammar file
-			tool.process(g, true); // can throw execeptions based on grammar eval
-		} catch (Exception | Error e) {
-			err = e;
+			IPath pathname = unit.getPath();
+			String location = unit.getLocation().toString();
+
+			DslParseRecord record = unit.getDefaultParseRecord();
+
+			// check status of reconciler; proceed regardless
+			if (!record.hasTree()) {
+				report(CS.WARN, Cause.UNIT_ERR, srcName(unit, false), " no Reconciler tree");
+			}
+
+			IPath output = null;
+			try {
+				output = BuildUtil.resolveOutputPath(record);
+			} catch (ModelException ex) {
+				String msg = ex.getMessage();
+				Throwable c = ex.getCause();
+				if (c != null) msg = c.getMessage();
+				report(CS.ERROR, Cause.SRC_ERRS, msg, srcName(unit, true));
+			}
+			monitor.worked(1);
+
+			if (output == null) {
+				report(CS.ERROR, Cause.PATH_ERR, srcName(unit, false), pathname);
+				CoreUtil.showStatusLineMessage("No output path for  %s", pathname);
+				return null;
+			}
+
+			IPath dest = output.makeRelativeTo(pathname);
+			Tool tool = new Tool(new String[] { "-visitor", "-o", output.toString() });
+			tool.removeListeners();
+			tool.addListener(new ToolErrorListener(record));
+
+			ProblemCollector collector = record.getCollector();
+			monitor.worked(1);
+
+			Throwable err = null;
+			try {
+				collector.beginCollecting(unit.getResource(), record.markerId);
+				Grammar g = tool.loadGrammar(location); // pre-process grammar
+				tool.process(g, true); 					// can throw on eval
+
+			} catch (Exception | Error e) {
+				err = e;
+				report(CS.ERROR, Cause.BUILD_ERR, e.getMessage(), srcName(unit, false), dest);
+
+			} finally {
+				record.getCollector().endCollecting();
+			}
+
+			if (err != null || record.hasProblems()) {
+				String failMsg = "Build error " + pathname.toString();
+				CoreUtil.showStatusLineMessage(failMsg, true);
+				int cnt = record.getErrorCnt() + record.getWarningCnt();
+				if (cnt > 0) report(CS.ERROR, Cause.SRC_PRBM, cnt, srcName(unit, false));
+				if (err != null) report(CS.ERROR, Cause.SRC_ERRS, err.getMessage(), srcName(unit, false));
+
+			} else {
+				String msg = "Built " + pathname.toString();
+				CoreUtil.showStatusLineMessage(msg, false);
+				report(CS.INFO, Cause.BUILT, srcName(unit, false), dest);
+				postCompileCleanup(unit, output, monitor);
+			}
+
+			monitor.worked(1);
+			return err;
+
 		} finally {
-			record.getCollector().endCollecting();
-		}
-
-		if (err != null || record.hasProblems()) {
-			String failMsg = "Build error " + unitPath.toString();
-			CoreUtil.showStatusLineMessage(failMsg, true);
-			if (err != null) Log.error(this, failMsg, err);
-			if (record.hasProblems()) explain(Cause.SRC_ERRS, unitPath.toString());
-			monitor.worked(1);
-
-		} else {
-			String msg = "Built " + unitPath.toString();
-			CoreUtil.showStatusLineMessage(msg, false);
-			monitor.worked(1);
-
-			IPath folder = unit.getProject().getLocation().append(unit.getSourceRoot()).append(output);
-			postCompileCleanup(unit, folder, monitor);
-			monitor.worked(1);
+			unit.unlock();
 		}
 	}
 
-	/**
-	 * Returns an output build path for the given grammar code unit. The build path
-	 * will be a filesystem absolute path or {@code null}. A {@code null} return
-	 * indicates that the given unit is not on a valid build path and, therefore, no
-	 * the unit should not be built.
-	 *
-	 * @param file the grammar IFile
-	 * @return a filesystem absolute path to the build folder or {@code null}
-	 */
-	public static IPath determineBuildPath(LanguageManager mgr, ICodeUnit unit) {
-		if (!mgr.onSourceBuildPath(unit)) return null;
+	@Override
+	protected void report(CS kind, Cause cause, Object... args) {
+		getDslCore().consoleAppend(Aspect.BUILDER, kind, cause.toString(), args);
+	}
 
-		IPath buildPath = AntlrUtil.getGrammarInternalPackagePath(unit);
-		if (buildPath != null) {
-			buildPath = unit.getSourceRoot().append(buildPath);
-		} else {
-			buildPath = mgr.getBuildOutputPath(unit);
-		}
-
-		buildPath = unit.getProject().getLocation().append(buildPath);
-		return buildPath;
+	@Override
+	protected String destPackage(ICodeUnit unit) {
+		String pkg = BuildUtil.grammarDefinedPackage(unit.getDefaultParseRecord());
+		return pkg != null ? pkg : Strings.UNKNOWN;
 	}
 
 	// ----
@@ -210,7 +224,7 @@ public class AntlrBuilder extends DslBuilder {
 				folder.refreshLocal(IResource.DEPTH_ONE, monitor);
 				if (markDerived) {
 					String name = unit.getElementName();
-					int dot = name.lastIndexOf('.');
+					int dot = name.lastIndexOf(Chars.DOT);
 					name = name.substring(0, dot);
 					String ext = name.substring(dot + 1);
 					for (IResource res : folder.members()) {
@@ -223,7 +237,7 @@ public class AntlrBuilder extends DslBuilder {
 								res.setDerived(true, monitor);
 							} else if (res.getName().startsWith(name + "Lexer")) {
 								res.setDerived(true, monitor);
-							} else if (res.getName().equals(name + "." + ext)) {
+							} else if (res.getName().equals(name + Strings.DOT + ext)) {
 								res.setDerived(true, monitor);
 							}
 						}
@@ -280,7 +294,7 @@ public class AntlrBuilder extends DslBuilder {
 				op.run(monitor);
 			}
 		} catch (OperationCanceledException e) {
-			Log.warn(this, "Ambiguous imports, organization cancelled");
+			Log.debug(this, "Ambiguous imports, organization skipped");
 		} catch (Exception e) {
 			Log.warn(this, "Failed to Organize imports");
 		}

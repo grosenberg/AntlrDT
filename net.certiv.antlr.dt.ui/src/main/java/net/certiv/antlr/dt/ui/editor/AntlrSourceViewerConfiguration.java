@@ -21,7 +21,7 @@ import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.formatter.AntlrSourceFormatter;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.editor.outline.AntlrStatementLabelProvider;
-import net.certiv.antlr.dt.ui.editor.strategies.AntlrDTAutoEditDocStrategy;
+import net.certiv.antlr.dt.ui.editor.strategies.AntlrAutoEditDocStrategy;
 import net.certiv.antlr.dt.ui.editor.strategies.SmartAutoEditStrategy;
 import net.certiv.antlr.dt.ui.editor.text.ScannerAction;
 import net.certiv.antlr.dt.ui.editor.text.ScannerCommentJD;
@@ -31,9 +31,9 @@ import net.certiv.antlr.dt.ui.editor.text.ScannerKeyword;
 import net.certiv.antlr.dt.ui.editor.text.ScannerString;
 import net.certiv.antlr.dt.ui.formatter.strategies.ActionCodeFormattingStrategy;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.IColorManager;
-import net.certiv.dsl.core.preferences.PrefsManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
+import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
@@ -41,6 +41,7 @@ import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
+import net.certiv.dsl.ui.editor.semantic.StylesManager;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
 import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
 import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
@@ -62,9 +63,9 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
 
-	public AntlrSourceViewerConfiguration(IColorManager colorMgr, IPrefsManager store, DslEditor editor,
+	public AntlrSourceViewerConfiguration(DslColorRegistry reg, IPrefsManager store, DslEditor editor,
 			String partitioning) {
-		super(AntlrCore.getDefault(), colorMgr, store, editor, partitioning);
+		super(AntlrCore.getDefault(), reg, store, editor, partitioning);
 	}
 
 	@Override
@@ -84,12 +85,13 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 	@Override
 	protected void initializeScanners() {
 		IPrefsManager store = getPrefStore();
-		commentJDScanner = new ScannerCommentJD(store);
-		commentMLScanner = new ScannerCommentML(store);
-		commentSLScanner = new ScannerCommentSL(store);
-		keywordScanner = new ScannerKeyword(store);
-		stringScanner = new ScannerString(store);
-		actionScanner = new ScannerAction(store);
+		StylesManager mgr = getDslUI().getStylesManager();
+		commentJDScanner = new ScannerCommentJD(store, mgr);
+		commentMLScanner = new ScannerCommentML(store, mgr);
+		commentSLScanner = new ScannerCommentSL(store, mgr);
+		keywordScanner = new ScannerKeyword(store, mgr);
+		stringScanner = new ScannerString(store, mgr);
+		actionScanner = new ScannerAction(store, mgr);
 
 		grammarAnalyzer = new AntlrSemanaticAnalyzer(getDslUI());
 	}
@@ -129,9 +131,8 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		if (keywordScanner.affectsBehavior(event)) keywordScanner.adaptToPreferenceChange(event);
 		if (grammarAnalyzer.affectsBehavior(event)) grammarAnalyzer.adaptToPreferenceChange(event);
-
+		if (keywordScanner.affectsBehavior(event)) keywordScanner.adaptToPreferenceChange(event);
 		if (commentJDScanner.affectsBehavior(event)) commentJDScanner.adaptToPreferenceChange(event);
 		if (commentMLScanner.affectsBehavior(event)) commentMLScanner.adaptToPreferenceChange(event);
 		if (commentSLScanner.affectsBehavior(event)) commentSLScanner.adaptToPreferenceChange(event);
@@ -141,8 +142,8 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 
 	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return keywordScanner.affectsBehavior(event) //
-				|| grammarAnalyzer.affectsBehavior(event) //
+		return grammarAnalyzer.affectsBehavior(event) //
+				|| keywordScanner.affectsBehavior(event) //
 				|| actionScanner.affectsBehavior(event) //
 				|| stringScanner.affectsBehavior(event) //
 				|| commentJDScanner.affectsBehavior(event) //
@@ -156,6 +157,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(viewer));
 
 		buildRepairer(getEditor(), viewer, reconciler, grammarAnalyzer, IDocument.DEFAULT_CONTENT_TYPE);
+
 		buildRepairer(reconciler, keywordScanner, IDocument.DEFAULT_CONTENT_TYPE);
 		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
 		buildRepairer(reconciler, commentMLScanner, Partitions.COMMENT_ML);
@@ -172,7 +174,7 @@ public class AntlrSourceViewerConfiguration extends DslSourceViewerConfiguration
 		switch (contentType) {
 			case Partitions.COMMENT_JD:
 			case Partitions.COMMENT_ML:
-				return new IAutoEditStrategy[] { new AntlrDTAutoEditDocStrategy(partitioning) };
+				return new IAutoEditStrategy[] { new AntlrAutoEditDocStrategy(partitioning) };
 
 			default:
 				return new IAutoEditStrategy[] { new SmartAutoEditStrategy(partitioning) };

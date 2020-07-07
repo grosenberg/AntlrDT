@@ -6,7 +6,7 @@
          name="Antlr Document"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            class="net.certiv.antlr.dt.ui.editor.AntlrDTDocumentSetupParticipant"
+            class="net.certiv.antlr.dt.ui.editor.AntlrDocumentSetupParticipant"
             contentTypeId="net.certiv.antlr.dt.core.contentType"
             extensions="g4">
       </participant>
@@ -87,6 +87,9 @@
       </context>
    </extension>
 
+   
+
+   
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -173,11 +176,11 @@
  <extension
        point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
     <hyperlinkDetector
-          activate="true"
-          class="net.certiv.antlr.dt.ui.editor.AntlrDTHyperlinkDetector"
-          description="Rule Detector"
           id="net.certiv.antlr.dt.ui.editor.AntlrDTHyperlinkDetector"
+          class="net.certiv.antlr.dt.ui.editor.AntlrHyperlinkDetector"
+          activate="true"
           name="Rule Detector"
+          description="Rule Detector"
           targetId="net.certiv.dsl.ui.codeUnit">
     </hyperlinkDetector>
  </extension>
@@ -197,6 +200,12 @@
             class="net.certiv.antlr.dt.ui.templates.OptionsContextType"
             id="net.certiv.antlr.dt.ui.templates.options"
             name="Options"
+            registryId="net.certiv.antlr.dt.ui.editor.AntlrEditor">
+      </contextType>
+      <contextType
+            class="net.certiv.antlr.dt.ui.templates.RuleContextType"
+            id="net.certiv.antlr.dt.ui.templates.rule"
+            name="Rule"
             registryId="net.certiv.antlr.dt.ui.editor.AntlrEditor">
       </contextType>
 
@@ -247,45 +256,52 @@
       <page
             category="net.certiv.certivtools.prefs.TopLevelPage"
             class="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            id="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             name="AntlrDT ">
       </page>
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
-            class="net.certiv.antlr.dt.ui.preferences.page.EditorPage"
-            id="net.certiv.antlr.dt.preferences.page.PrefPageEditor"
-            name="Editor">
-      </page>
-      <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.ui.preferences.page.FoldingPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageFolding"
+            id="net.certiv.antlr.dt.ui.preferences.page.FoldingPage"
             name="Folding">
       </page>
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
+            class="net.certiv.antlr.dt.ui.preferences.page.ConsolePage"
+            id="net.certiv.antlr.dt.ui.preferences.page.ConsolePage"
+            name="Console">
+      </page>
+      <page
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
+            class="net.certiv.antlr.dt.ui.preferences.page.EditorPage"
+            id="net.certiv.antlr.dt.ui.preferences.page.EditorPage"
+            name="Editor">
+      </page>
+      <page
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.ui.preferences.page.SyntaxColorPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageSyntaxColoring"
+            id="net.certiv.antlr.dt.ui.preferences.page.SyntaxColorPage"
             name="Syntax Coloring">
       </page>
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.ui.preferences.page.TemplatesPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageCodeTemplates"
+            id="net.certiv.antlr.dt.ui.preferences.page.TemplatesPage"
             name="Templates">
       </page>
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.ui.preferences.page.FormatterPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageFormatter"
+            id="net.certiv.antlr.dt.ui.preferences.page.FormatterPage"
             name="Formatter">
       </page>
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.ui.preferences.page.BuilderPage"
-            id="net.certiv.antlr.dt.ui.preferences.page.PrefPageBuilder"
+            id="net.certiv.antlr.dt.ui.preferences.page.BuilderPage"
             name="Builder">
       </page>
+
    </extension>
  <extension
        point="org.eclipse.ui.propertyPages">
@@ -623,6 +639,14 @@
          </command>
       </menuContribution>
    </extension>
+ <extension
+       point="org.eclipse.ui.console.consoleFactories">
+    <consoleFactory
+          class="net.certiv.antlr.dt.ui.console.AntlrConsoleFactory"
+          icon="icons/obj16/console_view.png"
+          label="AntlrDT Console">
+    </consoleFactory>
+ </extension>
 
    <!-- completions
    <extension

@@ -28,7 +28,7 @@ import org.eclipse.ui.part.ViewPart;
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
-import net.certiv.dsl.core.preferences.DslPrefsManager;
+import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.core.util.eclipse.PartAdaptor;
 
 public class Preview extends ViewPart implements PartAdaptor, ITextListener, IPropertyChangeListener {
@@ -88,7 +88,7 @@ public class Preview extends ViewPart implements PartAdaptor, ITextListener, IPr
 	public void propertyChange(PropertyChangeEvent event) {
 		if (viewjob != null) {
 			if (WatchProperties.isEmpty()) {
-				DslPrefsManager mgr = AntlrCore.getDefault().getPrefsManager();
+				PrefsManager mgr = AntlrCore.getDefault().getPrefsManager();
 				WatchProperties.add(mgr.bind(PrefsKey.EDITOR_PREVIEW_EXTERNAL_DIR));
 				WatchProperties.add(mgr.bind(PrefsKey.EDITOR_PREVIEW_INTERNAL_DIR));
 				WatchProperties.add(mgr.bind(PrefsKey.EDITOR_PREVIEW_FILE));

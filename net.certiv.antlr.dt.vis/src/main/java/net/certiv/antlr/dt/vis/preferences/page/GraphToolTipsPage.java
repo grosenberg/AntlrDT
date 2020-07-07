@@ -18,7 +18,7 @@ import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.DslColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
@@ -86,22 +86,22 @@ public class GraphToolTipsPage extends AbstractFieldEditorPreferencePage {
 
 		addField(new RadioGroupFieldEditor(bind(PrefsKey.PT_ENH_POSITION), "Positioning:", 1, ALIGNS, tipComp));
 
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_ENH_X), "Fixed Gap X distance (pixels):", tipComp, 0, 0,
-				100, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_ENH_Y), "Fixed Gap Y distance (pixels):", tipComp, 0, 0,
-				100, 1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_ENH_X), "Fixed Gap X distance (pixels):", tipComp, 0, 100,
+				1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_ENH_Y), "Fixed Gap Y distance (pixels):", tipComp, 0, 100,
+				1));
 		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_KILL_DELAY), "Fixed Gap transit grace period (ms):", tipComp,
-				0, 20, 2000, 10));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_FLOAT), "Floating gap distance (pixels):", tipComp, 0, 0,
-				100, 1));
-		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_TIP_DURATION), "Floating display duration (ms):", tipComp, 0,
-				20, 10000, 10));
+				20, 2000, 10));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_GAP_FLOAT), "Floating gap distance (pixels):", tipComp, 0, 100,
+				1));
+		addField(new SpinnerFieldEditor(bind(PrefsKey.PT_TIP_DURATION), "Floating display duration (ms):", tipComp, 20,
+				10000, 10));
 
 	}
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
-			PrefsDeltaManager delta, FormToolkit formkit, DslColorManager colorMgr) {
+			PrefsDeltaManager delta, FormToolkit formkit, DslColorRegistry reg) {
 		return null;
 	}
 

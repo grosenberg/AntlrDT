@@ -3,11 +3,11 @@ Automatic-Module-Name: net.certiv.antlr.dt.core
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT Core
 Bundle-SymbolicName: net.certiv.antlr.dt.core;singleton:=true
-Bundle-Version: 4.10.0.qualifier
+Bundle-Version: 4.11.0.qualifier
 Bundle-Activator: net.certiv.antlr.dt.core.AntlrCore
-Require-Bundle: net.certiv.dsl.core;bundle-version="0.10.0",
- net.certiv.dsl.lib;bundle-version="0.10.0",
- net.certiv.dsl.ui;bundle-version="0.10.0",
+Require-Bundle: net.certiv.dsl.core;bundle-version="0.11.0",
+ net.certiv.dsl.lib;bundle-version="0.11.0",
+ net.certiv.dsl.ui;bundle-version="0.11.0",
  org.eclipse.ui;bundle-version="3.111.0",
  org.eclipse.ui.console;bundle-version="3.8.300",
  org.eclipse.ui.editors;bundle-version="3.11.300",
@@ -25,6 +25,7 @@ Bundle-Vendor: Certiv Analytics
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: net.certiv.antlr.dt.core,
  net.certiv.antlr.dt.core.builder,
+ net.certiv.antlr.dt.core.console,
  net.certiv.antlr.dt.core.formatter,
  net.certiv.antlr.dt.core.lang,
  net.certiv.antlr.dt.core.model,

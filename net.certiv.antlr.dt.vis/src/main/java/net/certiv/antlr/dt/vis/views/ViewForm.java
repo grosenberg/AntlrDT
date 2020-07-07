@@ -21,7 +21,6 @@ public class ViewForm {
 		this.toolkit = toolkit;
 		form = this.toolkit.createScrolledForm(parent);
 		managedForm = new ManagedForm(toolkit, form);
-		// this.toolkit.decorateFormHeading(form.getForm());
 
 		FillLayout layout = new FillLayout();
 		layout.marginHeight = 2;

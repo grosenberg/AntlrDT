@@ -1,6 +1,6 @@
 package net.certiv.antlr.dt.vis.views.tokens;
 
-import static net.certiv.antlr.dt.vis.parse.GrammarRecord.*;
+import static net.certiv.antlr.dt.vis.parse.TargetAssembly.*;
 
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -14,7 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.certiv.antlr.dt.vis.fields.DirField;
 import net.certiv.antlr.dt.vis.fields.FileField;
-import net.certiv.antlr.dt.vis.parse.GrammarRecord;
+import net.certiv.antlr.dt.vis.parse.TargetAssembly;
+import net.certiv.antlr.runtime.xvisitor.util.Strings;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
 import net.certiv.dsl.ui.fields.SelectionField;
@@ -22,7 +23,7 @@ import net.certiv.dsl.ui.fields.TextField;
 
 public class GrammarDialog extends StatusDialog {
 
-	private GrammarRecord rec;
+	private TargetAssembly assembly;
 
 	private TextField project;
 	private TextField grammar;
@@ -35,14 +36,14 @@ public class GrammarDialog extends StatusDialog {
 
 	private ContentChangedListener listener;
 
-	public GrammarDialog(Shell parent, GrammarRecord rec) {
+	public GrammarDialog(Shell parent, TargetAssembly assembly) {
 		super(parent);
-		this.rec = rec;
-		this.listener = new ContentChangedListener();
+		this.assembly = assembly;
+		listener = new ContentChangedListener();
 	}
 
-	public GrammarRecord getRecord() {
-		return rec;
+	public TargetAssembly getAssembly() {
+		return assembly;
 	}
 
 	@Override
@@ -59,38 +60,38 @@ public class GrammarDialog extends StatusDialog {
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(grammarComp);
 
 		project = new TextField(grammarComp, SWT.READ_ONLY | SWT.NO_FOCUS, PROJECT, "Project", 3);
-		project.setText(rec.getProject().getName());
+		project.setText(assembly.getProject().getName());
 
 		grammar = new TextField(grammarComp, SWT.READ_ONLY | SWT.NO_FOCUS, GRAMMAR, "Gen", 3);
-		grammar.setText(rec.getGrammar().getName());
+		grammar.setText(assembly.getGrammar().getName());
 
 		snippetDir = new DirField(getShell(), grammarComp, SWT.NONE, SNIPPET_DIR, "Snippets Dir", 3);
-		snippetDir.setSource(rec.getSnippetsDir());
+		snippetDir.setSource(assembly.getSnippetsDir());
 		snippetDir.addContentChangedListener(listener);
 
 		snippetExt = new TextField(grammarComp, SWT.NONE, SNIPPET_EXT, "Snippets Ext", 3);
-		snippetExt.setText(rec.getSnippetsExt());
+		snippetExt.setText(assembly.getSnippetsExt());
 		snippetExt.addContentChangedListener(listener);
 
-		String defaultDir = rec.getProject().getLocation().toString();
+		String defaultDir = assembly.getProject().getLocation().toString();
 
 		tokenFactory = new FileField(getShell(), grammarComp, SWT.NONE, TOKEN_FACTORY, "Token factory *", 3,
-				rec.getTokenFactory(), defaultDir);
-		tokenFactory.setSource(rec.getTokenFactory());
+				assembly.getTokenFactory(), defaultDir);
+		tokenFactory.setSource(assembly.getTokenFactory());
 		tokenFactory.addContentChangedListener(listener);
 
-		customToken = new FileField(getShell(), grammarComp, SWT.NONE, TOKEN, "Custom token *", 3, rec.getCustomToken(),
-				defaultDir);
-		customToken.setSource(rec.getCustomToken());
+		customToken = new FileField(getShell(), grammarComp, SWT.NONE, TOKEN, "Custom token *", 3,
+				assembly.getCustomToken(), defaultDir);
+		customToken.setSource(assembly.getCustomToken());
 		customToken.addContentChangedListener(listener);
 
 		errorStrategy = new FileField(getShell(), grammarComp, SWT.NONE, PARSER_STRATEGY, "Parser error strategy *", 3,
-				rec.getErrorStrategy(), defaultDir);
-		errorStrategy.setSource(rec.getErrorStrategy());
+				assembly.getErrorStrategy(), defaultDir);
+		errorStrategy.setSource(assembly.getErrorStrategy());
 		errorStrategy.addContentChangedListener(listener);
 
 		traceParser = new SelectionField(grammarComp, SWT.CHECK, PARSER_TRACE, "Trace parser execution", 3);
-		traceParser.setSelected(rec.getTraceParser());
+		traceParser.setSelected(assembly.getTraceParser());
 		traceParser.addContentChangedListener(listener);
 
 		Label note = new Label(grammarComp, SWT.NONE);
@@ -106,28 +107,28 @@ public class GrammarDialog extends StatusDialog {
 		public void contentChanged(ContentChangedEvent event) {
 			switch (event.getId()) {
 				case SNIPPET_DIR:
-					rec.setSnippetsDir(snippetDir.getSource());
+					assembly.setSnippetsDir(snippetDir.getSource());
 					break;
 				case SNIPPET_EXT:
 					String ext = snippetExt.getText();
 					if (ext.trim().isEmpty()) {
-						ext = "*";
-					} else if (ext.startsWith(".")) {
+						ext = Strings.STAR;
+					} else if (ext.startsWith(Strings.DOT)) {
 						ext = ext.substring(1);
 					}
-					rec.setSnippetsExt(ext);
+					assembly.setSnippetsExt(ext);
 					break;
 				case TOKEN_FACTORY:
-					rec.setTokenFactory(tokenFactory.getSource());
+					assembly.setTokenFactory(tokenFactory.getSource());
 					break;
 				case TOKEN:
-					rec.setCustomToken(customToken.getSource());
+					assembly.setCustomToken(customToken.getSource());
 					break;
 				case PARSER_STRATEGY:
-					rec.setErrorStrategy(errorStrategy.getSource());
+					assembly.setErrorStrategy(errorStrategy.getSource());
 					break;
 				case PARSER_TRACE:
-					rec.setTraceParser(traceParser.isSelected());
+					assembly.setTraceParser(traceParser.isSelected());
 				default:
 			}
 		}

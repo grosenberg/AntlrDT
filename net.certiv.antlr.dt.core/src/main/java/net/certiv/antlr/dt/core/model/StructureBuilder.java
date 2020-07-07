@@ -38,13 +38,12 @@ import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.antlr.GrammarUtil;
 
 /** Implementing functions for model tree walker. */
 public abstract class StructureBuilder extends Processor {
 
 	private ModelBuilder builder;
-	@SuppressWarnings("unused") private String name = ModelBuilder.UNKNOWN;
 
 	public StructureBuilder(ParseTree tree) {
 		super(tree);
@@ -52,10 +51,6 @@ public abstract class StructureBuilder extends Processor {
 
 	public void setBuilder(ModelBuilder builder) {
 		this.builder = builder;
-	}
-
-	public void setSourceName(String name) {
-		this.name = name;
 	}
 
 	/** Called on a GrammarSpecContext node. */
@@ -97,8 +92,8 @@ public abstract class StructureBuilder extends Processor {
 	public void doDeclaration() {}
 
 	/**
-	 * Called for named or anonymous action statements. The block body content is
-	 * handled as an aggregate of native code.
+	 * Called for named or anonymous action statements. The block body content is handled
+	 * as an aggregate of native code.
 	 * <p>
 	 * Declaration{AtAction} -> Native{Value}
 	 */
@@ -115,7 +110,7 @@ public abstract class StructureBuilder extends Processor {
 		Statement stmt = builder.statement(ModelType.NATIVE, ctx, ctx.id(), data);
 
 		builder.pushParent(stmt);
-		String actionContent = AntlrUtil.getText(ctx.actionBlock().ACTION_CONTENT()).trim();
+		String actionContent = GrammarUtil.getText(ctx.actionBlock().ACTION_CONTENT()).trim();
 		actionContent = Strings.ellipsize(actionContent, 32);
 		addField(ModelType.NATIVE, SpecializedType.Value, rulename, ctx, actionContent);
 		builder.popParent();
@@ -199,7 +194,7 @@ public abstract class StructureBuilder extends Processor {
 		}
 		Statement stmt = builder.statement(ModelType.FUNC, ctx, ctx.RULE_REF(), data);
 		builder.pushParent(stmt);
-		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.RULE_REF());
+		addField(ModelType.LITERAL, SpecializedType.ParserRuleName, ruleName(ctx), ctx.RULE_REF());
 		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
@@ -210,7 +205,7 @@ public abstract class StructureBuilder extends Processor {
 				ctx.TOKEN_REF().getText());
 		Statement stmt = builder.statement(ModelType.FUNC, ctx, ctx.TOKEN_REF(), data);
 		builder.pushParent(stmt);
-		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
+		addField(ModelType.LITERAL, SpecializedType.LexerRuleName, ruleName(ctx), ctx.TOKEN_REF());
 		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 
@@ -222,7 +217,7 @@ public abstract class StructureBuilder extends Processor {
 		data.setDecoration(Specialization.FRAGMENT);
 		Statement stmt = builder.statement(ModelType.FUNC, ctx, ctx.TOKEN_REF(), data);
 		builder.pushParent(stmt);
-		addField(ModelType.LITERAL, SpecializedType.RuleName, ruleName(ctx), ctx.TOKEN_REF());
+		addField(ModelType.LITERAL, SpecializedType.FragmentRuleName, ruleName(ctx), ctx.TOKEN_REF());
 		addBlock(ModelType.BEG_BLOCK, ctx.COLON(), ctx.SEMI());
 	}
 

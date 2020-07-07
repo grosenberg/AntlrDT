@@ -1,14 +1,11 @@
 package net.certiv.antlr.dt.vis.views.tokens;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -29,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -42,18 +38,22 @@ import org.eclipse.ui.part.ViewPart;
 
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.antlr.dt.ui.console.AntlrConsoleFactory;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
-import net.certiv.antlr.dt.vis.parse.ErrorRecord;
-import net.certiv.antlr.dt.vis.parse.GrammarRecord;
-import net.certiv.antlr.dt.vis.parse.ListProcessor;
+import net.certiv.antlr.dt.vis.parse.FieldProcessor;
+import net.certiv.antlr.dt.vis.parse.ProblemRecord;
+import net.certiv.antlr.dt.vis.parse.TargetAssembly;
 import net.certiv.antlr.dt.vis.parse.TargetBuilder;
 import net.certiv.antlr.dt.vis.util.VisUtil;
-import net.certiv.antlr.dt.vis.views.parse.TreeView;
+import net.certiv.antlr.dt.vis.views.tree.TreeView;
+import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.log.Log.LogLevel;
+import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.eclipse.PartAdaptor2;
-import net.certiv.dsl.ui.util.WorkbenchAdaptor;
+import net.certiv.dsl.core.util.eclipse.WorkbenchAdaptor;
 
 public class TokensView extends ViewPart {
 
@@ -76,7 +76,7 @@ public class TokensView extends ViewPart {
 
 	private static boolean DialogFirstOpen = true;
 
-	public static String dialogFilterMod(String dir) {
+	private static String dialogFilterMod(String dir) {
 		if (DialogFirstOpen) {
 			dir = "\\\\?\\" + dir;
 			DialogFirstOpen = false;
@@ -86,18 +86,20 @@ public class TokensView extends ViewPart {
 
 	// ----
 
-	private Composite mainComp;
+	private Composite comp;
 	private GrammarBlock gmrBlock;
 	private SourceBlock srcBlock;
 	private TokensBlock tokBlock;
-	private FieldDecoration decoRegistry;
+	private FieldDecoration registry;
 
 	private IDialogSettings dialogSettings;
 	private ArrayList<Source> history;
 
-	private GrammarRecord record;
+	private TargetAssembly assembly;
 	private Source source;
-	private AntlrEditor lastEditorUsed;
+
+	private AntlrEditor priorEditor;
+	private ICodeUnit priorUnit;
 
 	private boolean linkEditorState;
 	private boolean showHidden;
@@ -109,115 +111,127 @@ public class TokensView extends ViewPart {
 
 	private TargetBuilder builder;
 	protected IJobChangeEvent lastBuildEvent;
-	private boolean validControls;
 
 	private ImageManager imgMgr;
 
 	public TokensView() {
 		super();
 		imgMgr = AntlrUI.getDefault().getImageManager();
-		Log.setLevel(this, LogLevel.Debug);
 	}
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		addListeners(this);
 
-		String secName = AntlrUI.PT_DIALOG_SEC + "_";
-		secName += CoreUtil.getWorkspaceLocation().toString().replaceAll("[:/\\\\]", "_");
+		String secName = AntlrUI.PT_DIALOG_SEC + Strings.LOWDASH;
+		secName += CoreUtil.getWorkspaceLocation().toString().replaceAll("[:/\\\\]", Strings.LOWDASH);
 		IDialogSettings settings = AntlrUI.getDefault().getDialogSettings();
 		dialogSettings = settings.getSection(secName);
 		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(secName);
 		}
 		history = new ArrayList<>();
-
-		decoRegistry = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
-
+		registry = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 		linkEditorState = dialogSettings.getBoolean(LINK_EDITOR_STATE);
 		showHidden = dialogSettings.getBoolean(SHOW_HIDDEN);
+
+		addListeners(this);
 	}
 
 	@Override
 	public void createPartControl(Composite parent) {
 		GridLayoutFactory.fillDefaults().spacing(1, 1).numColumns(1).applyTo(parent);
 
-		mainComp = new Composite(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().spacing(1, 1).numColumns(1).applyTo(mainComp);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(mainComp);
+		comp = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().spacing(1, 1).numColumns(1).applyTo(comp);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(comp);
 
-		// ------------------------------------------------------------------
-
-		gmrBlock = new GrammarBlock(this, mainComp);
-		srcBlock = new SourceBlock(this, mainComp);
-		tokBlock = new TokensBlock(this, mainComp);
-
-		// ------------------------------------------------------------------
+		gmrBlock = new GrammarBlock(this, comp);	// grammar name
+		srcBlock = new SourceBlock(this, comp);		// source name
+		tokBlock = new TokensBlock(this, comp);		// token stream & errors
 
 		makeActions();
 		contributeToActionBars();
-
 		validateControls();
 	}
 
 	// called on:
-	// 1) part creation; 2) source block value change; 3) editor becomes active
+	// 1) part creation
+	// 2) source block value change
+	// 3) editor becomes active
 	protected boolean validateControls() {
-		validControls = checkGrammar();
-		validControls &= checkSource();
-		return validControls;
+		boolean valid = true;
+		valid &= checkGrammar();
+		valid &= checkSource();
+		return valid;
 	}
 
 	private boolean checkGrammar() {
-		boolean valid = false;
-		IEditorPart part = CoreUtil.getActiveEditor();
-		if (part instanceof AntlrEditor) {
-			AntlrEditor editor = (AntlrEditor) part;
-			IFile grammarFile = CoreUtil.getInputFile(editor);
-			if (grammarFile != null && grammarFile.exists() && !editor.isDirty()) {
-				gmrBlock.getDecorator().hide();
-				if (gmrBlock.setText(grammarFile.getName())) {
-					srcBlock.clear();  // grammarFile name changed
-					tokBlock.clear();
-				}
-				valid = true;
-				IProject project = grammarFile.getProject();
-				if (record == null) {
-					record = new GrammarRecord(project, grammarFile);
-					record.load();
-					Log.debug(this, "Loaded record");
-				}
-			}
-		} else if (lastEditorUsed != null) {
-			valid = true;
+		boolean valid = true;
+		AntlrEditor editor = null;
+		ICodeUnit unit = null;
+
+		gmrBlock.hideDecoration();
+
+		// if current editor is not AntlrEditor; use prior if valid
+		IEditorPart ed = CoreUtil.getActiveEditor();
+		if (ed instanceof AntlrEditor) {
+			editor = (AntlrEditor) ed;
+			unit = editor.getInputDslElement();
+			priorEditor = editor;
+			priorUnit = unit;
+
+		} else if (priorEditor != null) {
+			editor = priorEditor;
+			unit = priorUnit;
+
+		} else {
+			gmrBlock.showDecoration("Open grammar in AntlrDT editor");
+			valid = false;
 		}
 
-		if (!valid) {
-			gmrBlock.setText("");
-			String msg = "Open a grammar to select";
-			srcBlock.getDecorator().setDescriptionText(msg);
-			srcBlock.getDecorator().show();
+		if (valid) {
+			if (!unit.exists()) {
+				gmrBlock.showDecoration("Grammar file not found!");
+				valid = false;
+
+			} else if (editor.isDirty()) {
+				gmrBlock.showDecoration("Grammar editor is dirty!");
+				valid = false;
+			}
 		}
+
+		if (valid) {
+			boolean changed = gmrBlock.setText(unit.getElementName());
+			if (changed) srcBlock.clear(); // grammar name changed
+
+			try {
+				assembly = new TargetAssembly(unit); // always recreate
+				assembly.prepare();
+				assembly.load();
+
+			} catch (ModelException e) {
+				gmrBlock.showDecoration(e.getMessage());
+				valid = false;
+			}
+		}
+
 		return valid;
 	}
 
 	private boolean checkSource() {
-		if (source == null || !source.fileExists()) {
-			String msg = "Select a snippet file";
-			srcBlock.getDecorator().setDescriptionText(msg);
-			srcBlock.getDecorator().show();
-			return false;
-		} else {
-			File snippet = source.getFile();
-			if (!snippet.canRead()) {
-				String msg = "Snippet file is not readable";
-				srcBlock.getDecorator().setDescriptionText(msg);
-				srcBlock.getDecorator().show();
-				return false;
-			}
-		}
 		srcBlock.getDecorator().hide();
+
+		if (source == null || !source.exists()) {
+			srcBlock.showDecoration("Must select an input data file");
+			return false;
+		}
+
+		if (!source.getFile().canRead()) {
+			srcBlock.showDecoration("Input data file is not readable");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -228,7 +242,7 @@ public class TokensView extends ViewPart {
 
 	public ControlDecoration createDecoration(Control control) {
 		ControlDecoration controlDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP);
-		controlDecoration.setImage(decoRegistry.getImage());
+		controlDecoration.setImage(registry.getImage());
 		controlDecoration.setShowOnlyOnFocus(false);
 		controlDecoration.setMarginWidth(DECORATION_SPACING);
 		return controlDecoration;
@@ -239,8 +253,9 @@ public class TokensView extends ViewPart {
 		try {
 			current = history.get(0); // prior UI selection, if any
 		} catch (Exception e1) {
-			current = new Source(record.getSnippetsDir().getPathname(), "");
+			current = new Source(assembly.getSnippetsDir().getPathname(), Strings.EMPTY);
 		}
+
 		current = handleFileSelectionDialog(current);
 		if (current != null) {
 			source = current;
@@ -262,8 +277,9 @@ public class TokensView extends ViewPart {
 		history.add(0, source);
 
 		updateSettings();
-		validateControls();
-		if (validControls) performBuild();
+		if (validateControls()) {
+			performBuild();
+		}
 	}
 
 	private void updateComboDropDown() {
@@ -315,7 +331,7 @@ public class TokensView extends ViewPart {
 		FileDialog dialog = new FileDialog(getSite().getShell(), SWT.SINGLE);
 		dialog.setFilterPath(dialogFilterMod(dir.toString()));
 		dialog.setFileName(prior.name);
-		dialog.setFilterExtensions(new String[] { "*." + record.getSnippetsExt() });
+		dialog.setFilterExtensions(new String[] { "*." + assembly.getSnippetsExt() });
 		if (dialog.open() != null) {
 			if (dialog.getFileName().length() > 0) {
 				Source source = new Source(dialog.getFilterPath(), dialog.getFileName());
@@ -326,12 +342,13 @@ public class TokensView extends ViewPart {
 	}
 
 	public void execGrammarDialogHandler() {
-		GrammarDialog dialog = new GrammarDialog(getSite().getShell(), record);
-		dialog.setTitle("Modify grammar integration data");
-		if (dialog.open() == Window.OK) {
-			record = dialog.getRecord();
-			record.validate();
-			record.save();
+		if (assembly != null) {
+			GrammarDialog dialog = new GrammarDialog(getSite().getShell(), assembly);
+			dialog.setTitle("Modify grammar integration data");
+			if (dialog.open() == Window.OK) {
+				assembly = dialog.getAssembly();
+				assembly.save();
+			}
 		}
 	}
 
@@ -446,45 +463,52 @@ public class TokensView extends ViewPart {
 		IEditorPart part = CoreUtil.getActiveEditor();
 		if (part instanceof AntlrEditor) {
 			performBuild((AntlrEditor) part);
-		} else if (lastEditorUsed != null) {
-			performBuild(lastEditorUsed);
+
+		} else if (priorEditor != null) {
+			performBuild(priorEditor);
 		}
 	}
 
 	private void performBuild(AntlrEditor editor) {
 		if (source == null) return;
-		if (!editor.isEditable() || !editor.getEditorInput().exists() || editor.isDirty()) return;
-		lastEditorUsed = editor;
 
 		// clear any prior data
-		setContentDescription(" ");
-		tokBlock.getTokensViewer().setInput(null);
+		setContentDescription(Strings.SPACE);
+		tokBlock.clear();
 
 		// compile the grammar and build a ParseTree using the given data file
-		builder = new TargetBuilder(editor, record, source);
+		builder = new TargetBuilder(editor, assembly, source);
 		builder.addJobChangeListener(new JobChangeAdapter() {
 
 			@Override
 			public void done(IJobChangeEvent event) {
 				lastBuildEvent = event;
 
-				Display.getDefault().asyncExec(new Runnable() {
+				String[] tokenNames = builder.getTokenNames();
+				String[] modeNames = builder.getModeNames();
+				List<Token> tokens = builder.getTokens();
+				List<ProblemRecord> problems = builder.getProblems();
+				List<ConsoleRecord> errors = builder.getErrors();
+
+				CoreUtil.getStandardDisplay().syncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						String[] tokenNames = builder.getTokenNames();
-						String[] modeNames = builder.getModeNames();
-						List<Token> tokens = builder.getTokens();
-						List<ErrorRecord> errors = builder.getErrorList();
-
 						if (tokens != null) {
-							List<String[]> data = ListProcessor.extract(tokens, tokenNames, modeNames, showHidden);
-							tokBlock.getTokensViewer().setInput(data);
+							List<String[]> data = FieldProcessor.extract(tokens, tokenNames, modeNames, showHidden);
+							tokBlock.setTokensInput(data);
+						}
+
+						if (problems != null) {
+							List<String[]> data = FieldProcessor.extract(problems, tokenNames);
+							tokBlock.setProblemsInput(data);
 						}
 
 						if (errors != null) {
-							List<String[]> data = ListProcessor.extract(errors, tokenNames);
-							tokBlock.getErrorsViewer().setInput(data);
+							AntlrConsoleFactory.getFactory().getConsole().append(errors, true);
+							for (ConsoleRecord error : errors) {
+								Log.error(TokensView.class, error.toString());
+							}
 						}
 
 						if (builder.isValid()) {
@@ -494,13 +518,13 @@ public class TokensView extends ViewPart {
 
 							} catch (Exception e) {
 								Log.error(this, "Failed opening TreeView: " + e.getMessage());
-								return;
 							}
 						}
 					}
 				});
 			}
 		});
+
 		builder.schedule();
 	}
 

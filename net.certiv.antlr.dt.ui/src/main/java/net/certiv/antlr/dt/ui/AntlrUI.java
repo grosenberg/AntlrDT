@@ -3,13 +3,15 @@ package net.certiv.antlr.dt.ui;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlr.dt.core.AntlrCore;
+import net.certiv.antlr.dt.ui.console.AntlrConsoleFactory;
 import net.certiv.antlr.dt.ui.editor.AntlrCompletionManager;
+import net.certiv.antlr.dt.ui.editor.AntlrTextTools;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
-import net.certiv.antlr.dt.ui.editor.AntlrDTTextTools;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.console.StyledConsole;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.templates.CompletionManager;
 
@@ -44,21 +46,31 @@ public class AntlrUI extends DslUI {
 	}
 
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(BundleContext ctx) throws Exception {
 		assert (AntlrCore.getDefault().getNatureId() != null);
 		plugin = this;
-		super.start(context);
+		super.start(ctx);
 	}
 
 	@Override
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
+	public void stop(BundleContext ctx) throws Exception {
+		super.stop(ctx);
 		plugin = null;
 	}
 
 	@Override
 	public String getPluginId() {
 		return plugin.getBundle().getSymbolicName();
+	}
+
+	@Override
+	public String getEditorId() {
+		return AntlrEditor.EDITOR_ID;
+	}
+
+	@Override
+	protected StyledConsole getConsole() {
+		return AntlrConsoleFactory.getFactory().getConsole();
 	}
 
 	@Override
@@ -72,7 +84,7 @@ public class AntlrUI extends DslUI {
 	@Override
 	public DslTextTools getTextTools() {
 		if (textTools == null) {
-			textTools = new AntlrDTTextTools(true);
+			textTools = new AntlrTextTools(true);
 		}
 		return textTools;
 	}
@@ -83,10 +95,5 @@ public class AntlrUI extends DslUI {
 			compMgr = new AntlrCompletionManager(this, getEditorId());
 		}
 		return compMgr;
-	}
-
-	@Override
-	public String getEditorId() {
-		return AntlrEditor.EDITOR_ID;
 	}
 }

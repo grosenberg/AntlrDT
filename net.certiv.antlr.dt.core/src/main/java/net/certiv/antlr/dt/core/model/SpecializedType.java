@@ -4,6 +4,7 @@ import net.certiv.dsl.core.model.builder.ISpecializedType;
 import net.certiv.dsl.core.util.Strings;
 
 public enum SpecializedType implements ISpecializedType {
+
 	GrammarRoot("Grammar", "grammar"),
 	Definition("Definition", Strings.EMPTY),
 
@@ -23,7 +24,10 @@ public enum SpecializedType implements ISpecializedType {
 
 	ParserRule("Parser rule", "rule"),
 	LexerRule("Lexer rule", "rule"),
-	RuleName("Rule name", "rulename"),
+
+	ParserRuleName("Parser rulename", "parser_rulename"),
+	LexerRuleName("Lexer rulename", "lexer_rulename"),
+	FragmentRuleName("Fragment rulename", "fragment_rulename"),
 
 	Mode("Mode statement", "mode"),
 	ModeName("Mode name", "modename"),

@@ -31,6 +31,13 @@ public class PrefsInitializer extends DslPrefsInit {
 		setRGB(PrefsKey.EDITOR_ACTION_COLOR, new RGB(70, 150, 170));
 		setRGB(PrefsKey.EDITOR_ACTION_NAME_COLOR, new RGB(220, 0, 0));
 
+		setRGB(Editor.EDITOR_KEYWORDS_COLOR, new RGB(127, 0, 85));
+		setRGB(Editor.EDITOR_SYMBOLS_COLOR, new RGB(127, 0, 85));
+
+		setBool(Editor.EDITOR_SEMANTIC_ENABLED, true);
+		setRGB(PrefsKey.EDITOR_RULE_NAME_COLOR, new RGB(0, 0, 192));
+		setRGB(PrefsKey.EDITOR_MODE_NAME_COLOR, new RGB(0, 77, 255));
+
 		setBool(PrefsKey.EDITOR_FOLDING_COMMENT_ML, true);
 		setBool(PrefsKey.EDITOR_FOLDING_COMMENT_JD, false);
 		setBool(PrefsKey.EDITOR_FOLDING_ACTION, false);
@@ -48,22 +55,21 @@ public class PrefsInitializer extends DslPrefsInit {
 		setInt(PrefsKey.VIEW_UPDATE_DELAY, 1000);
 
 		// stylesheets
-
-		String BUNDLE_ID = "net.certiv.antlr.dt.ui";
-		String previewDir = resourceDir(BUNDLE_ID, PrefsKey.PREVIEW);
-		setString(PrefsKey.EDITOR_PREVIEW_INTERNAL_DIR, previewDir);
-		setString(PrefsKey.EDITOR_PREVIEW_FILE, previewDir + PrefsKey.MARKDOWN_CSS);
-
-		setBool(PrefsKey.EDITOR_PREVIEW_EXTERNAL_ENABLE, false);
-		setString(PrefsKey.EDITOR_PREVIEW_EXTERNAL_DIR, Strings.EMPTY);
-
-		String semanticDir = resourceDir(BUNDLE_ID, Editor.SEMANTIC);
-		setString(Editor.EDITOR_SEMANTIC_INTERNAL_DIR, semanticDir);
-		setString(Editor.EDITOR_SEMANTIC_FILE, semanticDir + Editor.DEFAULT_CSS);
+		// String BUNDLE_ID = "net.certiv.antlr.dt.ui";
+		// String previewDir = resourceDir(BUNDLE_ID, PrefsKey.PREVIEW);
+		// setString(PrefsKey.EDITOR_PREVIEW_INTERNAL_DIR, previewDir);
+		// setString(PrefsKey.EDITOR_PREVIEW_FILE, previewDir + PrefsKey.MARKDOWN_CSS);
+		//
+		// setBool(PrefsKey.EDITOR_PREVIEW_EXTERNAL_ENABLE, false);
+		// setString(PrefsKey.EDITOR_PREVIEW_EXTERNAL_DIR, Strings.EMPTY);
+		//
+		// String semanticDir = resourceDir(BUNDLE_ID, Editor.SEMANTIC);
+		// setString(Editor.EDITOR_SEMANTIC_INTERNAL_DIR, semanticDir);
+		// setString(Editor.EDITOR_SEMANTIC_FILE, semanticDir + Editor.DEFAULT_CSS);
 
 		setString(Builder.BUILDER_USE, Builder.BUILDER_USE_GRAMMAR);
 		setString(Builder.BUILDER_REL_PATH, "./gen/");
-		setString(Builder.BUILDER_ABS_PATH, "");
+		setString(Builder.BUILDER_ABS_PATH, Strings.EMPTY);
 
 		// Initialize formatter preferences
 
@@ -142,7 +148,7 @@ public class PrefsInitializer extends DslPrefsInit {
 		// ------------------------------------------------------------------------------
 		// Other
 
-		setString(PrefsKey.SNIPPETTEST_BASEDIR_SOURCE, "");
+		setString(PrefsKey.SNIPPETTEST_BASEDIR_SOURCE, Strings.EMPTY);
 
 		setLong(PrefsKey.PARSE_TIMEOUT, 10000);
 

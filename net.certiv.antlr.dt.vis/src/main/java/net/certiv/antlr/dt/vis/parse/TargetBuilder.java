@@ -19,6 +19,7 @@ import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
 import net.certiv.antlr.dt.vis.model.TreeModel;
 import net.certiv.antlr.dt.vis.views.tokens.Source;
+import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Strings;
@@ -26,24 +27,23 @@ import net.certiv.dsl.ui.DslUI;
 
 public class TargetBuilder {
 
-	private final BuildJob buildJob = new BuildJob("Parse Tree Builder");
+	private final TargetJob job = new TargetJob("Parse Tree Builder");
 
 	private AntlrEditor editor;
-	private GrammarRecord record;
+	private TargetAssembly assembly;
 	private Source source;
 
 	private long timeout;	// ms for parser execution and tree walk
 	private TargetUnit target;
 
-	public TargetBuilder(AntlrEditor editor, GrammarRecord record, Source source) {
+	public TargetBuilder(AntlrEditor editor, TargetAssembly assembly, Source source) {
 		this.editor = editor;
-		this.record = record;
+		this.assembly = assembly;
 		this.source = source;
 
 		timeout = editor.getPrefsMgr().getLong(PrefsKey.PARSE_TIMEOUT);
-
-		buildJob.setPriority(Job.BUILD);
-		buildJob.setSystem(true);
+		job.setPriority(Job.SHORT);
+		job.setSystem(true);
 	}
 
 	public AntlrEditor getEditor() {
@@ -51,7 +51,7 @@ public class TargetBuilder {
 	}
 
 	public boolean isValid() {
-		return getTree() != null;
+		return target != null ? target.isValid() : false;
 	}
 
 	public TreeModel getModel() {
@@ -66,7 +66,11 @@ public class TargetBuilder {
 		return target != null ? target.getTokens() : null;
 	}
 
-	public List<ErrorRecord> getErrorList() {
+	public List<ProblemRecord> getProblems() {
+		return target != null ? target.getProblems() : null;
+	}
+
+	public List<ConsoleRecord> getErrors() {
 		return target != null ? target.getErrors() : null;
 	}
 
@@ -90,17 +94,17 @@ public class TargetBuilder {
 		return target != null ? target.getModeNames() : null;
 	}
 
-	public void addJobChangeListener(JobChangeAdapter jobChangeAdapter) {
-		buildJob.addJobChangeListener(jobChangeAdapter);
+	public void addJobChangeListener(JobChangeAdapter adapter) {
+		job.addJobChangeListener(adapter);
 	}
 
 	public void schedule() {
-		buildJob.schedule();
+		job.schedule();
 	}
 
-	private class BuildJob extends Job {
+	private class TargetJob extends Job {
 
-		public BuildJob(String name) {
+		public TargetJob(String name) {
 			super(name);
 		}
 
@@ -125,12 +129,13 @@ public class TargetBuilder {
 			try {
 				timer = startTimer(monitor, getThread());
 				IFile grammar = CoreUtil.getInputFile(editor);
-				String sourceText = source.getContent();
-				target = new TargetUnit(record, grammar, sourceText);
+				target = new TargetUnit(assembly, grammar, source.getContent());
 				target.exec();
+
 			} finally {
 				if (timer != null) timer.cancel();
 			}
+
 			if (getTree() == null) {
 				IStatus status = new Status(IStatus.CANCEL, DslUI.PLUGIN_ID, "No tree generated");
 				return status;

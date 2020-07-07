@@ -1,15 +1,19 @@
 package net.certiv.antlr.dt.diagram.views;
 
+import static guru.nidi.graphviz.model.Factory.*;
+
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.apache.commons.text.StringEscapeUtils;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.browser.ProgressAdapter;
@@ -20,13 +24,26 @@ import org.eclipse.ui.IPathEditorInput;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
+import net.certiv.antlr.dt.diagram.convert.DotBuilder;
 import net.certiv.antlr.dt.diagram.convert.Kind;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
 import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.parser.DslParseRecord;
+import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.core.util.FileUtils;
 import net.certiv.dsl.core.util.Strings;
+
+import guru.nidi.graphviz.attribute.Color;
+import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.attribute.LinkAttr;
+import guru.nidi.graphviz.attribute.Shape;
+import guru.nidi.graphviz.attribute.Style;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.Graph;
+import guru.nidi.graphviz.model.Node;
 
 public class ViewJob extends Job {
 
@@ -48,7 +65,7 @@ public class ViewJob extends Job {
 
 	private Preview view;
 	private Browser browser;
-	private IPreferenceStore store;
+	private PrefsManager store;
 	private DoneFunction func;
 
 	private State state = State.NONE;
@@ -61,11 +78,44 @@ public class ViewJob extends Job {
 		this.view = view;
 		browser = view.getBrowser();
 		store = AntlrCore.getDefault().getPrefsManager();
+
 		load();
 	}
 
 	public boolean load() {
 		return load(false);
+	}
+
+	public boolean load(DslParseRecord record) {
+		if (record.hasTree()) {
+			DotBuilder gen = new DotBuilder(store);
+			String result = gen.generate(record);
+
+		}
+		return true;
+	}
+
+	Node main = node("main").with(Label.html("<b>main</b><br/>start"), Color.rgb("1020d0").font());
+	Node init = node(Label.markdown("**_init_**")), execute = node("execute");
+	Node compare = node("compare").with(Shape.RECTANGLE, Style.FILLED, Color.hsv(.7, .3, 1.0));
+	Node mkString = node("mkString").with(Label.lines("left", "make", "a", "multi-line"));
+	Node printf = node("printf");
+
+	public boolean load(ParserRuleContext root) throws IOException {
+		Graph g = graph("example2").directed().with( //
+				main.link( //
+						to(node("parse").link(execute)).with(LinkAttr.weight(8)), //
+						to(init).with(Style.DOTTED), //
+						node("cleanup"), //
+						to(printf).with(Style.BOLD, Label.of("100 times"), Color.RED)),
+				execute.link( //
+						graph().with(mkString, printf), //
+						to(compare).with(Color.RED)), //
+				init.link(mkString) //
+		);
+		Graphviz.fromGraph(g).width(900).render(Format.PNG).toFile(new File("example/ex2.png"));
+
+		return true;
 	}
 
 	public boolean load(boolean firebug) {

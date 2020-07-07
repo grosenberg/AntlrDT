@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.certiv.antlr.dt.vis.views.tokens.Source;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.ui.fields.TextField;
 
 public class DirField extends TextField {
@@ -45,12 +46,13 @@ public class DirField extends TextField {
 				if (dialog.open() == null) return; 				// cancelled
 				if (dialog.getFilterPath().trim().isEmpty()) { 	// entry cleared
 					setSource(new Source());					// set to empty source
-					fireContentChangedEvent("");
+					fireContentChangedEvent(Strings.EMPTY);
+
 				} else {										// validate
 					dir = new Path(dialog.getFilterPath());
 					if (dir.toFile().exists()) {				// change only if valid
 						dir = dir.makeRelativeTo(CoreUtil.getWorkspaceLocation());
-						Source source = new Source(dir.toString(), "");
+						Source source = new Source(dir.toString(), Strings.EMPTY);
 						setSource(source);
 						fireContentChangedEvent(dialog.getFilterPath());
 					}

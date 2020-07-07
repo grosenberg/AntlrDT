@@ -33,6 +33,7 @@ public class SourceBlock {
 		GridDataFactory.fillDefaults().indent(6, 0).align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(combo);
 		combo.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				view.dropDownSourceFileSelection(combo.getSelectionIndex());
 			}
@@ -59,5 +60,14 @@ public class SourceBlock {
 
 	public void clear() {
 		combo.clearSelection();
+	}
+
+	public void hideDecoration() {
+		getDecorator().hide();
+	}
+
+	public void showDecoration(String msg) {
+		getDecorator().setDescriptionText(msg);
+		getDecorator().show();
 	}
 }

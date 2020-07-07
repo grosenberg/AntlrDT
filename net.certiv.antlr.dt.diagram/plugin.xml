@@ -10,6 +10,7 @@
 		</definition>
 	</extension>
 
+<!-- 
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -31,6 +32,8 @@
             name="Tool Tips">
       </page>
    </extension>
+   
+-->
 
    <extension
          point="org.eclipse.ui.commands">
@@ -50,6 +53,7 @@
       </command>
    </extension>
 
+<!--
    <extension
          point="org.eclipse.ui.handlers">
       <handler
@@ -61,7 +65,7 @@
             commandId="net.certiv.antlr.dt.diagram.openPathsViewCmd">
       </handler>
    </extension>
-
+-->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -99,6 +103,7 @@
       </menuContribution>
    </extension>
 
+<!--
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -138,6 +143,8 @@
             class="net.certiv.antlr.dt.diagram.preferences.PrefInit">
       </initializer>
    </extension>
+
+-->
 
 <!--
    <extension

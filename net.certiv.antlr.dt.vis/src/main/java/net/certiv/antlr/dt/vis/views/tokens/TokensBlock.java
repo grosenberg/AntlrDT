@@ -1,5 +1,7 @@
 package net.certiv.antlr.dt.vis.views.tokens;
 
+import java.util.List;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.TableViewer;
@@ -13,114 +15,122 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import net.certiv.antlr.dt.vis.views.tokens.providers.ErrorsViewerLabelProvider;
-import net.certiv.antlr.dt.vis.views.tokens.providers.ListViewerContentProvider;
-import net.certiv.antlr.dt.vis.views.tokens.providers.TokensViewerLabelProvider;
-
 public class TokensBlock {
 
 	private static final int flags = SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL;
-	private static final String[] tokTitles = { "Idx", "Token", "Line", "Col", "Mode", "Text" };
-	private static final int[] tokWidths = { 40, 100, 40, 40, 50, 300 };
-	private static final String[] errTitles = { "Idx", "Line", "Col", "Message" };
-	private static final int[] errWidths = { 40, 40, 40, 450 };
 
+	private static final String[] TokTitles = { "Idx", "Token", "Line", "Col", "Mode", "Text" };
+	private static final int[] TokWidths = { 40, 100, 40, 40, 50, 300 };
+
+	private static final String[] ProblemTitles = { "Idx", "Line", "Col", "Message" };
+	private static final int[] ProblemWidths = { 40, 40, 40, 450 };
+
+	private SashForm sash;
 	private TableViewer tokViewer;
-	private TableViewer errViewer;
+	private TableViewer prbViewer;
 
-	public TokensBlock(TokensView view, Composite tokComp) {
-		createTokensBlock(view, tokComp);
-	}
-
-	private void createTokensBlock(TokensView view, Composite parent) {
-
-		SashForm sash = new SashForm(parent, SWT.VERTICAL | SWT.SMOOTH);
+	public TokensBlock(TokensView view, Composite comp) {
+		sash = new SashForm(comp, SWT.VERTICAL | SWT.SMOOTH);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sash);
 
-		{ // tokens
-			Group tokGroup = new Group(sash, SWT.NONE);
-			GridDataFactory.fillDefaults().indent(0, 6).grab(true, true).span(1, 1).applyTo(tokGroup);
-			GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(tokGroup);
-			tokGroup.setText("Token Stream");
+		tokViewer = tokens(view, comp, sash);
+		prbViewer = problems(view, comp, sash);
 
-			tokViewer = new TableViewer(tokGroup, flags);
-			tokViewer.setContentProvider(new ListViewerContentProvider());
-			tokViewer.setLabelProvider(new TokensViewerLabelProvider(parent.getDisplay()));
-			tokViewer.getTable().setHeaderVisible(true);
-			tokViewer.getTable().setLinesVisible(true);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(tokViewer.getControl());
+		sash.setWeights(new int[] { 4, 2 });
+	}
 
-			tokViewer.getTable().addMouseListener(new MouseAdapter() {
+	private TableViewer tokens(TokensView view, Composite parent, Composite sash) {
+		Group tokGroup = new Group(sash, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, true).span(1, 1).applyTo(tokGroup);
+		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(tokGroup);
+		tokGroup.setText("Token Stream");
 
-				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					Point pt = new Point(e.x, e.y);
-					TableItem item = tokViewer.getTable().getItem(pt);
-					String sIdx = item.getText(0);
-					try {
-						int idx = Integer.parseInt(sIdx);
-						view.openSourceFileAtToken(idx);
-					} catch (NumberFormatException e1) {}
-				}
-			});
+		TableViewer viewer = new TableViewer(tokGroup, flags);
+		viewer.setContentProvider(new TokensViewContentProvider());
+		viewer.setLabelProvider(new TokensLabelProvider(parent.getDisplay()));
+		viewer.getTable().setHeaderVisible(true);
+		viewer.getTable().setLinesVisible(true);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getControl());
 
-			for (int i = 0; i < tokTitles.length; i++) {
-				TableColumn col = new TableColumn(tokViewer.getTable(), SWT.NONE);
-				col.setText(tokTitles[i]);
-				col.setMoveable(false);
-				col.setWidth(tokWidths[i]);
+		viewer.getTable().addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				Point pt = new Point(e.x, e.y);
+				TableItem item = viewer.getTable().getItem(pt);
+				try {
+					int num = Math.max(0, Integer.parseInt(item.getText(0)));
+					view.openSourceFileAtToken(num);
+				} catch (NumberFormatException nfe) {}
 			}
-		} // tokens
+		});
 
-		{ // errors
-			Group errGroup = new Group(sash, SWT.NONE);
-			GridDataFactory.fillDefaults().indent(0, 6).grab(true, true).span(1, 1).applyTo(errGroup);
-			GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(errGroup);
-			errGroup.setText("Lex/Parse Errors");
+		for (int idx = 0; idx < TokTitles.length; idx++) {
+			TableColumn col = new TableColumn(viewer.getTable(), SWT.NONE);
+			col.setText(TokTitles[idx]);
+			col.setMoveable(false);
+			col.setWidth(TokWidths[idx]);
+		}
+		return viewer;
+	}
 
-			errViewer = new TableViewer(errGroup, flags);
-			errViewer.setContentProvider(new ListViewerContentProvider());
-			errViewer.setLabelProvider(new ErrorsViewerLabelProvider(parent.getDisplay()));
-			errViewer.getTable().setHeaderVisible(true);
-			errViewer.getTable().setLinesVisible(true);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(errViewer.getControl());
+	private TableViewer problems(TokensView view, Composite parent, Composite sash) {
+		Group errGroup = new Group(sash, SWT.NONE);
+		GridDataFactory.fillDefaults().indent(0, 6).grab(true, true).span(1, 1).applyTo(errGroup);
+		GridLayoutFactory.fillDefaults().margins(6, 6).applyTo(errGroup);
+		errGroup.setText("Lex/Parse Errors");
 
-			errViewer.getTable().addMouseListener(new MouseAdapter() {
+		TableViewer viewer = new TableViewer(errGroup, flags);
+		viewer.setContentProvider(new TokensViewContentProvider());
+		viewer.setLabelProvider(new ProblemsLabelProvider(parent.getDisplay()));
+		viewer.getTable().setHeaderVisible(true);
+		viewer.getTable().setLinesVisible(true);
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(viewer.getControl());
 
-				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					Point pt = new Point(e.x, e.y);
-					TableItem item = errViewer.getTable().getItem(pt);
-					String sIdx = item.getText(0);
-					try {
-						int idx = Integer.parseInt(sIdx);
-						idx = idx >= 0 ? idx : 0;
-						view.openSourceFileAtToken(idx);
-					} catch (NumberFormatException e1) {}
-				}
-			});
+		viewer.getTable().addMouseListener(new MouseAdapter() {
 
-			for (int i = 0; i < errTitles.length; i++) {
-				TableColumn col = new TableColumn(errViewer.getTable(), SWT.NONE);
-				col.setText(errTitles[i]);
-				col.setMoveable(false);
-				col.setWidth(errWidths[i]);
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				Point pt = new Point(e.x, e.y);
+				TableItem item = viewer.getTable().getItem(pt);
+				try {
+					int num = Math.max(0, Integer.parseInt(item.getText(0)));
+					view.openSourceFileAtToken(num);
+				} catch (NumberFormatException nfe) {}
 			}
-		} // errors
+		});
 
-		sash.setWeights(new int[] { 4, 1 });
+		for (int idx = 0; idx < ProblemTitles.length; idx++) {
+			TableColumn col = new TableColumn(viewer.getTable(), SWT.NONE);
+			col.setText(ProblemTitles[idx]);
+			col.setMoveable(false);
+			col.setWidth(ProblemWidths[idx]);
+		}
+		return viewer;
+	}
+
+	public void setSashWeights(int[] weights) {
+		sash.setWeights(weights);
+	}
+
+	public void setTokensInput(List<String[]> data) {
+		tokViewer.setInput(data);
+	}
+
+	public void setProblemsInput(List<String[]> data) {
+		prbViewer.setInput(data);
 	}
 
 	public TableViewer getTokensViewer() {
 		return tokViewer;
 	}
 
-	public TableViewer getErrorsViewer() {
-		return errViewer;
+	public TableViewer getProblemsViewer() {
+		return prbViewer;
 	}
 
 	public void clear() {
 		tokViewer.setInput(null);
-		errViewer.setInput(null);
+		prbViewer.setInput(null);
 	}
 }

@@ -81,7 +81,7 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 
 		switch (getStatementType()) {
 			case MODULE:
-				desc = mgr.getDescriptor(mgr.IMG_OBJS_MODULE);
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_GRAMMAR);
 				break;
 
 			case IMPORT:
@@ -96,7 +96,7 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 				break;
 
 			case DECLARATION:
-				desc = mgr.getDescriptor(mgr.IMG_OBJS_CORE);
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_PACKAGE);
 				break;
 
 			case STATEMENT:
@@ -106,24 +106,37 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 					Specialization data = (Specialization) getData();
 					switch (data.specializedType) {
 						case Options:
-							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTIONS);
 							break;
 						case Option:
-							desc = mgr.getDescriptor(mgr.IMG_OBJ_ENUM);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
 						case Tokens:
-							desc = mgr.getDescriptor(mgr.IMG_OBJ_PACKAGE);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_ENUM);
 							break;
 						case Token:
-							desc = mgr.getDescriptor(mgr.IMG_OBJ_MESSAGE);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_TERMINAL);
 							break;
-						case LexerRule:
+
+						case ParserRuleName:
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
+							break;
+
+						case LexerRuleName:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
-							if (hasOverlay(data.decoration & Specialization.FRAGMENT)) {
-								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
-										DslImageDescriptor.TOP_RIGHT);
-							}
 							break;
+
+						case FragmentRuleName:
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
+							desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
+									DslImageDescriptor.TOP_RIGHT);
+
+							break;
+
+						case ModeName:
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_MODE);
+							break;
+
 						case ParserRule:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
 							if (hasOverlay(data.decoration & Specialization.PROTECTED)) {
@@ -134,9 +147,17 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 										DslImageDescriptor.TOP_RIGHT);
 							}
 							break;
+						case LexerRule:
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
+							if (hasOverlay(data.decoration & Specialization.FRAGMENT)) {
+								desc = createOverlayImageDescriptor(desc, mgr.getDescriptor(mgr.IMG_OVR_FRAGMENT),
+										DslImageDescriptor.TOP_RIGHT);
+							}
+							break;
 						case Mode:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_MODE);
 							break;
+
 						case AtAction:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_ACTION);
 							break;
@@ -144,8 +165,9 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_LABEL);
 							break;
 						case Value:
-							desc = mgr.getDescriptor(mgr.IMG_OBJS_PROTECTED_METHOD);
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_VALUE);
 							break;
+
 						default:
 							desc = mgr.getDescriptor(mgr.IMG_OBJS_UNKNOWN);
 							break;
@@ -153,6 +175,7 @@ public class AntlrStatementLabelProvider extends OutlineLabelProvider {
 				}
 				break;
 
+			case BLOCK:
 			case BEG_BLOCK:
 				if (getStatement().getElementName().equals(":")) {
 					desc = mgr.getDescriptor(mgr.IMG_OBJ_RULE_COLON);

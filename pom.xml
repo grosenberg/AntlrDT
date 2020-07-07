@@ -8,10 +8,10 @@
 
 	<groupId>net.certiv</groupId>
 	<artifactId>net.certiv.antlr.dt</artifactId>
-	<version>4.10.0-SNAPSHOT</version>
+	<version>4.11.0-SNAPSHOT</version>
 
-	<name>net.certiv.antlr.dt :: parent</name>
-	<description>net.certiv.antlr.dt parent</description>
+	<name>net.certiv.antlr.dt</name>
+	<description>net.certiv.antlr.dt</description>
 	<organization>
 		<name>Certiv Analytics</name>
 		<url>www.certiv.net</url>
@@ -21,7 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<tycho.version>1.6.0</tycho.version>
+		<tycho.version>1.7.0</tycho.version>
 		<eclipse-repo.url>https://download.eclipse.org/releases/2020-03</eclipse-repo.url>
 		<certiv-repo.url>file:/D:/DevFiles/Eclipse/Update</certiv-repo.url>
 	</properties>
@@ -39,6 +39,14 @@
 		</repository>
 	</repositories>
 
+	<modules>
+		<module>net.certiv.antlr.dt.core</module>
+		<module>net.certiv.antlr.dt.ui</module>
+		<module>net.certiv.antlr.dt.vis</module>
+		<!-- <module>net.certiv.antlr.dt.diagram</module> -->
+		<module>net.certiv.antlr.dt.feature</module>
+		<module>net.certiv.antlr.dt.site</module>
+	</modules>
 
 	<build>
 		<plugins>
@@ -107,6 +115,7 @@
 					</archive>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
@@ -124,12 +133,4 @@
 		</profile>
 	</profiles>
 
-	<modules>
-		<module>net.certiv.antlr.dt.core</module>
-		<module>net.certiv.antlr.dt.ui</module>
-		<!-- <module>net.certiv.antlr.dt.diagram</module> -->
-		<module>net.certiv.antlr.dt.vis</module> 
-		<module>net.certiv.antlr.dt.feature</module>
-		<module>net.certiv.antlr.dt.site</module>
-	</modules>
 </project>

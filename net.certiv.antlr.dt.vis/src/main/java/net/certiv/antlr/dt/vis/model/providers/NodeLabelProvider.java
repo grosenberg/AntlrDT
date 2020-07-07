@@ -155,7 +155,7 @@ public class NodeLabelProvider implements INodeLabelProvider, IConnectionStylePr
 	@Override
 	public IFigure getTooltip(Object entity) {
 		if (entity == null || entity instanceof EntityConnectionData) return null;
-		if (store.matches(PrefsKey.PT_TOOLTIP_TYPE, PrefsKey.PT_TTT_MIN)) {
+		if (store.matches(PrefsKey.PT_TTT_MIN, PrefsKey.PT_TOOLTIP_TYPE)) {
 			return null; // force default content
 		}
 

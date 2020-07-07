@@ -8,35 +8,36 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
-import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.dsl.core.preferences.IPrefsManager;
-import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.core.preferences.consts.Editor;
+import net.certiv.dsl.ui.editor.scanners.DslRuleBasedScanner;
+import net.certiv.dsl.ui.editor.semantic.StylesManager;
 
-public class ScannerString extends AbstractBufferedRuleBasedScanner {
+public class ScannerString extends DslRuleBasedScanner {
 
-	private String[] tokenProperties;
+	private String[] props;
 
-	public ScannerString(IPrefsManager store) {
-		super(store);
+	public ScannerString(IPrefsManager store, StylesManager stylesMgr) {
+		super(store, stylesMgr);
 		initialize();
 	}
 
 	@Override
 	protected String[] getTokenProperties() {
-		if (tokenProperties == null) {
-			tokenProperties = new String[] { bind(PrefsKey.EDITOR_STRING_COLOR) };
+		if (props == null) {
+			props = new String[] { bind(Editor.EDITOR_STRING_COLOR) };
 		}
-		return tokenProperties;
+		return props;
 	}
 
 	// Have to evaluate bracketed strings before single quoted strings to avoid a single quote
 	// character being recognized within a bracket string
 	@Override
 	protected List<IRule> createRules() {
-		IToken token = getToken(bind(PrefsKey.EDITOR_STRING_COLOR));
+		IToken token = getToken(bind(Editor.EDITOR_STRING_COLOR));
 		setDefaultReturnToken(token);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		rules.add(new WhitespaceRule(new WhitespaceDetector()));
 		// rules.add(new NestingDelimiterRule("[", "]", token, '\\'));
 		// rules.add(new SingleLineRule("[", "]", token, '\\')); // non-nested

@@ -37,7 +37,7 @@ public class PathProcessor {
 			for (ICodeUnit unit : getRelated(unit)) {
 				DslParseRecord rec = unit.getDefaultParseRecord();
 				if (rec != null && rec.hasTree()) {
-					PathVisitor walker = new PathVisitor(rec.tree);
+					PathVisitor walker = new PathVisitor(rec.getTree());
 					walker.setHelper(model);
 					walker.findAll();
 				}

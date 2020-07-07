@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.certiv.antlr.dt.vis.views.tokens.Source;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.ui.fields.TextField;
 
 public class FileField extends TextField {
@@ -46,8 +47,8 @@ public class FileField extends TextField {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(shell, SWT.SINGLE);
 
-				String path = "";
-				String name = "";
+				String path = Strings.EMPTY;
+				String name = Strings.EMPTY;
 				String ext = source.getExt();
 
 				IPath fname = new Path(source.getPathname());
@@ -58,7 +59,7 @@ public class FileField extends TextField {
 				} else {
 					path = CoreUtil.getWorkspaceLocation().append(defDir).toString();
 				}
-				if (ext == null || ext.trim().equals("")) ext = "*";
+				if (ext == null || ext.trim().equals(Strings.EMPTY)) ext = Strings.STAR;
 
 				dialog.setFilterPath(path);
 				dialog.setFileName(name);
@@ -67,7 +68,7 @@ public class FileField extends TextField {
 				if (dialog.open() == null) return; 				// cancelled
 				if (dialog.getFileName().trim().isEmpty()) { 	// entry cleared
 					setSource(new Source());					// set to empty source
-					fireContentChangedEvent("");
+					fireContentChangedEvent(Strings.EMPTY);
 				} else {										// validate
 					fname = new Path(dialog.getFilterPath()).append(new Path(dialog.getFileName()));
 					if (fname.toFile().isFile()) {				// change only if valid

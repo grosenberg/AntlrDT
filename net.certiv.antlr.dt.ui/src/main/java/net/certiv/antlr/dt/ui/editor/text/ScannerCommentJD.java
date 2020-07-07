@@ -10,14 +10,15 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.core.preferences.consts.Editor;
-import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.scanners.DslRuleBasedScanner;
+import net.certiv.dsl.ui.editor.semantic.StylesManager;
 
-public class ScannerCommentJD extends AbstractBufferedRuleBasedScanner {
+public class ScannerCommentJD extends DslRuleBasedScanner {
 
 	private String[] fgTokenProperties;
 
-	public ScannerCommentJD(IPrefsManager store) {
-		super(store);
+	public ScannerCommentJD(IPrefsManager store, StylesManager stylesMgr) {
+		super(store, stylesMgr);
 		initialize();
 	}
 

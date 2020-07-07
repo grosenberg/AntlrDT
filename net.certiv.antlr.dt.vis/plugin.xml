@@ -13,15 +13,15 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="net.certiv.antlr.dt.ui.preferences.page.PrefPageAntlrDT"
+            category="net.certiv.antlr.dt.ui.preferences.page.GeneralPage"
             class="net.certiv.antlr.dt.vis.preferences.page.GraphPage"
-            id="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraph"
+            id="net.certiv.antlr.dt.vis.preferences.page.GraphPage"
             name="ParseTree Display">
       </page>
       <page
-            category="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraph"
+            category="net.certiv.antlr.dt.vis.preferences.page.GraphPage"
             class="net.certiv.antlr.dt.vis.preferences.page.GraphColoringPage"
-            id="net.certiv.antlr.dt.vis.preferences.page.PrefsPageGraphColoring"
+            id="net.certiv.antlr.dt.vis.preferences.page.GraphColoringPage"
             name="Graph Coloring">
       </page>
    </extension>
@@ -39,6 +39,7 @@
             name="Open Paths View">
       </command>
    </extension>
+
 
    <extension
          point="org.eclipse.ui.handlers">
@@ -104,7 +105,7 @@
       <view
             allowMultiple="false"
             category="net.certiv.certivtools"
-            class="net.certiv.antlr.dt.vis.views.parse.TreeView"
+            class="net.certiv.antlr.dt.vis.views.tree.TreeView"
             icon="icons/obj16/tree.png"
             id="net.certiv.antlr.dt.vis.views.tree.TreeView"
             inject="false"

@@ -13,7 +13,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.actions.ActionGroup;
 
 import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
-import net.certiv.antlr.dt.vis.views.parse.TreeView;
+import net.certiv.antlr.dt.vis.views.tree.TreeView;
 
 public class RouterToolbarGroup extends ActionGroup {
 

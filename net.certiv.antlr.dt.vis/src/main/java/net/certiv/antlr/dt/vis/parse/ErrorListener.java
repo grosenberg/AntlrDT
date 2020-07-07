@@ -7,20 +7,22 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
 
+import net.certiv.antlr.dt.core.console.Aspect;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Lexer;
+import net.certiv.dsl.core.util.Strings;
 
 public class ErrorListener extends BaseErrorListener {
 
-	private ErrorSrc src;
-	private List<ErrorRecord> errors;
+	private Aspect src;
+	private List<ProblemRecord> errors;
 
-	public ErrorListener(ErrorSrc src, List<ErrorRecord> errors) {
+	public ErrorListener(Aspect src, List<ProblemRecord> errors) {
 		super();
 		this.src = src;
 		this.errors = errors;
 	}
 
-	public List<ErrorRecord> getErrors() {
+	public List<ProblemRecord> getErrors() {
 		return errors;
 	}
 
@@ -29,17 +31,17 @@ public class ErrorListener extends BaseErrorListener {
 			String msg, RecognitionException e) {
 
 		Token symbol = offendingSymbol instanceof Token ? (Token) offendingSymbol : null;
-		ErrorRecord er = new ErrorRecord(src, symbol, line, charPositionInLine, msg, e);
-		er.offendingTokenText(formatToken(symbol));
-		if (e != null) er.expectedTokens(formatExpectedTokens(e));
-		errors.add(er);
+		ProblemRecord rec = new ProblemRecord(src, symbol, line, charPositionInLine, msg, e);
+		rec.offendingTokenText(formatToken(symbol));
+		if (e != null) rec.expectedTokens(formatExpectedTokens(e));
+		errors.add(rec);
 	}
 
 	private String formatToken(Token errToken) {
 		if (errToken == null) return "<no token>";
 		if (errToken.getType() == Token.EOF) return "<EOF>";
 		String str = errToken.getText();
-		if (str == null) return "<" + errToken.getType() + ">";
+		if (str == null) return Strings.LANGLE + errToken.getType() + Strings.RANGLE;
 		return str;
 	}
 
