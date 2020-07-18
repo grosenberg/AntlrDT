@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -39,7 +40,10 @@ import net.certiv.antlr.dt.vis.views.tree.TreeProcessor;
 import net.certiv.dsl.core.console.CS;
 import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.parser.IDslToken;
+import net.certiv.dsl.core.util.ArrayUtil;
 import net.certiv.dsl.core.util.ExceptUtil;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.dsl.jdt.util.JdtUtil;
 
@@ -345,10 +349,15 @@ class TargetUnit implements ITargetInfo {
 
 		report(Aspect.LEXER, "Filling token stream.");
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-		tokenStream.fill();
-		tokens = tokenStream.getTokens();
+		try {
+			tokenStream.fill();
+			tokens = tokenStream.getTokens();
+		} catch (EmptyStackException ex) {
+			reportError(Aspect.LEXER, ex, "Mode stack is empty (%s).", at(tokenStream.getTokens()));
+		}
+
 		if (tokens.isEmpty()) {
-			reportError(Aspect.LEXER, null, "No tokens generated! The lexer appears to have recognized nothing.");
+			reportError(Aspect.LEXER, null, "No tokens generated.");
 			return;
 		}
 
@@ -460,13 +469,37 @@ class TargetUnit implements ITargetInfo {
 	}
 
 	private void reportError(Aspect aspect, Throwable ex, String fmt, Object... args) {
-		errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt, args));
-		if (ex != null) {
+		if (ex == null) {
+			errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt, args));
+
+		} else {
+			args = ArrayUtil.append(args, at(ex));
+			errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt + "\n\t(at %s)", args));
+
 			Throwable cause = ex.getCause();
 			if (cause != null) { // handle nested errors
 				reportError(aspect, cause, "Caused by:\n\t%s", cause.getMessage());
 			}
 		}
+	}
+
+	private String at(List<Token> tokens) {
+		if (tokens == null || tokens.isEmpty()) return Strings.AT + Strings.UNKNOWN;
+
+		Token token = tokens.get(tokens.size() - 1);
+		int line = token.getLine() + 1;
+		int cpos = token.getCharPositionInLine() + 1;
+		String mode = modeNames[0];
+		if (token instanceof IDslToken) {
+			mode = modeNames[((IDslToken) token).getMode()];
+		}
+		return String.format("@%s-%s [%s]", line, cpos, mode);
+	}
+
+	private String at(Throwable e) {
+		StackTraceElement[] st = e.getStackTrace();
+		if (st == null || st.length < 1) return Strings.UNKNOWN;
+		return String.format("%s#%s @%s", st[0].getClassName(), st[0].getMethodName(), st[0].getLineNumber());
 	}
 
 	private void report(Aspect aspect, String format, Object... args) {

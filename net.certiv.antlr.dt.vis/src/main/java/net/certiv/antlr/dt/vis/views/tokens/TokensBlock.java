@@ -20,7 +20,7 @@ public class TokensBlock {
 	private static final int flags = SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL;
 
 	private static final String[] TokTitles = { "Idx", "Token", "Line", "Col", "Mode", "Text" };
-	private static final int[] TokWidths = { 40, 100, 40, 40, 50, 300 };
+	private static final int[] TokWidths = { 40, 100, 40, 40, 60, 300 };
 
 	private static final String[] ProblemTitles = { "Idx", "Line", "Col", "Message" };
 	private static final int[] ProblemWidths = { 40, 40, 40, 450 };

@@ -76,6 +76,14 @@
       </page>
    </extension>
 -->
+ <extension
+       point="org.eclipse.ui.console.consoleFactories">
+    <consoleFactory
+          class="net.certiv.antlr.dt.ui.console.AntlrConsoleFactory"
+          icon="icons/obj16/console_view.png"
+          label="AntlrDT Console">
+    </consoleFactory>
+ </extension>
 
    <extension
          point="org.eclipse.ui.contexts">
@@ -133,6 +141,8 @@
 
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
+         
+<!--
       <specification
             annotationImageProvider="net.certiv.antlr.dt.ui.editor.AnnotationImageProvider"
             annotationType="net.certiv.antlr.dt.ui.error">
@@ -145,6 +155,7 @@
             annotationImageProvider="net.certiv.antlr.dt.ui.editor.AnnotationImageProvider"
             annotationType="net.certiv.antlr.dt.ui.info">
       </specification>
+-->
       <specification
             annotationType="net.certiv.antlr.dt.ui.occurrences"
             colorPreferenceKey="occurrenceIndicationColor"
@@ -639,14 +650,6 @@
          </command>
       </menuContribution>
    </extension>
- <extension
-       point="org.eclipse.ui.console.consoleFactories">
-    <consoleFactory
-          class="net.certiv.antlr.dt.ui.console.AntlrConsoleFactory"
-          icon="icons/obj16/console_view.png"
-          label="AntlrDT Console">
-    </consoleFactory>
- </extension>
 
    <!-- completions
    <extension

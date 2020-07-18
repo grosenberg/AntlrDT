@@ -1,7 +1,7 @@
 package net.certiv.antlr.dt.core.console;
 
-import net.certiv.dsl.core.console.IAspect;
 import net.certiv.dsl.core.console.CS;
+import net.certiv.dsl.core.console.IAspect;
 import net.certiv.dsl.core.util.Strings;
 
 public enum Aspect implements IAspect {
@@ -21,6 +21,7 @@ public enum Aspect implements IAspect {
 	NO_ACCESS("No access"),
 	NO_ARG("Illegal argument(s)"),
 	INSTANCE("Instantiation"),
+	EXEC("Execution"),
 
 	;
 

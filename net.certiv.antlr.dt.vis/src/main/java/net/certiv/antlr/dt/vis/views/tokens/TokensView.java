@@ -505,7 +505,7 @@ public class TokensView extends ViewPart {
 						}
 
 						if (errors != null) {
-							AntlrConsoleFactory.getFactory().getConsole().append(errors, true);
+							AntlrConsoleFactory.getFactory().getConsole().append(errors, false);
 							for (ConsoleRecord error : errors) {
 								Log.error(TokensView.class, error.toString());
 							}

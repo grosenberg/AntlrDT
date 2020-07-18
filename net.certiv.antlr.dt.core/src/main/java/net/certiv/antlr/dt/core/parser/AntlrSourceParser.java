@@ -24,6 +24,7 @@ import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
+import net.certiv.dsl.core.parser.Origin;
 
 public class AntlrSourceParser extends DslSourceParser {
 
@@ -46,7 +47,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	@Override
 	public Throwable parse() {
-		DslErrorListener auditor = getErrorListener();
+		DslErrorListener listener = getErrorListener();
 		try {
 			String name = record.unit.getFile().getName();
 			String content = getContent();
@@ -55,24 +56,28 @@ public class AntlrSourceParser extends DslSourceParser {
 			Lexer lexer = new AntlrDT4Lexer(record.getCharStream());
 			lexer.setTokenFactory(TokenFactory);
 			lexer.removeErrorListeners();
-			lexer.addErrorListener(auditor);
+			lexer.addErrorListener(listener);
 
 			record.setTokenStream(new CommonTokenStream(lexer));
 			AntlrDT4Parser parser = new AntlrDT4Parser(record.getTokenStream());
 			parser.setTokenFactory(TokenFactory);
 			parser.removeErrorListeners();
-			parser.addErrorListener(auditor);
+			parser.addErrorListener(listener);
 			record.setParser(parser);
 			record.setTree(parser.grammarSpec());
 
-			lint(record, name, content);
-
-			return null;
+			try {
+				lint(record, name, content);
+			} catch (Exception | Error e) {
+				listener.generalError(Origin.BUILDER, ERR_PARSER, e);
+				return e;
+			}
 
 		} catch (Exception | Error e) {
-			auditor.generalError(ERR_PARSER, e);
+			listener.generalError(Origin.GENERAL, ERR_PARSER, e);
 			return e;
 		}
+		return null;
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class AntlrSourceParser extends DslSourceParser {
 			return null;
 
 		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_ANALYSIS, e);
+			getErrorListener().generalError(Origin.ANALYSIS, ERR_ANALYSIS, e);
 			return e;
 		}
 	}
