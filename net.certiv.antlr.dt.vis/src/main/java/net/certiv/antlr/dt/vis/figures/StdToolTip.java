@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2009, Gerald B. Rosenberg, Certiv Analytics and others.
+ * Copyright 2009, 2020, Gerald B. Rosenberg, Certiv Analytics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
