@@ -1,6 +1,8 @@
-### AntlrDT
+# AntlrDT
 
 Antlr v4 grammar editor and builder for Eclipse
+
+## Features
 
 * Syntax-assisted editing with syntax highlighting, smart editing actions, and folding
 * Incremental grammar builder 
@@ -8,12 +10,36 @@ Antlr v4 grammar editor and builder for Eclipse
 * Graphical parse tree display with full token and parser/lexer error reporting
 * Graphical rule path (connectivity) analysis
 
-#### Use
 
-The folders containing the 'g4' grammars and the generated files must be on the project classpath, i.e., a Java source folder. Otherwise AntlrDT has no reliable way of finding them.
+## Screenshot
+
+<figure>
+<figcaption>Parse Tree Graph</figcaption>
+<img src="./doc/Expr.g4.png">
+</figure>
+
+## Use
+
+The folders containing the 'g4' grammars and the generated files must be on the project classpath, i.e., 
+a Java source folder. Otherwise, AntlrDT has no reliable way of finding them.
+
+### Keys
+
+|Key         |Function                          |
+|:-----------|:---------------------------------|
+|Ctrl-Space  |Open quick assist popup           |
+|Ctrl-/      |Toggle commenting of selected text|
+|Ctrl-Shift-f|Format full page or selected text |
 
 
-##### Exemplary project layout:
+### Graphs
+
+From the Antlr tools section of the platform toolbar ![Antlr Tools](./doc/AntlrTools.png):
+
+- Tokens View: select the ![tokens view](./doc/grammarAst.png) icon.
+- Paths View: select the ![paths view](./doc/hierarchy_co.png) icon.
+
+### Exemplary project layout:
 
 ~~~
 [workspace root]
@@ -32,14 +58,11 @@ The folders containing the 'g4' grammars and the generated files must be on the 
            [[source snippets]]
        /complex 
            [[source snippets]]
-
 ~~~
 
 Add the appropriate `@header` to the lexer and parser grammars:
 
-    @header {
-        package some.non.default.package.parser.gen;
-    }
+    @header { package your.package.path.parser.gen; }
 
 After opening the token view, be sure to verify the values in the 'Integration' dialog.
 
@@ -54,4 +77,4 @@ Update site:
 
 #### License
 
-EPL v1.0
+EPL v2.0
