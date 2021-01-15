@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
 
-import net.certiv.antlr.dt.vis.views.EnhGraphViewer;
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.graph.EnhGraphViewer;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
 import net.certiv.dsl.core.util.Reflect;
 
 public class ZoomControlItem extends ZoomContributionViewItem {

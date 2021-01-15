@@ -14,11 +14,11 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 
-import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.antlr.dt.vis.VisUI;
 import net.certiv.antlr.dt.vis.model.PathNode;
-import net.certiv.antlr.dt.vis.views.paths.PathOp;
-import net.certiv.antlr.dt.vis.views.paths.PathView;
+import net.certiv.antlr.dt.vis.path.PathOp;
+import net.certiv.antlr.dt.vis.path.PathView;
 
 public class PathsRemoveAction extends Action {
 
@@ -27,19 +27,19 @@ public class PathsRemoveAction extends Action {
 	public PathsRemoveAction(PathView view) {
 		this.view = view;
 
-		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
+		ImageManager imgMgr = VisUI.getDefault().getImageManager();
 		setText("Remove Node");
 		setToolTipText("Remove this node and immediate path connections ");
 		setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_ACTION_REMOVE_PATHS));
-		setId(PathView.REMOVE_PATHS);
+		setId(PathOp.REMOVE.text);
 	}
 
 	@Override
 	public void run() {
 		List<PathNode> selected = view.getCurrentSelectedNodes();
 		if (selected != null) {
-			for (PathNode select : selected) {
-				view.update(PathOp.REMOVE_NODE, null, select.getNodeName());
+			for (PathNode node : selected) {
+				view.update(PathOp.REMOVE, node);
 			}
 		}
 	}

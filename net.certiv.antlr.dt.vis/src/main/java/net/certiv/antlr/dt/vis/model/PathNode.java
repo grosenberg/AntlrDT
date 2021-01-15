@@ -11,34 +11,34 @@
 package net.certiv.antlr.dt.vis.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import net.certiv.antlr.dt.core.model.Target;
 import net.certiv.antlr.dt.core.parser.AntlrToken;
+import net.certiv.dsl.core.model.IStatement;
 
 public class PathNode {
 
-	static int ident = 0;
-	public final int id;
-
-	// key = node; value = in-bound connections
+	// in-bound connections
 	private final List<PathNode> parents = new ArrayList<>();
-	// key = node; value = out-bound connections
+	// out-bound connections
 	private final List<PathNode> children = new ArrayList<>();
+	// equivalent statements
+	private final LinkedHashSet<IStatement> stmts = new LinkedHashSet<>();
 
-	private boolean hidden = true;
+	private Target target;
+	private boolean hidden;
 
-	public final ParserRuleContext ctx;
-	public final AntlrToken term;
-	public final Target kind;
+	public PathNode(IStatement stmt, Target target) {
+		addStatement(stmt, target);
+	}
 
-	public PathNode(ParserRuleContext ctx, AntlrToken term, Target kind) {
-		this.ctx = ctx;
-		this.term = term;
-		this.kind = kind;
-		this.id = ident++;
+	public void addStatement(IStatement stmt, Target target) {
+		stmts.add(stmt);
+		if (this.target != Target.FRAGMENT) {
+			this.target = target;
+		}
 	}
 
 	public void addParent(PathNode node) {
@@ -65,36 +65,50 @@ public class PathNode {
 		this.hidden = hidden;
 	}
 
-	public ParserRuleContext getContext() {
-		return ctx;
-	}
-
-	public AntlrToken getSymbol() {
-		return term;
+	public AntlrToken getNameToken() {
+		return (AntlrToken) getStatement().getDescriptor().getNameToken();
 	}
 
 	public String getNodeName() {
-		return term.getText();
+		return getStatement().getElementName();
+	}
+
+	public IStatement getStatement() {
+		return stmts.iterator().next();
 	}
 
 	public boolean isParserRule() {
-		return kind == Target.PARSER;
+		return Target.PARSER == target;
 	}
 
 	public boolean isLexerRule() {
-		return kind == Target.LEXER;
-	}
-
-	public boolean isTerminal() {
-		return kind == Target.TERMINAL;
+		return Target.LEXER == target;
 	}
 
 	public boolean isFragment() {
-		return kind == Target.FRAGMENT;
+		return Target.FRAGMENT == target;
+	}
+
+	public boolean isRange() {
+		return Target.RANGE == target;
+	}
+
+	public boolean isSet() {
+		return Target.SET == target;
+	}
+
+	public boolean isTerminal() {
+		return Target.TERMINAL == target;
+	}
+
+	public void clear() {
+		parents.clear();
+		children.clear();
+		stmts.clear();
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s [%s]", term.getText(), id);
+		return getNodeName();
 	}
 }

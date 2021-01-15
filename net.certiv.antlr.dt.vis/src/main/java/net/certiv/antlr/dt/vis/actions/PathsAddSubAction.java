@@ -14,11 +14,11 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 
-import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.antlr.dt.vis.VisUI;
 import net.certiv.antlr.dt.vis.model.PathNode;
-import net.certiv.antlr.dt.vis.views.paths.PathOp;
-import net.certiv.antlr.dt.vis.views.paths.PathView;
+import net.certiv.antlr.dt.vis.path.PathOp;
+import net.certiv.antlr.dt.vis.path.PathView;
 
 public class PathsAddSubAction extends Action {
 
@@ -27,19 +27,19 @@ public class PathsAddSubAction extends Action {
 	public PathsAddSubAction(PathView view) {
 		this.view = view;
 
-		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
-		setText("Add Sub Paths");
-		setToolTipText("Add sub paths to this path node");
+		ImageManager imgMgr = VisUI.getDefault().getImageManager();
+		setText("Add Callee Paths");
+		setToolTipText("Add call target paths to this path node");
 		setImageDescriptor(imgMgr.getDescriptor(imgMgr.IMG_ACTION_ADD_PATHS));
-		setId(PathView.ADD_SUB_PATHS);
+		setId(PathOp.ADD_CALLEES.text);
 	}
 
 	@Override
 	public void run() {
 		List<PathNode> selected = view.getCurrentSelectedNodes();
 		if (selected != null) {
-			for (PathNode select : selected) {
-				view.update(PathOp.ADD_CALLEES, null, select.getNodeName());
+			for (PathNode node : selected) {
+				view.update(PathOp.ADD_CALLEES, node);
 			}
 		}
 	}

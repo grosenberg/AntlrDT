@@ -3,7 +3,7 @@
 <plugin>
 
    <extension point="org.eclipse.core.expressions.definitions">
-		<definition id="net.certiv.antlr.dt.activeEditor">
+		<definition id="net.certiv.antlr.dt.activeEditor.def">
 			<with variable="activePartId">
 				<equals value="net.certiv.antlr.dt.ui.editor.AntlrEditor"/>
 			</with>
@@ -27,6 +27,40 @@
    </extension>
 
    <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.tokens.TokensView"
+            icon="icons/obj16/view.png"
+            id="net.certiv.antlr.dt.vis.views.tokens.TokensView"
+            inject="false"
+            name="Tokens View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.tree.TreeView"
+            icon="icons/obj16/tree.png"
+            id="net.certiv.antlr.dt.vis.views.tree.TreeView"
+            inject="false"
+            name="Parse Tree View"
+            restorable="false">
+      </view>
+      <view
+            allowMultiple="false"
+            category="net.certiv.certivtools"
+            class="net.certiv.antlr.dt.vis.path.PathView"
+            icon="icons/obj16/hierarchy_co.png"
+            id="net.certiv.antlr.dt.vis.views.paths.PathView"
+            inject="false"
+            name="Paths View"
+            restorable="false">
+      </view>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.commands">
       <command
             categoryId="net.certiv.antlr.dt.ui.commands.category"
@@ -37,6 +71,20 @@
             categoryId="net.certiv.antlr.dt.ui.commands.category"
             id="net.certiv.antlr.dt.vis.openPathsViewCmd"
             name="Open Paths View">
+      </command>
+      <command
+            categoryId="net.certiv.antlr.dt.ui.commands.category"
+            id="net.certiv.antlr.dt.vis.SelectRuleCmd"
+            name="Rule Selection">
+         <commandParameter
+               id="path.func"
+               name="function">
+         </commandParameter>
+      </command>
+      <command
+            categoryId="net.certiv.antlr.dt.ui.commands.category"
+            id="net.certiv.antlr.dt.vis.ClearPathsCmd"
+            name="Clear Paths">
       </command>
    </extension>
 
@@ -50,6 +98,27 @@
       <handler
             class="net.certiv.antlr.dt.vis.handlers.OpenPathsViewHandler"
             commandId="net.certiv.antlr.dt.vis.openPathsViewCmd">
+      </handler>
+      
+	  <handler
+            class="net.certiv.antlr.dt.vis.handlers.RuleSelectionHandler"
+            commandId="net.certiv.antlr.dt.vis.SelectRuleCmd">
+         <activeWhen>
+            <reference definitionId="net.certiv.antlr.dt.activeEditor.def"/>
+         </activeWhen>
+         <enabledWhen>
+            <reference definitionId="net.certiv.antlr.dt.activeEditor.def"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="net.certiv.antlr.dt.vis.handlers.ClearPathsHandler"
+            commandId="net.certiv.antlr.dt.vis.ClearPathsCmd">
+			<activeWhen>
+				<reference definitionId="net.certiv.antlr.dt.activeEditor.def" />
+			</activeWhen>
+			<enabledWhen>
+				<reference definitionId="net.certiv.antlr.dt.activeEditor.def" />
+			</enabledWhen>
       </handler>
    </extension>
 
@@ -68,7 +137,7 @@
 	            <visibleWhen
     	              checkEnabled="false">
         	       <reference
-            	         definitionId="net.certiv.antlr.dt.activeEditor">
+            	         definitionId="net.certiv.antlr.dt.activeEditor.def">
 	               </reference>
     	        </visibleWhen>
             </command>
@@ -81,47 +150,68 @@
 	            <visibleWhen
     	              checkEnabled="false">
         	       <reference
-            	         definitionId="net.certiv.antlr.dt.activeEditor">
+            	         definitionId="net.certiv.antlr.dt.activeEditor.def">
 	               </reference>
     	        </visibleWhen>
             </command>
 
 		  </toolbar>
       </menuContribution>
-   </extension>
+      
+      
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               icon="icons/obj16/call_hierarchy.png"
+               id="pathsMenu"
+               label="Paths Graph">
+            <visibleWhen
+                  checkEnabled="false">
+        	       <reference
+            	         definitionId="net.certiv.antlr.dt.activeEditor.def">
+	               </reference>
+            </visibleWhen>
 
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="net.certiv.certivtools"
-            class="net.certiv.antlr.dt.vis.views.tokens.TokensView"
-            icon="icons/obj16/view.png"
-            id="net.certiv.antlr.dt.vis.views.tokens.TokensView"
-            inject="false"
-            name="Tokens View"
-            restorable="false">
-      </view>
-      <view
-            allowMultiple="false"
-            category="net.certiv.certivtools"
-            class="net.certiv.antlr.dt.vis.views.tree.TreeView"
-            icon="icons/obj16/tree.png"
-            id="net.certiv.antlr.dt.vis.views.tree.TreeView"
-            inject="false"
-            name="Parse Tree View"
-            restorable="false">
-      </view>
-      <view
-            allowMultiple="false"
-            category="net.certiv.certivtools"
-            class="net.certiv.antlr.dt.vis.views.paths.PathView"
-            icon="icons/obj16/hierarchy_co.png"
-            id="net.certiv.antlr.dt.vis.views.paths.PathView"
-            inject="false"
-            name="Paths View"
-            restorable="false">
-      </view>
+            <command
+                  commandId="net.certiv.antlr.dt.vis.SelectRuleCmd"
+                  icon="icons/obj16/ch_callers.png"
+                  label="Add Callers"
+                  style="push"
+                  tooltip="Add inbound rule references to the path graph">
+               <parameter
+                     name="path.func"
+                     value="addCallers">
+               </parameter>
+            </command>
+            <command
+                  commandId="net.certiv.antlr.dt.vis.SelectRuleCmd"
+                  icon="icons/obj16/ch_callees.png"
+                  label="Add Callees"
+                  style="push"
+                  tooltip="Add outbound rule references to the call graph">
+               <parameter
+                     name="path.func"
+                     value="addCallees">
+               </parameter>
+            </command>
+            <separator
+                  name="sep"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="net.certiv.antlr.dt.vis.SelectRuleCmd"
+                  icon="icons/obj16/remove_obj.png"
+                  label="Remove from Graph"
+                  style="push"
+                  tooltip="Remove selected rule references from the graph">
+               <parameter
+                     name="path.func"
+                     value="remove">
+               </parameter>
+            </command>
+         </menu>
+      </menuContribution>
+      
    </extension>
 
 </plugin>

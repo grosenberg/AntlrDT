@@ -38,6 +38,6 @@ public class PathConnector {
 
 	@Override
 	public String toString() {
-		return String.format("%s -> %s", source.toString(), target.toString());
+		return String.format("%s -> %s", source, target);
 	}
 }

@@ -11,7 +11,6 @@
 package net.certiv.antlr.dt.vis.actions;
 
 import org.eclipse.jface.action.ControlContribution;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
 
 public class LayoutControlItem extends ControlContribution {
 
@@ -56,16 +55,14 @@ public class LayoutControlItem extends ControlContribution {
 			public void widgetSelected(SelectionEvent e) {
 				int idx = combo.getSelectionIndex();
 				TableItem row = combo.getTable().getItem(idx);
-				Layout layout = Layout.getEnum(row.getText());
+				Layout layout = Layout.from(row.getText());
 				if (layout == null) layout = Layout.SPRING;
 				view.setLayout(layout);
 			}
 		});
 
-		IDialogSettings settings = AntlrUI.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(AntlrUI.PA_DIALOG_SEC);
-		String layout = section.get(IAdjustableViewPart.KEY_LAYOUT);
-		combo.setText(layout);
+		Layout layout = view.getLayout();
+		combo.setText(layout.getDisplayName());
 
 		return combo;
 	}

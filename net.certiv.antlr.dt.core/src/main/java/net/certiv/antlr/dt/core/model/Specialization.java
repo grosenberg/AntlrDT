@@ -44,7 +44,7 @@ public class Specialization extends ModelSpecialization {
 	}
 
 	@Override
-	public ISpecializedType getSpecializedType() {
+	public SpecializedType getSpecializedType() {
 		return specializedType;
 	}
 

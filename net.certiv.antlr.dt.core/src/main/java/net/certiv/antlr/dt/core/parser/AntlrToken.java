@@ -10,6 +10,8 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.core.parser;
 
+import java.util.Objects;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.TokenSource;
@@ -46,6 +48,21 @@ public class AntlrToken extends CommonToken implements IDslToken {
 
 	public String getTypeName() {
 		return AntlrDT4Lexer.VOCABULARY.getDisplayName(type);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(channel, charPositionInLine, index, line, source, start, stop, text, type, _mode);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof AntlrToken)) return false;
+		AntlrToken o = (AntlrToken) obj;
+		return channel == o.channel && charPositionInLine == o.charPositionInLine && index == o.index && line == o.line
+				&& Objects.equals(source, o.source) && start == o.start && stop == o.stop
+				&& Objects.equals(text, o.text) && type == o.type && _mode == o._mode;
 	}
 
 	@Override

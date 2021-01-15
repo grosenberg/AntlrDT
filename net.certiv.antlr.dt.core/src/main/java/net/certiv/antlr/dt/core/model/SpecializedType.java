@@ -35,15 +35,23 @@ public enum SpecializedType implements ISpecializedType {
 	ParserRule("Parser rule", "rule"),
 	LexerRule("Lexer rule", "rule"),
 
+	RuleRef("Rule Ref", "ruleref"),
+	ParserAtomRef("Parser atom ref", "parser_atomref"),
+	LexerAtomRef("Lexer atom ref", "lexer_atomref"),
+	LexerCmdExpr("Lexer command expr", "lexer_cmdexpr"),
+
 	ParserRuleName("Parser rulename", "parser_rulename"),
 	LexerRuleName("Lexer rulename", "lexer_rulename"),
 	FragmentRuleName("Fragment rulename", "fragment_rulename"),
+
+	Range("Range", "range"),
+	Set("Set", "set"),
+	Terminal("Terminal", "terminal"),
 
 	Mode("Mode statement", "mode"),
 	ModeName("Mode name", "modename"),
 
 	Label("Label", "label"),
-
 	ActionBlock("Code", "code"),
 
 	Unknown("Unknown", Strings.EMPTY),

@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
 import net.certiv.antlr.dt.vis.model.TreeModel;
-import net.certiv.antlr.dt.vis.views.tokens.Source;
+import net.certiv.antlr.dt.vis.tokens.Source;
 import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;

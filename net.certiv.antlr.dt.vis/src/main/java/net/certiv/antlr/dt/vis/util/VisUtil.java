@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import net.certiv.antlr.dt.vis.views.tokens.Source;
+import net.certiv.antlr.dt.vis.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.ui.util.EditorUtil;
 

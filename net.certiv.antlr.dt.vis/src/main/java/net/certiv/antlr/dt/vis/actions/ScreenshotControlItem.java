@@ -27,7 +27,7 @@ import org.eclipse.zest.core.widgets.Graph;
 
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
 import net.certiv.dsl.core.util.CoreUtil;
 
 public class ScreenshotControlItem extends ControlContribution {

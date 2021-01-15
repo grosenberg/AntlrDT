@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
+import org.apache.logging.log4j.Level;
 
 import org.eclipse.core.runtime.IPath;
 
@@ -28,7 +29,6 @@ import net.certiv.antlr.dt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
@@ -42,7 +42,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	public AntlrSourceParser(DslParseRecord record) {
 		super(record);
-		Log.setLevel(this, LogLevel.Debug);
+		Log.setLevel(this, Level.DEBUG);
 	}
 
 	@Override

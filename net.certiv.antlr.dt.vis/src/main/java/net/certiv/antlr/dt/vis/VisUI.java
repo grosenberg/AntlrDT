@@ -10,17 +10,31 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.vis;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.apache.logging.log4j.Level;
+
 import org.osgi.framework.BundleContext;
 
-public class VisUI extends AbstractUIPlugin {
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-	public static final String PLUGIN_ID = "net.certiv.antlr.dt.vis"; //$NON-NLS-1$
+import net.certiv.antlr.dt.core.AntlrCore;
+import net.certiv.antlr.dt.ui.AntlrUI;
+import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.color.DslColorRegistry;
+import net.certiv.dsl.core.lang.LanguageManager;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.model.DslModel;
+import net.certiv.dsl.core.preferences.PrefsManager;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.IDslUI;
+
+public class VisUI extends AbstractUIPlugin implements IDslUI {
 
 	private static VisUI plugin;
 
 	public VisUI() {
 		super();
+		Log.defLevel(Level.DEBUG);
 	}
 
 	@Override
@@ -37,5 +51,43 @@ public class VisUI extends AbstractUIPlugin {
 
 	public static VisUI getDefault() {
 		return plugin;
+	}
+
+	@Override
+	public DslUI getDslUI() {
+		return AntlrUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return AntlrCore.getDefault();
+	}
+
+	@Override
+	public String getPluginId() {
+		return plugin.getBundle().getSymbolicName();
+	}
+
+	@Override
+	public LanguageManager getLanguageManager() {
+		return getDslCore().getLangManager();
+	}
+
+	@Override
+	public PrefsManager getPrefsManager() {
+		return getDslCore().getPrefsManager();
+	}
+
+	/** Returns the Dsl model. */
+	public DslModel getDslModel() {
+		return getDslCore().getDslModel();
+	}
+
+	public DslColorRegistry getColorRegistry() {
+		return getDslCore().getColorRegistry();
+	}
+
+	public ImageManager getImageManager() {
+		return (ImageManager) getDslUI().getImageManager();
 	}
 }

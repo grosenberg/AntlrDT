@@ -17,6 +17,7 @@ import java.util.Set;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -37,6 +38,7 @@ import net.certiv.antlr.dt.ui.ImageManager;
 import net.certiv.antlr.dt.vis.figures.StdToolTip;
 import net.certiv.antlr.dt.vis.model.PathConnector;
 import net.certiv.antlr.dt.vis.model.PathNode;
+import net.certiv.dsl.core.model.builder.Descriptor;
 import net.certiv.dsl.core.preferences.PrefsManager;
 
 public class PathLabelProvider implements INodeLabelProvider, IConnectionStyleProvider, IEntityStyleProvider {
@@ -49,11 +51,13 @@ public class PathLabelProvider implements INodeLabelProvider, IConnectionStylePr
 	private PrefsManager store;
 	private ImageManager imgr;
 
-	private Image parserNode;
-	private Image lexerNode;
-	private Image terminalNode;
-	private Image fragmentNode;
-	private Image unknownNode;
+	private Image parserNodeImg;
+	private Image lexerNodeImg;
+	private Image fragmentNodeImg;
+	private Image rangeNodeImg;
+	private Image setNodeImg;
+	private Image terminalNodeImg;
+	private Image unknownNodeImg;
 
 	private Object rootNode;
 	private Object selected;
@@ -68,11 +72,13 @@ public class PathLabelProvider implements INodeLabelProvider, IConnectionStylePr
 		store = AntlrCore.getDefault().getPrefsManager();
 		imgr = AntlrUI.getDefault().getImageManager();
 
-		parserNode = imgr.get(imgr.IMG_OBJ_PARSER);
-		lexerNode = imgr.get(imgr.IMG_OBJ_LEXER);
-		terminalNode = imgr.get(imgr.IMG_OBJ_TERMINAL);
-		fragmentNode = imgr.get(imgr.IMG_NODE_FRAGMENT);
-		unknownNode = imgr.get(imgr.UNKNOWN_NODE);
+		parserNodeImg = imgr.get(imgr.IMG_OBJ_RULE);
+		lexerNodeImg = imgr.get(imgr.IMG_OBJ_LEXER);
+		fragmentNodeImg = imgr.get(imgr.IMG_OBJ_FRAGMENT);
+		rangeNodeImg = imgr.get(imgr.IMG_OBJ_RANGE);
+		setNodeImg = imgr.get(imgr.IMG_OBJ_SET);
+		terminalNodeImg = imgr.get(imgr.IMG_OBJ_TERMINAL);
+		unknownNodeImg = imgr.get(imgr.IMG_OBJ_UNKNOWN);
 	}
 
 	@Override
@@ -143,12 +149,14 @@ public class PathLabelProvider implements INodeLabelProvider, IConnectionStylePr
 		if (entity instanceof PathConnector) return null;
 		if (entity instanceof PathNode) {
 			PathNode element = (PathNode) entity;
-			if (element.isParserRule()) return parserNode;
-			if (element.isLexerRule()) return lexerNode;
-			if (element.isTerminal()) return terminalNode;
-			if (element.isFragment()) return fragmentNode;
+			if (element.isParserRule()) return parserNodeImg;
+			if (element.isLexerRule()) return lexerNodeImg;
+			if (element.isFragment()) return fragmentNodeImg;
+			if (element.isRange()) return rangeNodeImg;
+			if (element.isSet()) return setNodeImg;
+			if (element.isTerminal()) return terminalNodeImg;
 		}
-		return unknownNode;
+		return unknownNodeImg;
 	}
 
 	@Override
@@ -156,8 +164,7 @@ public class PathLabelProvider implements INodeLabelProvider, IConnectionStylePr
 		if (entity instanceof EntityConnectionData) return null;
 		if (entity instanceof PathConnector) return null;
 		if (entity instanceof PathNode) {
-			PathNode element = (PathNode) entity;
-			return element.getNodeName();
+			return ((PathNode) entity).getNodeName();
 		}
 		return "Unknown";
 	}
@@ -171,28 +178,30 @@ public class PathLabelProvider implements INodeLabelProvider, IConnectionStylePr
 
 		PathNode element = (PathNode) entity;
 		Label fig = new StdToolTip();
-		if (element.isParserRule()) fig.setIcon(parserNode);
-		if (element.isLexerRule()) fig.setIcon(lexerNode);
-		if (element.isTerminal()) fig.setIcon(terminalNode);
-		if (element.isFragment()) fig.setIcon(fragmentNode);
+		if (element.isParserRule()) fig.setIcon(parserNodeImg);
+		if (element.isLexerRule()) fig.setIcon(lexerNodeImg);
+		if (element.isFragment()) fig.setIcon(fragmentNodeImg);
+		if (element.isRange()) fig.setIcon(rangeNodeImg);
+		if (element.isSet()) fig.setIcon(setNodeImg);
+		if (element.isTerminal()) fig.setIcon(terminalNodeImg);
 		fig.setText(summary(element));
 
 		return fig;
 	}
 
-	private String summary(PathNode element) {
-		String name = element.getNodeName();
-		if (element.isTerminal()) {
-			AntlrToken token = element.getSymbol();
+	private String summary(PathNode node) {
+		String name = node.getNodeName();
+		if (node.isTerminal()) {
+			AntlrToken token = node.getNameToken();
 			String ttype = token.getTypeName();
 			int line = token.getLine() + 1;
 			int col = token.getCharPositionInLine();
 			return String.format("%s (%s) @%s:%s", name, ttype, line, col);
 		}
 
-		AntlrToken token = (AntlrToken) element.getContext().start;
-		int line = token.getLine() + 1;
-		int col = token.getCharPositionInLine();
+		Descriptor desc = node.getStatement().getDescriptor();
+		int line = desc.begLine + 1;
+		int col = desc.begOffsetName;
 		return String.format("%s @%s:%s", name, line, col);
 	}
 

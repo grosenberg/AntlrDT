@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -69,8 +70,8 @@ public class NodeLabelProvider implements INodeLabelProvider, IConnectionStylePr
 
 		ruleNode = imgr.get(imgr.IMG_OBJ_RULE);
 		terminalNode = imgr.get(imgr.IMG_OBJ_TERMINAL);
-		errorNode = imgr.get(imgr.ERROR_NODE);
-		unknownNode = imgr.get(imgr.UNKNOWN_NODE);
+		errorNode = imgr.get(imgr.IMG_OBJ_ERROR);
+		unknownNode = imgr.get(imgr.IMG_OBJ_UNKNOWN);
 	}
 
 	@Override

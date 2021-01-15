@@ -3,30 +3,30 @@ Automatic-Module-Name: net.certiv.antlr.dt.vis
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT Visualization
 Bundle-SymbolicName: net.certiv.antlr.dt.vis;singleton:=true
-Bundle-Version: 4.11.0.qualifier
+Bundle-Version: 4.2.0.qualifier
 Bundle-Activator: net.certiv.antlr.dt.vis.VisUI
 Bundle-Vendor: Certiv Analytics
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Require-Bundle: net.certiv.antlr.dt.ui;bundle-version="4.11.0",
- net.certiv.antlr.dt.core;bundle-version="4.11.0",
- net.certiv.dsl.jdt.plugin;bundle-version="0.11.0",
- net.certiv.dsl.core;bundle-version="0.11.0",
- net.certiv.dsl.lib;bundle-version="0.11.0",
- net.certiv.dsl.ui;bundle-version="0.11.0",
- org.eclipse.core.commands,
- org.eclipse.core.resources;bundle-version="3.13.700",
- org.eclipse.core.runtime;bundle-version="3.17.100",
+Require-Bundle: net.certiv.antlr.dt.ui;bundle-version="4.2.0",
+ net.certiv.antlr.dt.core;bundle-version="4.2.0",
+ net.certiv.dsl.jdt.plugin;bundle-version="0.20.0",
+ net.certiv.dsl.core;bundle-version="0.20.0",
+ net.certiv.dsl.lib;bundle-version="0.20.0",
+ net.certiv.dsl.ui;bundle-version="0.20.0",
+ org.eclipse.core.commands;bundle-version="3.9.700",
+ org.eclipse.core.resources;bundle-version="3.13.800",
+ org.eclipse.core.runtime;bundle-version="3.19.0",
  org.eclipse.core.filesystem;bundle-version="1.7.700",
- org.eclipse.jface;bundle-version="3.15.0",
- org.eclipse.jface.text;bundle-version="3.15.0",
- org.eclipse.ui;bundle-version="3.116.0",
- org.eclipse.ui.console,
- org.eclipse.ui.editors;bundle-version="3.13.100",
- org.eclipse.ui.forms;bundle-version="3.9.0",
- org.eclipse.ui.ide;bundle-version="3.17.0",
- org.eclipse.ui.views;bundle-version="3.10.200",
- org.eclipse.ui.workbench.texteditor;bundle-version="3.14.100",
- org.eclipse.nebula.widgets.tablecombo,
+ org.eclipse.jface;bundle-version="3.21.0",
+ org.eclipse.jface.text;bundle-version="3.16.400",
+ org.eclipse.ui;bundle-version="3.118.0",
+ org.eclipse.ui.console;bundle-version="3.9.300",
+ org.eclipse.ui.editors;bundle-version="3.13.300",
+ org.eclipse.ui.forms;bundle-version="3.10.0",
+ org.eclipse.ui.ide;bundle-version="3.17.200",
+ org.eclipse.ui.views;bundle-version="3.10.400",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.15.0",
+ org.eclipse.nebula.widgets.tablecombo;bundle-version="1.2.0",
  org.eclipse.zest.core;bundle-version="1.5.300",
  org.eclipse.zest.layouts;bundle-version="1.1.300"

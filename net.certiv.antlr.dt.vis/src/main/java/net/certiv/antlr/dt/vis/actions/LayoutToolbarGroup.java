@@ -21,8 +21,8 @@ import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
-import net.certiv.antlr.dt.vis.views.tree.TreeView;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.tree.TreeView;
 
 public class LayoutToolbarGroup extends ActionGroup {
 

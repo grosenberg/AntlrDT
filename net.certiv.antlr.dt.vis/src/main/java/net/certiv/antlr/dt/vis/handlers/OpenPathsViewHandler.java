@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import net.certiv.antlr.dt.vis.views.paths.PathView;
+import net.certiv.antlr.dt.vis.path.PathView;
 
 public class OpenPathsViewHandler extends AbstractHandler {
 

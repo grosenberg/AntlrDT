@@ -478,7 +478,7 @@
             class="net.certiv.dsl.ui.handlers.BuildHandler"
             commandId="net.certiv.antlr.dt.ui.build">
 			<activeWhen>
-				<reference definitionId="net.certiv.antlr.dt.activeEditor" />
+				<reference definitionId="net.certiv.antlr.dt.activeEditor.definition" />
 			</activeWhen>
 			<enabledWhen>
 				<reference definitionId="net.certiv.antlr.dt.activeEditor.definition" />

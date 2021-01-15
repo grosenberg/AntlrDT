@@ -43,14 +43,51 @@ import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.TokensSpecContext;
 import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.dsl.core.model.Block;
 import net.certiv.dsl.core.model.IStatement;
-import net.certiv.dsl.core.model.ImportStmt;
+import net.certiv.dsl.core.model.Include;
 import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.antlr.GrammarUtil;
 
-/** Implementing functions for model tree walker. */
+/**
+ * Implementing functions for model tree walker.
+ *
+ * <pre>
+ * grammar spec		: ModelType.MODULE -> ModelType.DECLARATION -> SpecializedType.GrammarRoot
+ *
+ * channel block	: ModelType.STATEMENT -> ModelType.BLOCK -> SpecializedType.Channel
+ * options block	: ModelType.STATEMENT -> ModelType.BLOCK -> SpecializedType.Options
+ * tokens block		: ModelType.STATEMENT -> ModelType.BLOCK -> SpecializedType.Tokens
+ * mode block		: ModelType.STATEMENT -> ModelType.BLOCK -> SpecializedType.Mode
+ *
+ * import statement	: ModelType.IMPORT -> ModelType.IMPORT -> SpecializedType.Import
+ * option statement	: ModelType.STATEMENT -> ModelType.EXPRESSION -> SpecializedType.Option
+ * chanel statement	: ModelType.STATEMENT -> ModelType.LITERAL -> SpecializedType.Channel
+ * token statement	: ModelType.STATEMENT -> ModelType.LITERAL -> SpecializedType.Token
+ *
+ * parser rule		: ModelType.STATEMENT -> ModelType.FUNC -> SpecializedType.ParserRule
+ * lexer rule		: ModelType.STATEMENT -> ModelType.FUNC -> SpecializedType.LexerRule
+ * action			: ModelType.STATEMENT -> ModelType.NATIVE -> SpecializedType.AtAction
+ *
+ * model block ref	: ModelType.FIELD -> ModelType.LITERAL -> SpecializedType.ModeName
+ *
+ * parser rule ref	: ModelType.FIELD -> ModelType.LITERAL -> SpecializedType.ParserRuleName
+ * lexer rule ref	: ModelType.FIELD -> ModelType.LITERAL -> SpecializedType.LexerRuleName
+ * fragment rule ref: ModelType.FIELD -> ModelType.LITERAL -> SpecializedType.FragmentRuleName
+ *
+ * rule ref			: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.RuleRef
+ * rule ref terminal: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.Terminal
+ * rule ref range	: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.Range
+ * rule ref set		: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.Set
+ *
+ * rule ref label	: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.Label
+ *
+ * parser atom ref 	: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.ParserAtomRef
+ * lexer atom ref 	: ModelType.FIELD -> ModelType.TYPE -> SpecializedType.LexerAtomRef
+ * lexer cmd expr	: ModelType.FIELD -> ModelType.VALUE -> SpecializedType.LexerCmdExpr
+ * </pre>
+ */
 public abstract class StructureBuilder extends Processor {
 
 	private ModelBuilder builder;
@@ -93,7 +130,7 @@ public abstract class StructureBuilder extends Processor {
 			String lexName = dtx.id().getText().replace("Parser", "Lexer");
 			data = new Specialization(SpecializedType.Import, ruleName(ctx), ctx, lexName);
 			data.setDecoration(Specialization.SYNTHETIC);
-			ImportStmt stmt = builder.importStmt(ctx, lexName, data);
+			Include stmt = builder.include(ctx, lexName, data);
 			stmt.setFlags(IStatement.SYNTHETIC);
 		}
 	}
@@ -131,7 +168,7 @@ public abstract class StructureBuilder extends Processor {
 		DelegateGrammarsContext ctx = (DelegateGrammarsContext) pathNodes().get(1);
 		IdContext ctxId = (IdContext) lastPathNode();
 		Specialization data = new Specialization(SpecializedType.Import, ruleName(ctx), ctx, ctxId.getText());
-		ImportStmt stmt = builder.importStmt(ctx, ctxId, data);
+		Include stmt = builder.include(ctx, ctxId, data);
 
 		builder.pushParent(stmt);
 		addField(ModelType.IMPORT, SpecializedType.Import, ruleName(ctx), ctxId);
@@ -149,8 +186,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each channel identifier within the block. */
 	public void doChannelsStatement() {
 		IdContext ctx = (IdContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, ctx.getText());
-		builder.field(ctx, ctx, ModelType.LITERAL, data);
+		Specialization data = new Specialization(SpecializedType.Channel, ruleName(ctx), ctx, ctx.getText());
+		builder.field(ModelType.LITERAL, ctx, ctx, data);
 	}
 
 	/** Called to begin the options block. */
@@ -182,7 +219,7 @@ public abstract class StructureBuilder extends Processor {
 		IdContext ctx = (IdContext) lastPathNode();
 		String ref = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF().getText() : ctx.getText();
 		Specialization data = new Specialization(SpecializedType.Token, ruleName(ctx), ctx, ref);
-		builder.statement(ModelType.EXPRESSION, ctx, ctx.TOKEN_REF(), data);
+		builder.statement(ModelType.LITERAL, ctx, ctx.TOKEN_REF(), data);
 	}
 
 	/** Called for a parser rule specification. */
@@ -274,14 +311,15 @@ public abstract class StructureBuilder extends Processor {
 
 	public void doCommandExpr() {
 		LexerCommandExprContext ctx = (LexerCommandExprContext) lastPathNode();
-		addField(ModelType.LITERAL, SpecializedType.ModeName, ruleName(ctx), ctx);
+		addField(ModelType.VARIABLE, SpecializedType.LexerCmdExpr, ruleName(ctx), ctx);
 	}
 
 	public void doAtomRef() {
 		AtomContext ctx = (AtomContext) lastPathNode();
 		if (ctx.DOT() != null) {
-			Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, ctx.DOT().getText());
-			builder.field(ctx, ctx.DOT(), ModelType.TYPE, data);
+			Specialization data = new Specialization(SpecializedType.ParserAtomRef, ruleName(ctx), ctx,
+					ctx.DOT().getText());
+			builder.field(ModelType.TYPE, ctx, ctx.DOT(), data);
 		}
 	}
 
@@ -289,23 +327,23 @@ public abstract class StructureBuilder extends Processor {
 		LexerAtomContext ctx = (LexerAtomContext) lastPathNode();
 		TerminalNode atom = ctx.charSet() != null ? ctx.charSet().LEXER_CHAR_SET() : ctx.DOT();
 		if (atom != null) {
-			Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, atom.getText());
-			builder.field(ctx, atom, ModelType.TYPE, data);
+			Specialization data = new Specialization(SpecializedType.LexerAtomRef, ruleName(ctx), ctx, atom.getText());
+			builder.field(ModelType.TYPE, ctx, atom, data);
 		}
 	}
 
 	/** Called for each parser rule referenced in a rule specification. */
 	public void doRuleRef() {
 		RulerefContext ctx = (RulerefContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, ctx.RULE_REF().getText());
-		builder.field(ctx, ctx.RULE_REF(), ModelType.TYPE, data);
+		Specialization data = new Specialization(SpecializedType.RuleRef, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		builder.field(ModelType.TYPE, ctx, ctx.RULE_REF(), data);
 	}
 
 	/** Called for each label reference within a parser rule specification. */
 	public void doLabelRef() {
 		IdContext ctx = (IdContext) lastPathNode();
 		Specialization data = new Specialization(SpecializedType.Label, ruleName(ctx), ctx, ctx.RULE_REF().getText());
-		builder.field(ctx, ctx.RULE_REF(), ModelType.VARIABLE, data);
+		builder.field(ModelType.TYPE, ctx, ctx.RULE_REF(), data);
 	}
 
 	/**
@@ -314,14 +352,14 @@ public abstract class StructureBuilder extends Processor {
 	public void doTerminalRef() {
 		TerminalContext ctx = (TerminalContext) lastPathNode();
 		TerminalNode terminal = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF() : ctx.STRING_LITERAL();
-		Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, terminal.getText());
-		builder.field(ctx, terminal, ModelType.TYPE, data);
+		Specialization data = new Specialization(SpecializedType.Terminal, ruleName(ctx), ctx, terminal.getText());
+		builder.field(ModelType.TYPE, ctx, terminal, data);
 	}
 
 	public void doRangeRef() {
 		RangeContext ctx = (RangeContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Value, ruleName(ctx), ctx, ctx.getText());
-		builder.field(ctx, ctx.STRING_LITERAL().get(0), ModelType.TYPE, data);
+		Specialization data = new Specialization(SpecializedType.Range, ruleName(ctx), ctx, ctx.getText());
+		builder.field(ModelType.TYPE, ctx, ctx, data);
 	}
 
 	public void doSetRef() {
@@ -335,8 +373,8 @@ public abstract class StructureBuilder extends Processor {
 			elem = ctx.charSet().LEXER_CHAR_SET();
 		}
 		if (elem != null) {
-			Specialization data = new Specialization(SpecializedType.LexerRule, ruleName(ctx), ctx, elem.getText());
-			builder.field(ctx, elem, ModelType.TYPE, data);
+			Specialization data = new Specialization(SpecializedType.Set, ruleName(ctx), ctx, elem.getText());
+			builder.field(ModelType.TYPE, ctx, elem, data);
 		}
 	}
 
@@ -377,13 +415,13 @@ public abstract class StructureBuilder extends Processor {
 
 	private void addField(ModelType mType, SpecializedType sType, String rulename, ParseTree ctx) {
 		if (ctx != null) {
-			builder.field(ctx, ctx, mType, new Specialization(sType, rulename, ctx, ctx.getText()));
+			builder.field(mType, ctx, ctx, new Specialization(sType, rulename, ctx, ctx.getText()));
 		}
 	}
 
 	private void addField(ModelType mType, SpecializedType sType, String rulename, ParseTree ctx, String text) {
 		if (ctx != null) {
-			builder.field(ctx, ctx, mType, new Specialization(sType, rulename, ctx, text));
+			builder.field(mType, ctx, ctx, new Specialization(sType, rulename, ctx, text));
 		}
 	}
 

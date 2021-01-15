@@ -11,7 +11,6 @@
 package net.certiv.antlr.dt.vis.actions;
 
 import org.eclipse.jface.action.ControlContribution;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.nebula.widgets.tablecombo.TableCombo;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +23,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
 
 public class RouterControlItem extends ControlContribution {
 
@@ -56,16 +55,14 @@ public class RouterControlItem extends ControlContribution {
 			public void widgetSelected(SelectionEvent e) {
 				int idx = combo.getSelectionIndex();
 				TableItem row = combo.getTable().getItem(idx);
-				Router router = Router.getEnum(row.getText());
+				Router router = Router.from(row.getText());
 				if (router == null) router = Router.FAN;
 				view.setRouter(router);
 			}
 		});
 
-		IDialogSettings settings = AntlrUI.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(AntlrUI.PA_DIALOG_SEC);
-		String router = section.get(IAdjustableViewPart.KEY_ROUTER);
-		combo.setText(router);
+		Router router = view.getRouter();
+		combo.setText(router.getDisplayName());
 
 		return combo;
 	}

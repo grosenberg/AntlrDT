@@ -25,12 +25,17 @@ public class PathContentProvider implements IGraphEntityContentProvider {
 
 	public PathContentProvider(GraphViewer viewer) {
 		this.viewer = viewer;
-		model = new PathModel();
+	}
+
+	public void initModel(PathModel model) {
+		this.model = model;
 	}
 
 	public void updateModel(PathModel model) {
-		dispose();
-		this.model = model;
+		if (this.model != model) {
+			this.model.clear();
+			this.model = model;
+		}
 		viewer.refresh();
 		viewer.applyLayout();
 	}
@@ -39,7 +44,7 @@ public class PathContentProvider implements IGraphEntityContentProvider {
 	public Object[] getElements(Object member) {
 		if (member == null) return new Object[] { member };
 
-		List<PathNode> members = model.getNodeList().stream().filter(n -> !n.isHidden()).collect(Collectors.toList());
+		List<PathNode> members = model.getNodes().stream().filter(n -> !n.isHidden()).collect(Collectors.toList());
 		members.remove(member);
 		return members.toArray();
 	}

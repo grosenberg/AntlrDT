@@ -48,14 +48,16 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 		keys.add(Editor.EDITOR_COMMENT_DC_COLOR);
 		keys.add(Editor.EDITOR_COMMENT_BL_COLOR);
 		keys.add(Editor.EDITOR_COMMENT_LN_COLOR);
+
 		keys.add(Editor.EDITOR_KEYWORDS_COLOR);
-		keys.add(Editor.EDITOR_SYMBOLS_COLOR);
+		keys.add(PrefsKey.EDITOR_MODE_NAME_COLOR);
+		keys.add(PrefsKey.EDITOR_RULE_NAME_COLOR);
 		keys.add(Editor.EDITOR_STRING_COLOR);
+		keys.add(Editor.EDITOR_SYMBOLS_COLOR);
+
 		keys.add(PrefsKey.EDITOR_ACTION_COLOR);
 		keys.add(PrefsKey.EDITOR_ACTION_NAME_COLOR);
 
-		keys.add(PrefsKey.EDITOR_RULE_NAME_COLOR);
-		keys.add(PrefsKey.EDITOR_MODE_NAME_COLOR);
 		return keys;
 	}
 

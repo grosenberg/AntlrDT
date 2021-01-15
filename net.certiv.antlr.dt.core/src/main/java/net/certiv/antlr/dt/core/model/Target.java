@@ -17,6 +17,11 @@ public enum Target {
 
 	PARSER,
 	LEXER,
+	FRAGMENT,
+
+	RANGE,
+	SET,
 	TERMINAL,
-	FRAGMENT;
+
+	;
 }

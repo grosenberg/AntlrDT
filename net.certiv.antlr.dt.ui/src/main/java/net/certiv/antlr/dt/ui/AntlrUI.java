@@ -15,11 +15,9 @@ import org.osgi.framework.BundleContext;
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.ui.console.AntlrConsoleFactory;
 import net.certiv.antlr.dt.ui.editor.AntlrCompletionManager;
-import net.certiv.antlr.dt.ui.editor.AntlrTextTools;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
+import net.certiv.antlr.dt.ui.editor.AntlrTextTools;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.console.StyledConsole;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
@@ -38,7 +36,6 @@ public class AntlrUI extends DslUI {
 
 	public AntlrUI() {
 		super();
-		Log.defLevel(LogLevel.Debug);
 	}
 
 	public static AntlrUI getDefault() {

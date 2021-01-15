@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Path;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.builder.BuildUtil;
-import net.certiv.antlr.dt.vis.views.tokens.Source;
+import net.certiv.antlr.dt.vis.tokens.Source;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.ModelException;

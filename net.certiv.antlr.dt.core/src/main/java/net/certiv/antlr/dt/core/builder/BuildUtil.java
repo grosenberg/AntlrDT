@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.tree.RuleNode;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -45,11 +44,12 @@ public class BuildUtil {
 	private BuildUtil() {}
 
 	/**
-	 * Returns the absolute filesystem path to the build output location for the current
-	 * grammar.
+	 * Returns the absolute filesystem path to the build output location for the
+	 * current grammar.
 	 * <p>
-	 * Resolves the location on (1) the package name specified in the first header block
-	 * of the grammar; or (2) the corresponding code unit default build output location.
+	 * Resolves the location on (1) the package name specified in the first header
+	 * block of the grammar; or (2) the corresponding code unit default build output
+	 * location.
 	 *
 	 * @param record the grammar parse record
 	 * @return an absolute output location path
@@ -73,8 +73,8 @@ public class BuildUtil {
 
 	/**
 	 * Returns the dotted-form package name of generated files. Prefers the
-	 * grammar-defined package name. Otherwise, returns the package name of the grammar
-	 * unit.
+	 * grammar-defined package name. Otherwise, returns the package name of the
+	 * grammar unit.
 	 *
 	 * @param record the grammar parse record
 	 * @return the resolved output package name
@@ -85,8 +85,9 @@ public class BuildUtil {
 	}
 
 	/**
-	 * Returns the path-form package name of generated files. Prefers the grammar-defined
-	 * package name. Otherwise, returns the package name of the grammar unit.
+	 * Returns the path-form package name of generated files. Prefers the
+	 * grammar-defined package name. Otherwise, returns the package name of the
+	 * grammar unit.
 	 *
 	 * @param record the grammar parse record
 	 * @return the resolved path-form output package name
@@ -120,8 +121,8 @@ public class BuildUtil {
 	}
 
 	/**
-	 * Returns grammar-defined dotted-form package name. Returns {@code Strings.UNKNOWN}
-	 * if not found.
+	 * Returns grammar-defined dotted-form package name. Returns
+	 * {@code Strings.UNKNOWN} if not found.
 	 *
 	 * @param record the grammar parse record
 	 * @return the resolved grammar-defined dotted-form package name
@@ -132,18 +133,18 @@ public class BuildUtil {
 	}
 
 	/**
-	 * Returns the dotted-form package name defined in the grammar top-most header block,
-	 * or {@code null} if not found.
+	 * Returns the dotted-form package name defined in the grammar top-most header
+	 * block, or {@code null} if not found.
 	 * <p>
-	 * Visits the reconcile parse-tree, if present, or {@code regex}s the full grammar
-	 * source content.
+	 * Visits the reconcile parse-tree, if present, or {@code regex}s the full
+	 * grammar source content.
 	 *
 	 * @param record the grammar parse record
 	 * @return the resolved package name or {@code null} if not found
 	 */
 	public static String grammarDefinedPackage(DslParseRecord record) {
 		if (record.hasTree()) {
-			AntlrDT4ParserBaseVisitor<String> PkgVisitor = new AntlrDT4ParserBaseVisitor<String>() {
+			AntlrDT4ParserBaseVisitor<String> PkgVisitor = new AntlrDT4ParserBaseVisitor<>() {
 
 				@Override
 				protected boolean shouldVisitNextChild(RuleNode node, String result) {
@@ -177,11 +178,11 @@ public class BuildUtil {
 	}
 
 	/**
-	 * Returns the value defined for the given option name, or {@code null} if the options
-	 * block or named key is not found.
+	 * Returns the value defined for the given option name, or {@code null} if the
+	 * options block or named key is not found.
 	 * <p>
-	 * Visits the reconcile parse-tree, if present, or {@code regex}s the full grammar
-	 * source content.
+	 * Visits the reconcile parse-tree, if present, or {@code regex}s the full
+	 * grammar source content.
 	 *
 	 * @param record the grammar parse record
 	 * @param keyname the option name key
@@ -189,7 +190,7 @@ public class BuildUtil {
 	 */
 	public static String grammarDefinedOptionValue(DslParseRecord record, String keyname) {
 		if (record.hasTree()) {
-			AntlrDT4ParserBaseVisitor<String> visitor = new AntlrDT4ParserBaseVisitor<String>() {
+			AntlrDT4ParserBaseVisitor<String> visitor = new AntlrDT4ParserBaseVisitor<>() {
 
 				@Override
 				protected boolean shouldVisitNextChild(RuleNode node, String result) {

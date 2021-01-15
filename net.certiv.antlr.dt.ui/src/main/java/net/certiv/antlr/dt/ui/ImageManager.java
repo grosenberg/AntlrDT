@@ -41,22 +41,23 @@ public class ImageManager extends DslImageManager {
 
 	public final String IMG_OVR_CUSTOM = create(locBundle, OVR, locPrefix + "custom_ovr.png");
 
-	public final String IMG_OBJ_GRAMMAR = create(locBundle, OBJ, locPrefix + "grammar_obj.png");
-	public final String IMG_OBJ_PARSER = create(locBundle, OBJ, locPrefix + "parser_obj.png");
-	public final String IMG_OBJ_LEXER = create(locBundle, OBJ, locPrefix + "lexer_obj.png");
+	public final String IMG_OBJ_GRAMMAR = create(locBundle, OBJ, locPrefix + "module.png");
+	public final String IMG_OBJ_PARSER = create(locBundle, OBJ, locPrefix + "node_parser.png");
+	public final String IMG_OBJ_LEXER = create(locBundle, OBJ, locPrefix + "node_lexer.png");
+	public final String IMG_OBJ_FRAGMENT = create(locBundle, OBJ, locPrefix + "node_fragment.png");
+
 	public final String IMG_OBJ_ACTION = create(locBundle, OBJ, locPrefix + "action_obj.png");
+	public final String IMG_OBJ_ERROR = create(locBundle, OBJ, locPrefix + "node_error.png");
 	public final String IMG_OBJ_OPTIONS = create(locBundle, OBJ, locPrefix + "options_obj.png");
 	public final String IMG_OBJ_MODE = create(locBundle, OBJ, locPrefix + "mode_obj.png");
 	public final String IMG_OBJ_LABEL = create(locBundle, OBJ, locPrefix + "label_obj.png");
 	public final String IMG_OBJ_RULE_COLON = create(locBundle, OBJ, locPrefix + "ruleColon.png");
-	public final String IMG_OBJ_RULE = create(locBundle, OBJ, locPrefix + "graph.png");
-	public final String IMG_OBJ_TERMINAL = create(locBundle, OBJ, locPrefix + "terminal_obj.png");
+	public final String IMG_OBJ_RULE = create(locBundle, OBJ, locPrefix + "node_rule.png");
+	public final String IMG_OBJ_RANGE = create(locBundle, OBJ, locPrefix + "node_range.png");
+	public final String IMG_OBJ_SET = create(locBundle, OBJ, locPrefix + "node_set.png");
+	public final String IMG_OBJ_TERMINAL = create(locBundle, OBJ, locPrefix + "node_terminal.png");
 	public final String IMG_OBJ_VALUE = create(locBundle, OBJ, locPrefix + "genericvariable_obj.png");
-
-	public final String IMG_NODE_PARSER = create(locBundle, OBJ, locPrefix + "node_rule.png");
-	public final String IMG_NODE_LEXER = create(locBundle, OBJ, locPrefix + "node_lexer.png");
-	public final String IMG_NODE_TERMINAL = create(locBundle, OBJ, locPrefix + "node_terminal.png");
-	public final String IMG_NODE_FRAGMENT = create(locBundle, OBJ, locPrefix + "node_fragment.png");
+	public final String IMG_OBJ_UNKNOWN = create(locBundle, OBJ, locPrefix + "node_unknown.png");
 
 	public final String IMG_OVR_COMBINED = create(locBundle, OVR, locPrefix + "combined_ovr.png");
 	public final String IMG_OVR_PARSER = create(locBundle, OVR, locPrefix + "parser_ovr.png");
@@ -115,9 +116,6 @@ public class ImageManager extends DslImageManager {
 	public final String CLEAR = create(locBundle, OBJ, locPrefix + "clearHistory.png");
 	public final String HIDDEN = create(locBundle, OBJ, locPrefix + "annotationOutlined.png");
 	public final String HISTORY = create(locBundle, OBJ, locPrefix + "history_list.png");
-
-	public final String ERROR_NODE = create(locBundle, OBJ, locPrefix + "errorNode.png");
-	public final String UNKNOWN_NODE = create(locBundle, OBJ, locPrefix + "unknown_obj.png");
 
 	public ImageManager() {
 		super();

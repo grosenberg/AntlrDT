@@ -59,7 +59,7 @@ public enum Router {
 		return algorithm;
 	}
 
-	public static Router getEnum(String name) {
+	public static Router from(String name) {
 		if (name != null) {
 			for (Router value : values()) {
 				if (value.getDisplayName().toLowerCase().equals(name.toLowerCase())) return value;

@@ -65,17 +65,10 @@ public class PrefsInitializer extends DslPrefsInit {
 		setInt(PrefsKey.VIEW_UPDATE_DELAY, 1000);
 
 		// stylesheets
-		// String BUNDLE_ID = "net.certiv.antlr.dt.ui";
-		// String previewDir = resourceDir(BUNDLE_ID, PrefsKey.PREVIEW);
-		// setString(PrefsKey.EDITOR_PREVIEW_INTERNAL_DIR, previewDir);
-		// setString(PrefsKey.EDITOR_PREVIEW_FILE, previewDir + PrefsKey.MARKDOWN_CSS);
-		//
-		// setBool(PrefsKey.EDITOR_PREVIEW_EXTERNAL_ENABLE, false);
-		// setString(PrefsKey.EDITOR_PREVIEW_EXTERNAL_DIR, Strings.EMPTY);
-		//
-		// String semanticDir = resourceDir(BUNDLE_ID, Editor.SEMANTIC);
-		// setString(Editor.EDITOR_SEMANTIC_INTERNAL_DIR, semanticDir);
-		// setString(Editor.EDITOR_SEMANTIC_FILE, semanticDir + Editor.DEFAULT_CSS);
+		String BUNDLE_ID = "net.certiv.antlr.dt.ui";
+		String semanticDir = resourceDir(BUNDLE_ID, Editor.SEMANTIC_DIR);
+		setString(Editor.EDITOR_SEMANTIC_INTERNAL_DIR, semanticDir);
+		setString(Editor.EDITOR_SEMANTIC_FILE, semanticDir + Editor.DEFAULT_CSS);
 
 		setString(Builder.BUILDER_USE, Builder.BUILDER_USE_GRAMMAR);
 		setString(Builder.BUILDER_REL_PATH, "./gen/");

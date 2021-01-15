@@ -10,6 +10,8 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.ui.wizards;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -17,19 +19,21 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
+import net.certiv.dsl.core.util.Chars;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
 import net.certiv.dsl.ui.fields.SelectionField;
 import net.certiv.dsl.ui.fields.TextButtonField;
-import net.certiv.dsl.ui.wizards.DslBaseWizard;
-import net.certiv.dsl.ui.wizards.DslContainerWizardPage;
+import net.certiv.dsl.ui.wizard.DslFileWizard;
+import net.certiv.dsl.ui.wizard.DslFileWizardPage;
 
 /**
  * Wizard UI to obtain the grammar location and the file name. Will accept no extension OR
  * just g4.
  */
-public class AntlrNewWizardPage extends DslContainerWizardPage {
+public class AntlrNewWizardPage extends DslFileWizardPage {
 
 	private final static String PACKAGE = "package";	//$NON-NLS-1$
 	private final static String SUPER = "superclass";	//$NON-NLS-1$
@@ -40,33 +44,22 @@ public class AntlrNewWizardPage extends DslContainerWizardPage {
 	private TextButtonField superField;
 	private SelectionField fragmentsField;
 	private SelectionField unicodeField;
-	private String importTxt = "";
+	private String importTxt = Strings.EMPTY;
 	private boolean genFragments;
 	private boolean genUnicode;
 
-	public AntlrNewWizardPage(DslBaseWizard wizard, IStructuredSelection selection) {
+	public AntlrNewWizardPage(DslFileWizard wizard, IStructuredSelection selection) {
 		super("AntlrNewWizardPage", wizard, selection);
+
+		setTitle("Create Antlr Grammar");
+		setDescription("Create new Antlr grammar");
+		setFilename("Grammar");
+		setFileExtension("g4");
 	}
 
 	@Override
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		GridLayoutFactory.fillDefaults().spacing(6, 9).margins(6, 6).applyTo(container);
-
-		setFileName("Grammar");
-		setFileExtension("g4");
-		createContainerControl(container);
-		createSubControls(container);
-
-		setControl(container);
-		setErrorMessage(null);
-		setMessage(null);
-		validatePage();
-	}
-
-	private void createSubControls(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+	protected void createCustomGroup(Composite topLevel) {
+		Composite container = new Composite(topLevel, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		GridLayoutFactory.fillDefaults().numColumns(3).margins(6, 6).applyTo(container);
 
@@ -111,7 +104,7 @@ public class AntlrNewWizardPage extends DslContainerWizardPage {
 	}
 
 	/** Returns the text of the package input field. */
-	public String getPackageText() {
+	public String getPackageName() {
 		return pkgField.getText();
 	}
 
@@ -131,5 +124,48 @@ public class AntlrNewWizardPage extends DslContainerWizardPage {
 
 	public boolean getUnicode() {
 		return genUnicode;
+	}
+
+	@Override
+	protected String getInitialContents() {
+		return null;
+	}
+
+	/**
+	 * Create multiple files, returning the primary.
+	 * <p>
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IFile createNewFile() {
+		final String filename = getFilename();
+		final IPath base = getContainerFullPath();
+		final String packageName = getPackageName();
+		final String superclass = getSuperClass();
+		final String importTxt = getImportTxt();
+		final boolean fragments = getFragments();
+		final boolean unicode = getUnicode();
+
+		int dot = filename.lastIndexOf(Chars.DOT);
+		String name = (dot != -1) ? filename.substring(0, dot) : filename;
+		name = Strings.titleCase(name);
+
+		String content = Gen.content("Parser", name, packageName, superclass, importTxt);
+		IFile parserFile = createNewFile(base, name + "Parser.g4", getInitialContentStream(content));
+
+		content = Gen.content("Lexer", name, packageName, superclass, importTxt);
+		createNewFile(base, name + "Lexer.g4", getInitialContentStream(content));
+
+		if (fragments) {
+			content = Gen.content("Fragments", name);
+			createNewFile(base, name + "Fragments.g4", getInitialContentStream(content));
+		}
+
+		if (unicode) {
+			content = Gen.content("Unicode", name);
+			createNewFile(base, name + "Unicode.g4", getInitialContentStream(content));
+		}
+
+		return parserFile;
 	}
 }

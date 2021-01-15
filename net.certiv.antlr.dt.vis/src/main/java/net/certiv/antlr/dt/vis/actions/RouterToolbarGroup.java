@@ -12,8 +12,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.actions.ActionGroup;
 
-import net.certiv.antlr.dt.vis.views.IAdjustableViewPart;
-import net.certiv.antlr.dt.vis.views.tree.TreeView;
+import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
+import net.certiv.antlr.dt.vis.tree.TreeView;
 
 public class RouterToolbarGroup extends ActionGroup {
 

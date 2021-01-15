@@ -91,7 +91,7 @@ public enum Layout {
 		return layoutAlgorithm;
 	}
 
-	public static Layout getEnum(String name) {
+	public static Layout from(String name) {
 		if (name != null) {
 			for (Layout value : values()) {
 				if (value.getDisplayName().toLowerCase().equals(name.toLowerCase())) return value;
