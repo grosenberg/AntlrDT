@@ -77,7 +77,7 @@ import net.certiv.antlr.dt.vis.model.PathModel;
 import net.certiv.antlr.dt.vis.model.PathNode;
 import net.certiv.antlr.dt.vis.model.providers.PathContentProvider;
 import net.certiv.antlr.dt.vis.model.providers.PathLabelProvider;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.CodeUnit;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IModuleStmt;

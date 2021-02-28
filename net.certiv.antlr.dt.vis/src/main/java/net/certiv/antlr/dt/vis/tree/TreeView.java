@@ -10,7 +10,7 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.vis.tree;
 
-import static org.eclipse.ui.IWorkbenchCommandConstants.*;
+import static org.eclipse.ui.IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR;
 
 import org.eclipse.draw2d.Cursors;
 import org.eclipse.draw2d.IFigure;
@@ -87,7 +87,7 @@ import net.certiv.antlr.dt.vis.model.providers.NodeContentProvider;
 import net.certiv.antlr.dt.vis.model.providers.NodeLabelProvider;
 import net.certiv.antlr.dt.vis.parse.TargetBuilder;
 import net.certiv.antlr.dt.vis.tokens.Source;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.CodeUnit;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IModuleStmt;

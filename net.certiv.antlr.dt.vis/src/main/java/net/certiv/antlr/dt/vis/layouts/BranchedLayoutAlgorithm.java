@@ -20,7 +20,7 @@ import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 
 public class BranchedLayoutAlgorithm extends AbstractLayoutAlgorithm {

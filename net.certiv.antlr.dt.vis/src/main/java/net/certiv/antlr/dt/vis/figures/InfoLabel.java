@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public class InfoLabel extends Label {
 

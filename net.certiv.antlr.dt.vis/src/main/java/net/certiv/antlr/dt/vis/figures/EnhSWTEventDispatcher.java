@@ -4,7 +4,7 @@ import org.eclipse.draw2d.SWTEventDispatcher;
 import org.eclipse.draw2d.ToolTipHelper;
 
 import net.certiv.antlr.dt.vis.graph.EnhGraphViewer;
-import net.certiv.dsl.core.util.Reflect;
+import net.certiv.common.util.Reflect;
 
 /** Enables use of an enhanced tip helper. */
 public class EnhSWTEventDispatcher extends SWTEventDispatcher {

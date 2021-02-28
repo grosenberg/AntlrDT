@@ -19,8 +19,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import net.certiv.dsl.core.util.Chars;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Chars;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.ui.fields.ContentChangedEvent;
 import net.certiv.dsl.ui.fields.IContentChangedListener;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;

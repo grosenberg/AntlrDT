@@ -18,8 +18,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
 import net.certiv.antlr.dt.vis.layouts.BranchedConnectionRouter;
-import net.certiv.dsl.core.util.Reflect;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Reflect;
+import net.certiv.common.util.Strings;
 
 public enum Router {
 

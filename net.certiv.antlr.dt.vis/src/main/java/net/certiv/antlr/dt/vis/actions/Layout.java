@@ -25,8 +25,8 @@ import net.certiv.antlr.dt.ui.ImageManager;
 import net.certiv.antlr.dt.vis.layouts.Branched;
 import net.certiv.antlr.dt.vis.layouts.BranchedLayoutAlgorithm;
 import net.certiv.antlr.dt.vis.layouts.LinWalkersLayoutAlgorithm;
-import net.certiv.dsl.core.util.Reflect;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Reflect;
+import net.certiv.common.util.Strings;
 
 public enum Layout {
 	HTREE("Horizontal Tree", "IMG_LAYOUT_TREE_HORIZ", new LinWalkersLayoutAlgorithm(K.NO_RESIZE), Branched.LEFT_RIGHT),

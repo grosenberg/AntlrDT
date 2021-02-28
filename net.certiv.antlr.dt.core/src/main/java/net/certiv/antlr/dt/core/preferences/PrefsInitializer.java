@@ -18,7 +18,7 @@ import net.certiv.dsl.core.preferences.DslPrefsInit;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.core.preferences.consts.Formatter;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 /**
  * Initializer for the preferences unique to this plugin.

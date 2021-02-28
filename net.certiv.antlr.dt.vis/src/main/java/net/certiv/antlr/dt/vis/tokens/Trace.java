@@ -10,7 +10,7 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.vis.tokens;
 
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public enum Trace {
 	ENTRY,

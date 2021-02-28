@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Token;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -56,12 +55,12 @@ import net.certiv.antlr.dt.vis.parse.TargetAssembly;
 import net.certiv.antlr.dt.vis.parse.TargetBuilder;
 import net.certiv.antlr.dt.vis.tree.TreeView;
 import net.certiv.antlr.dt.vis.util.VisUtil;
+import net.certiv.common.log.Log;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
-import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.eclipse.PartAdaptor2;
 import net.certiv.dsl.core.util.eclipse.WorkbenchAdaptor;
 

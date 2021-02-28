@@ -17,7 +17,6 @@ import java.util.TimerTask;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -29,10 +28,10 @@ import net.certiv.antlr.dt.core.preferences.PrefsKey;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
 import net.certiv.antlr.dt.vis.model.TreeModel;
 import net.certiv.antlr.dt.vis.tokens.Source;
+import net.certiv.common.log.Log;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
-import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.ui.DslUI;
 
 public class TargetBuilder {

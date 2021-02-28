@@ -28,7 +28,7 @@ import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlr.dt.core.parser.gen.StructureVisitor;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.ToolErrorListener;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;

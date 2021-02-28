@@ -12,7 +12,7 @@ package net.certiv.antlr.dt.ui.editor.text;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.ui.editor.scanners.IPrefixRuleBasedScanner;
 
 /** TODO: need to refactor */

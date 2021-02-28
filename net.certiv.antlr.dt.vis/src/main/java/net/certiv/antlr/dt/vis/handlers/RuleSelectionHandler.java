@@ -22,7 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import net.certiv.antlr.dt.ui.editor.AntlrEditor;
 import net.certiv.antlr.dt.vis.path.PathOp;
 import net.certiv.antlr.dt.vis.path.PathView;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.ui.editor.DslEditor.DslSelection;
 
 public class RuleSelectionHandler extends AbstractHandler {

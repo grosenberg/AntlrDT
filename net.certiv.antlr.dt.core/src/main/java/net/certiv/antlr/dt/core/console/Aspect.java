@@ -12,7 +12,7 @@ package net.certiv.antlr.dt.core.console;
 
 import net.certiv.dsl.core.console.CS;
 import net.certiv.dsl.core.console.IAspect;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public enum Aspect implements IAspect {
 

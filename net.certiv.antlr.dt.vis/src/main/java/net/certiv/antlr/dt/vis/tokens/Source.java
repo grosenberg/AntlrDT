@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import net.certiv.dsl.core.util.FileUtils;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.FileUtils;
+import net.certiv.common.util.Strings;
 
 public class Source {
 

@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.Path;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.ActionContext;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.OptionContext;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4ParserBaseVisitor;
+import net.certiv.common.util.Chars;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
-import net.certiv.dsl.core.util.Chars;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.antlr.GrammarUtil;
 
 /** @see GrammarUtil */

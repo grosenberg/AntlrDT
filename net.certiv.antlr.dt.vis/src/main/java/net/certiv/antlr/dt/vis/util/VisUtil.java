@@ -11,7 +11,6 @@
 package net.certiv.antlr.dt.vis.util;
 
 import org.antlr.v4.runtime.Token;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -29,7 +28,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlr.dt.vis.tokens.Source;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.ui.util.EditorUtil;
 
 public class VisUtil {

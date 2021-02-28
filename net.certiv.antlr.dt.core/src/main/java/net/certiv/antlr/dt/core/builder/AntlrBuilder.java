@@ -51,15 +51,15 @@ import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.console.CS;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.problems.ProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
-import net.certiv.dsl.core.util.Chars;
+import net.certiv.common.util.Chars;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public class AntlrBuilder extends DslBuilder {
 

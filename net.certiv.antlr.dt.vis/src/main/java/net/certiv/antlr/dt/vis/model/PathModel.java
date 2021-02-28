@@ -26,7 +26,7 @@ import net.certiv.antlr.dt.core.model.SpecializedType;
 import net.certiv.antlr.dt.core.model.Target;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.TerminalContext;
 import net.certiv.antlr.dt.vis.model.providers.PathContentProvider;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IField;
 import net.certiv.dsl.core.model.IStatement;

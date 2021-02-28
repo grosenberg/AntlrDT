@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public class TokensLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 

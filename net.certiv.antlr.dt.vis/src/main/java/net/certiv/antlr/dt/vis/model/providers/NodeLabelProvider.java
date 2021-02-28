@@ -18,7 +18,6 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -37,8 +36,8 @@ import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
 import net.certiv.antlr.dt.vis.figures.StdToolTip;
 import net.certiv.antlr.dt.vis.model.TreeNode;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.preferences.PrefsManager;
-import net.certiv.dsl.core.util.Strings;
 
 public class NodeLabelProvider implements INodeLabelProvider, IConnectionStyleProvider, IEntityStyleProvider {
 

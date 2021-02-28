@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.Token;
 
 import net.certiv.antlr.dt.core.console.Aspect;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Lexer;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public class ErrorListener extends BaseErrorListener {
 

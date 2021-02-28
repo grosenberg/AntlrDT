@@ -17,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
-
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
@@ -27,7 +26,7 @@ import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 
 /**

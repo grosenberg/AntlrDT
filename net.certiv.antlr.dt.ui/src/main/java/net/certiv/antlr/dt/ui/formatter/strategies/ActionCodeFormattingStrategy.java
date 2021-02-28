@@ -15,7 +15,7 @@ import org.eclipse.jface.text.IDocument;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.dsl.core.formatter.IndentManipulation;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.jdt.ui.formatter.strategies.JavaFormattingStrategy;
 import net.certiv.dsl.ui.editor.text.LineRegion;

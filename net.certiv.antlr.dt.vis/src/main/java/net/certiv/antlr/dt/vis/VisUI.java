@@ -11,18 +11,16 @@
 package net.certiv.antlr.dt.vis;
 
 import org.apache.logging.log4j.Level;
-
-import org.osgi.framework.BundleContext;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.lang.LanguageManager;
-import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.DslModel;
 import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.ui.DslUI;

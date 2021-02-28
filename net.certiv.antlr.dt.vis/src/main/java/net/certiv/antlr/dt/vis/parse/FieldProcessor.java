@@ -16,8 +16,8 @@ import java.util.List;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.parser.IDslToken;
-import net.certiv.dsl.core.util.Strings;
 
 public class FieldProcessor {
 

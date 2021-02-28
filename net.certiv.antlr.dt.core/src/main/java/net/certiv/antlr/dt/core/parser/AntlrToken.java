@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.misc.Pair;
 
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.dsl.core.parser.IDslToken;
-import net.certiv.dsl.core.util.Strings;
+import net.certiv.common.util.Strings;
 
 public class AntlrToken extends CommonToken implements IDslToken {
 

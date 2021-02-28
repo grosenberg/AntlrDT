@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.certiv.antlr.dt.vis.tokens.Source;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.ui.fields.TextField;
 
 public class FileField extends TextField {

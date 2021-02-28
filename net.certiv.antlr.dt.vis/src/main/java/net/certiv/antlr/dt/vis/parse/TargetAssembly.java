@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.Path;
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.builder.BuildUtil;
 import net.certiv.antlr.dt.vis.tokens.Source;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
+import net.certiv.common.util.Chars;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.ModelStatus;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.preferences.PrefsManager;
-import net.certiv.dsl.core.util.Chars;
-import net.certiv.dsl.core.util.Strings;
 
 public class TargetAssembly {
 

@@ -41,13 +41,13 @@ import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.SetElementContext;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.TerminalContext;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser.TokensSpecContext;
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.model.Block;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.Include;
 import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.antlr.GrammarUtil;
 
 /**
@@ -120,7 +120,8 @@ public abstract class StructureBuilder extends Processor {
 			qualifier = Specialization.COMBINED;
 		}
 
-		Specialization data = new Specialization(SpecializedType.GrammarRoot, ruleName(ctx), ctx, grammarName);
+		Specialization data = new Specialization(SpecializedType.GrammarRoot, ruleName(ctx), ctx,
+				grammarName);
 		data.setDecoration(qualifier);
 		builder.module(ctx, grammarName, data);
 
@@ -139,8 +140,8 @@ public abstract class StructureBuilder extends Processor {
 	public void doDeclaration() {}
 
 	/**
-	 * Called for named or anonymous action statements. The block body content is handled
-	 * as an aggregate of native code.
+	 * Called for named or anonymous action statements. The block body content is
+	 * handled as an aggregate of native code.
 	 * <p>
 	 * Declaration{AtAction} -> Native{Value}
 	 */
@@ -178,7 +179,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called to begin the channnels block. */
 	public void doChannelsBlock() {
 		ChannelsSpecContext ctx = (ChannelsSpecContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Channel, ruleName(ctx), ctx, "Channels Block");
+		Specialization data = new Specialization(SpecializedType.Channel, ruleName(ctx), ctx,
+				"Channels Block");
 		Statement stmt = builder.statement(ModelType.BLOCK, ctx, ctx, data);
 		builder.pushParent(stmt);
 	}
@@ -193,7 +195,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called to begin the options block. */
 	public void doOptionsBlock() {
 		OptionsSpecContext ctx = (OptionsSpecContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Options, ruleName(ctx), ctx, "Options Block");
+		Specialization data = new Specialization(SpecializedType.Options, ruleName(ctx), ctx,
+				"Options Block");
 		Statement stmt = builder.statement(ModelType.BLOCK, ctx, ctx.OPTIONS(), data);
 		builder.pushParent(stmt);
 	}
@@ -201,8 +204,8 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each option within the options block. */
 	public void doOptionStatement() {
 		OptionContext ctx = (OptionContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Option, ruleName(ctx), ctx, ctx.id().getText(),
-				ctx.optionValue());
+		Specialization data = new Specialization(SpecializedType.Option, ruleName(ctx), ctx,
+				ctx.id().getText(), ctx.optionValue());
 		builder.statement(ModelType.EXPRESSION, ctx.id(), ctx.id(), data);
 	}
 
@@ -327,7 +330,8 @@ public abstract class StructureBuilder extends Processor {
 		LexerAtomContext ctx = (LexerAtomContext) lastPathNode();
 		TerminalNode atom = ctx.charSet() != null ? ctx.charSet().LEXER_CHAR_SET() : ctx.DOT();
 		if (atom != null) {
-			Specialization data = new Specialization(SpecializedType.LexerAtomRef, ruleName(ctx), ctx, atom.getText());
+			Specialization data = new Specialization(SpecializedType.LexerAtomRef, ruleName(ctx), ctx,
+					atom.getText());
 			builder.field(ModelType.TYPE, ctx, atom, data);
 		}
 	}
@@ -335,14 +339,16 @@ public abstract class StructureBuilder extends Processor {
 	/** Called for each parser rule referenced in a rule specification. */
 	public void doRuleRef() {
 		RulerefContext ctx = (RulerefContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.RuleRef, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		Specialization data = new Specialization(SpecializedType.RuleRef, ruleName(ctx), ctx,
+				ctx.RULE_REF().getText());
 		builder.field(ModelType.TYPE, ctx, ctx.RULE_REF(), data);
 	}
 
 	/** Called for each label reference within a parser rule specification. */
 	public void doLabelRef() {
 		IdContext ctx = (IdContext) lastPathNode();
-		Specialization data = new Specialization(SpecializedType.Label, ruleName(ctx), ctx, ctx.RULE_REF().getText());
+		Specialization data = new Specialization(SpecializedType.Label, ruleName(ctx), ctx,
+				ctx.RULE_REF().getText());
 		builder.field(ModelType.TYPE, ctx, ctx.RULE_REF(), data);
 	}
 
@@ -352,7 +358,8 @@ public abstract class StructureBuilder extends Processor {
 	public void doTerminalRef() {
 		TerminalContext ctx = (TerminalContext) lastPathNode();
 		TerminalNode terminal = ctx.TOKEN_REF() != null ? ctx.TOKEN_REF() : ctx.STRING_LITERAL();
-		Specialization data = new Specialization(SpecializedType.Terminal, ruleName(ctx), ctx, terminal.getText());
+		Specialization data = new Specialization(SpecializedType.Terminal, ruleName(ctx), ctx,
+				terminal.getText());
 		builder.field(ModelType.TYPE, ctx, terminal, data);
 	}
 
@@ -419,7 +426,8 @@ public abstract class StructureBuilder extends Processor {
 		}
 	}
 
-	private void addField(ModelType mType, SpecializedType sType, String rulename, ParseTree ctx, String text) {
+	private void addField(ModelType mType, SpecializedType sType, String rulename, ParseTree ctx,
+			String text) {
 		if (ctx != null) {
 			builder.field(mType, ctx, ctx, new Specialization(sType, rulename, ctx, text));
 		}

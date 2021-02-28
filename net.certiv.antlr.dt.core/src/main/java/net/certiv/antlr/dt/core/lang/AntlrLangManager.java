@@ -23,7 +23,7 @@ import net.certiv.dsl.core.lang.LanguageManager;
 import net.certiv.dsl.core.lang.RootEntry;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslSourceParser;
-import net.certiv.dsl.core.util.Chars;
+import net.certiv.common.util.Chars;
 
 public class AntlrLangManager extends LanguageManager {
 

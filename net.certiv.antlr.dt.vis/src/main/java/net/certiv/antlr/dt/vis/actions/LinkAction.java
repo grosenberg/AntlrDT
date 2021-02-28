@@ -1,6 +1,6 @@
 package net.certiv.antlr.dt.vis.actions;
 
-import static org.eclipse.ui.IWorkbenchCommandConstants.*;
+import static org.eclipse.ui.IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR;
 
 import org.eclipse.jface.action.Action;
 

@@ -21,7 +21,7 @@ import org.eclipse.zest.core.widgets.Graph;
 
 import net.certiv.antlr.dt.vis.figures.EnhSWTEventDispatcher;
 import net.certiv.antlr.dt.vis.figures.EnhTipHelper;
-import net.certiv.dsl.core.util.Reflect;
+import net.certiv.common.util.Reflect;
 
 public class EnhGraphViewer extends GraphViewer implements IEnhGraphViewer {
 

@@ -19,7 +19,7 @@ import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
 
 import net.certiv.antlr.dt.vis.graph.EnhGraphViewer;
 import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
-import net.certiv.dsl.core.util.Reflect;
+import net.certiv.common.util.Reflect;
 
 public class ZoomControlItem extends ZoomContributionViewItem {
 
