@@ -126,6 +126,6 @@ public class TreeModel implements IModel {
 
 	@Override
 	public String toString() {
-		return "TreeModel [connectors=" + connectors.size() + "]";
+		return connectors.size() + " nodes";
 	}
 }

@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import net.certiv.common.util.FileUtils;
+import net.certiv.common.util.FsUtil;
 import net.certiv.common.util.Strings;
 
 public class Source {
@@ -51,7 +51,7 @@ public class Source {
 	}
 
 	public String getExt() {
-		return FileUtils.getExt(getPathname());
+		return FsUtil.getExt(getPathname());
 	}
 
 	public boolean exists() {
@@ -66,7 +66,7 @@ public class Source {
 		File file = getFile();
 		if (file.isFile()) {
 			try {
-				return FileUtils.readToString(file);
+				return FsUtil.readToString(file);
 			} catch (IOException e) {}
 		}
 		return Strings.EMPTY;
@@ -76,7 +76,7 @@ public class Source {
 		File file = getFile();
 		if (file.isFile()) {
 			try {
-				return FileUtils.readToLines(file);
+				return FsUtil.readToLines(file);
 			} catch (IOException e) {}
 		}
 		return Strings.EMPTY_STRINGS;

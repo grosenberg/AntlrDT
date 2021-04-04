@@ -143,8 +143,8 @@ class TargetUnit implements ITargetInfo {
 	}
 
 	/**
-	 * Loads and holds the classes that corresponding to the current editor content: the
-	 * source grammar.
+	 * Loads and holds the classes that corresponding to the current editor content:
+	 * the source grammar.
 	 *
 	 * @param assembly a data record describing the source grammar
 	 * @param srcGrammar the source grammar file
@@ -370,6 +370,8 @@ class TargetUnit implements ITargetInfo {
 			return;
 		}
 
+		report(Aspect.LEXER, "Token stream contains %d tokens.", tokens.size());
+
 		// parser
 
 		report(Aspect.PARSER, "Constructing '%s'", parserClass.getSimpleName());
@@ -470,7 +472,8 @@ class TargetUnit implements ITargetInfo {
 		model = new TreeModel();
 		model.setVocab(ruleNames, tokenNames);
 		ParseTreeWalker.DEFAULT.walk(new TreeProcessor(model), tree);
-		report(Aspect.TREE, "Parse tree generated!");
+
+		report(Aspect.TREE, "Tree of %s generated!", model.toString());
 	}
 
 	private void reportEx(Aspect aspect, Aspect type, Exception ex) {
@@ -515,8 +518,12 @@ class TargetUnit implements ITargetInfo {
 		AntlrUI.getDefault().consoleAppend(aspect, CS.INFO, format, args);
 	}
 
-	@SuppressWarnings("deprecation")
 	private String[] getTokenNames(Lexer lexer) {
-		return lexer.getTokenNames();
+		List<String> names = new ArrayList<>();
+		names.add("EOF");
+		for (int idx = 1; idx <= lexer.getVocabulary().getMaxTokenType(); idx++) {
+			names.add(lexer.getVocabulary().getSymbolicName(idx));
+		}
+		return names.toArray(new String[names.size()]);
 	}
 }
