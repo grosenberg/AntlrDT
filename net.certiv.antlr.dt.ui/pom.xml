@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>net.certiv</groupId>
 		<artifactId>net.certiv.antlr.dt</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.2.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>net.certiv.antlr.dt.ui</artifactId>

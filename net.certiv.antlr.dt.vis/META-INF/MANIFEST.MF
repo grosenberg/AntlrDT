@@ -3,17 +3,17 @@ Automatic-Module-Name: net.certiv.antlr.dt.vis
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT Visualization
 Bundle-SymbolicName: net.certiv.antlr.dt.vis;singleton:=true
-Bundle-Version: 4.2.0.qualifier
+Bundle-Version: 4.2.1.qualifier
 Bundle-Activator: net.certiv.antlr.dt.vis.VisUI
 Bundle-Vendor: Certiv Analytics
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Require-Bundle: net.certiv.antlr.dt.ui;bundle-version="4.2.0",
- net.certiv.antlr.dt.core;bundle-version="4.2.0",
- net.certiv.dsl.jdt.plugin;bundle-version="0.20.0",
- net.certiv.dsl.core;bundle-version="0.20.0",
- net.certiv.dsl.lib;bundle-version="0.20.0",
- net.certiv.dsl.ui;bundle-version="0.20.0",
+Require-Bundle: net.certiv.antlr.dt.ui;bundle-version="4.2.1",
+ net.certiv.antlr.dt.core;bundle-version="4.2.1",
+ net.certiv.dsl.jdt.plugin;bundle-version="0.21.0",
+ net.certiv.dsl.core;bundle-version="0.21.0",
+ net.certiv.dsl.lib;bundle-version="0.21.0",
+ net.certiv.dsl.ui;bundle-version="0.21.0",
  org.eclipse.core.commands;bundle-version="3.9.700",
  org.eclipse.core.resources;bundle-version="3.13.800",
  org.eclipse.core.runtime;bundle-version="3.19.0",
