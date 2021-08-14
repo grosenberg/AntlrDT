@@ -18,8 +18,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
 import net.certiv.antlr.dt.vis.layouts.BranchedConnectionRouter;
+import net.certiv.common.stores.Result;
 import net.certiv.common.util.Reflect;
-import net.certiv.common.util.Strings;
 
 public enum Router {
 
@@ -43,16 +43,16 @@ public enum Router {
 
 	public ImageDescriptor getImageDescriptor() {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
-		Object key = Reflect.get(imgMgr, imageKey, true);
-		if (key == null) return null;
-		return imgMgr.getDescriptor((String) key);
+		Result<String> key = Reflect.get(imgMgr, imageKey);
+		if (!key.valid()) return null;
+		return imgMgr.getDescriptor(key.result);
 	}
 
 	public String getImageUrlname() {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
-		Object value = Reflect.get(imgMgr, imageKey, true);
-		if (value == null) return Strings.EMPTY;
-		return imgMgr.getUrl((String) value).toExternalForm();
+		Result<String> key = Reflect.get(imgMgr, imageKey);
+		if (!key.valid()) return null;
+		return imgMgr.getUrl(key.result).toExternalForm();
 	}
 
 	public AbstractRouter getRouter() {

@@ -19,6 +19,7 @@ import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
 
 import net.certiv.antlr.dt.vis.graph.EnhGraphViewer;
 import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
+import net.certiv.common.stores.Result;
 import net.certiv.common.util.Reflect;
 
 public class ZoomControlItem extends ZoomContributionViewItem {
@@ -29,16 +30,18 @@ public class ZoomControlItem extends ZoomContributionViewItem {
 		EnhGraphViewer viewer = (EnhGraphViewer) editor.getZoomableViewer();
 		// zoomLevels = zoomManager.getZoomLevelsAsText();
 
-		Object zMgr = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
-		String[] levels = (String[]) Reflect.invoke(zMgr, "getZoomLevelsAsText", null, null);
-		Reflect.setSuper(this, "zoomLevels", levels);
+		Result<Object> zoomMgr = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
+		if (zoomMgr.valid()) {
+			Result<String[]> levels = Reflect.invoke(zoomMgr, "getZoomLevelsAsText", null, null);
+			if (levels.valid()) Reflect.setSuper(this, "zoomLevels", levels);
+		}
 	}
 
 	@Override
 	public void fill(ToolBar parent, int index) {
 
 		Class<?>[] params = new Class[] { Composite.class };
-		Object[] args = new Object[] { parent };
+		Object[] args = { parent };
 		Object c = Reflect.invokeSuperDeclared(this, "createCombo", params, args);
 
 		ToolItem item = new ToolItem(parent, SWT.SEPARATOR);
