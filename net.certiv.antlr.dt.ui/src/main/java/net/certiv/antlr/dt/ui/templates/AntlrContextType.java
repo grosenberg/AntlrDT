@@ -8,7 +8,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-
 package net.certiv.antlr.dt.ui.templates;
 
 import org.eclipse.jface.text.templates.TemplateVariableResolver;

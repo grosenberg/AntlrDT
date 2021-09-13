@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.lang.LanguageManager;
 import net.certiv.dsl.core.model.IDslProject;
 import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.ui.DslUI;
@@ -41,14 +42,17 @@ public class RootFoldersPropertyPage extends AbstractPropertyPage {
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(PrefsDeltaManager delta) {
-		return new RootConfigBlock(this, delta, getFormkit(), getColorRegistry(), getProject());
+		LanguageManager langMgr = getDslCore().getLangManager();
+		return new RootConfigBlock(this, delta, getFormkit(), getColorRegistry(), langMgr, getProject());
 	}
 
 	private IDslProject getProject() {
 		IAdaptable adaptable = getElement();
 		if (adaptable == null) return null;
+
 		IProject project = adaptable.getAdapter(IProject.class);
 		if (project == null) return null;
+
 		return getDslCore().getDslModel().create(project);
 	}
 }
