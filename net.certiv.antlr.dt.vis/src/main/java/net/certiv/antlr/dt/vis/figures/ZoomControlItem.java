@@ -16,24 +16,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
+import org.eclipse.zest.core.viewers.internal.ZoomManager;
 
 import net.certiv.antlr.dt.vis.graph.EnhGraphViewer;
 import net.certiv.antlr.dt.vis.graph.IAdjustableViewPart;
 import net.certiv.common.stores.Result;
 import net.certiv.common.util.Reflect;
 
+@SuppressWarnings("restriction")
 public class ZoomControlItem extends ZoomContributionViewItem {
 
 	public ZoomControlItem(IAdjustableViewPart editor) {
 		super(editor);
 
 		EnhGraphViewer viewer = (EnhGraphViewer) editor.getZoomableViewer();
-		// zoomLevels = zoomManager.getZoomLevelsAsText();
-
-		Result<Object> zoomMgr = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
-		if (zoomMgr.valid()) {
-			Result<String[]> levels = Reflect.invoke(zoomMgr, "getZoomLevelsAsText", null, null);
-			if (levels.valid()) Reflect.setSuper(this, "zoomLevels", levels);
+		Result<ZoomManager> res = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
+		if (res.valid()) {
+			Result<String[]> levels = Reflect.invoke(res.result, "getZoomLevelsAsText", null, null);
+			if (levels.valid()) Reflect.setSuper(this, "zoomLevels", levels.result);
 		}
 	}
 
@@ -42,13 +42,15 @@ public class ZoomControlItem extends ZoomContributionViewItem {
 
 		Class<?>[] params = new Class[] { Composite.class };
 		Object[] args = { parent };
-		Object c = Reflect.invokeSuperDeclared(this, "createCombo", params, args);
 
-		ToolItem item = new ToolItem(parent, SWT.SEPARATOR);
-		Combo combo = (Combo) c;
-		combo.pack();
-		item.setControl(combo);
-		item.setWidth(combo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		zoomChanged(100);
+		Result<Combo> res = Reflect.invokeSuperDeclared(this, "createCombo", params, args);
+		if (res.valid()) {
+			ToolItem item = new ToolItem(parent, SWT.SEPARATOR);
+			Combo combo = res.result;
+			combo.pack();
+			item.setControl(combo);
+			item.setWidth(combo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+			zoomChanged(100);
+		}
 	}
 }

@@ -28,6 +28,16 @@ public class EnhGraphViewer extends GraphViewer implements IEnhGraphViewer {
 	private EnhSWTEventDispatcher dispatcher;
 	private EnhTipHelper helper;
 
+	public static void setAntialias(GC gc, int style) {
+		if (!gc.getAdvanced()) {
+			gc.setAdvanced(true);
+			if (!gc.getAdvanced()) return;
+		}
+		gc.setAntialias(style);
+		gc.setTextAntialias(style);
+		gc.setInterpolation((style == SWT.ON) ? SWT.HIGH : SWT.DEFAULT);
+	}
+
 	public EnhGraphViewer(Composite parent, int style) {
 		super(parent, style);
 		Graph graph = new Graph(parent, style) {
@@ -50,16 +60,6 @@ public class EnhGraphViewer extends GraphViewer implements IEnhGraphViewer {
 		graph.getLightweightSystem().setEventDispatcher(dispatcher);
 	}
 
-	public static void setAntialias(GC gc, int style) {
-		if (!gc.getAdvanced()) {
-			gc.setAdvanced(true);
-			if (!gc.getAdvanced()) return;
-		}
-		gc.setAntialias(style);
-		gc.setTextAntialias(style);
-		gc.setInterpolation((style == SWT.ON) ? SWT.HIGH : SWT.DEFAULT);
-	}
-
 	@Override
 	public EnhSWTEventDispatcher getEventDispatcher() {
 		return dispatcher;
@@ -73,14 +73,14 @@ public class EnhGraphViewer extends GraphViewer implements IEnhGraphViewer {
 	public void setZoomLevels(double[] zoomLevels) {
 		Object zMgr = Reflect.invokeSuperDeclared(this, "getZoomManager", null, null);
 		Class<?>[] params = new Class[] { zoomLevels.getClass() };
-		Object[] args = new Object[] { zoomLevels };
+		Object[] args = { zoomLevels };
 		Reflect.invoke(zMgr, "setZoomLevels", params, args);
 	}
 
 	public void setZoomAsText(String text) {
 		Object zMgr = Reflect.invokeSuperDeclared(this, "getZoomManager", null, null);
 		Class<?>[] params = new Class[] { text.getClass() };
-		Object[] args = new Object[] { text };
+		Object[] args = { text };
 		Reflect.invoke(zMgr, "setZoomAsText", params, args);
 	}
 

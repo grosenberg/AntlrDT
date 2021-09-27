@@ -4,6 +4,7 @@ import org.eclipse.draw2d.Figure;
 
 public class ClassFigure extends Figure {
 
-	public ClassFigure() {}
-
+	public ClassFigure() {
+		super();
+	}
 }
