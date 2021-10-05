@@ -12,14 +12,11 @@ package net.certiv.antlr.dt.core.builder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.antlr.v4.Tool;
 import org.antlr.v4.tool.Grammar;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -46,33 +43,27 @@ import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.console.Aspect;
+import net.certiv.common.log.Log;
+import net.certiv.common.util.Chars;
+import net.certiv.common.util.ExceptUtil;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.builder.ToolErrorListener;
 import net.certiv.dsl.core.console.CS;
-import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.problems.ProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
-import net.certiv.common.util.Chars;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.common.util.Strings;
 
 public class AntlrBuilder extends DslBuilder {
 
 	private static final String TASK = "Antlr build";
 	private static final String TOKENS = ".tokens";
 
-	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
-
-		@Override
-		public int compare(ICodeUnit u1, ICodeUnit u2) {
-			return u1.getElementName().compareTo(u2.getElementName());
-		}
-	};
+	public static final Comparator<ICodeUnit> NameComp = Comparator.comparing(ICodeUnit::getElementName);
 
 	public AntlrBuilder() {
 		super();
@@ -89,19 +80,8 @@ public class AntlrBuilder extends DslBuilder {
 	}
 
 	@Override
-	protected List<ICodeUnit> filterBuildableUnits(List<ICodeUnit> units) {
-		Set<ICodeUnit> changed = new HashSet<>();
-		for (ICodeUnit unit : units) {
-			if (!unit.isConsistent()) {
-				changed.add(unit);
-				changed.addAll(findRelated(unit, null));
-			}
-		}
-		return new ArrayList<>(changed);
-	}
-
-	@Override
-	protected IStatus buildUnits(List<ICodeUnit> units, IProgressMonitor monitor, int ticks) throws CoreException {
+	protected IStatus buildUnits(List<ICodeUnit> units, IProgressMonitor monitor, int ticks)
+			throws CoreException {
 		if (units.isEmpty()) return Status.OK_STATUS;
 
 		try {
@@ -128,23 +108,21 @@ public class AntlrBuilder extends DslBuilder {
 
 			// check status of reconciler; proceed regardless
 			if (!record.hasTree()) {
-				report(CS.WARN, Cause.UNIT_ERR, srcName(unit, false), " no Reconciler tree");
+				reportWarn("Build: %s has no reconciler tree.", pathname);
 			}
 
 			IPath output = null;
 			try {
 				output = BuildUtil.resolveOutputPath(record);
 			} catch (ModelException ex) {
-				String msg = ex.getMessage();
-				Throwable c = ex.getCause();
-				if (c != null) msg = c.getMessage();
-				report(CS.ERROR, Cause.SRC_ERRS, msg, srcName(unit, true));
+				String cause = ExceptUtil.getMessage(ex);
+				reportError("Exception determining output path for %s (%s)", srcName(unit, true), cause);
 			}
 			monitor.worked(1);
 
 			if (output == null) {
-				report(CS.ERROR, Cause.PATH_ERR, srcName(unit, false), pathname);
-				CoreUtil.showStatusLineMessage("No output path for  %s", pathname);
+				reportError("No output path for %s", pathname);
+				CoreUtil.showStatusLineMessage("No output path for %s", pathname);
 				return null;
 			}
 
@@ -164,23 +142,20 @@ public class AntlrBuilder extends DslBuilder {
 
 			} catch (Exception | Error e) {
 				err = e;
-				report(CS.ERROR, Cause.BUILD_ERR, e.getMessage(), srcName(unit, false), dest);
 
 			} finally {
 				record.getCollector().endCollecting();
 			}
 
 			if (err != null || record.hasProblems()) {
-				String failMsg = "Build error " + pathname.toString();
-				CoreUtil.showStatusLineMessage(failMsg, true);
+				CoreUtil.showStatusLineMessage("Build problem: %s", pathname);
 				int cnt = record.getErrorCnt() + record.getWarningCnt();
-				if (cnt > 0) report(CS.ERROR, Cause.SRC_PRBM, cnt, srcName(unit, false));
-				if (err != null) report(CS.ERROR, Cause.SRC_ERRS, err.getMessage(), srcName(unit, false));
+				if (cnt > 0) reportError("Build: source errors %s: %s", cnt, pathname);
+				if (err != null) reportError("Build: exception (%s): %s", err.getMessage(), pathname);
 
 			} else {
-				String msg = "Built " + pathname.toString();
-				CoreUtil.showStatusLineMessage(msg, false);
-				report(CS.INFO, Cause.BUILT, srcName(unit, false), dest);
+				CoreUtil.showStatusLineMessage("Built %s -> %s", pathname, dest);
+				reportInfo("Built %s -> %s", pathname, dest);
 				postCompileCleanup(unit, output, monitor);
 			}
 
@@ -193,8 +168,9 @@ public class AntlrBuilder extends DslBuilder {
 	}
 
 	@Override
-	protected void report(CS kind, Cause cause, Object... args) {
-		getDslCore().consoleAppend(Aspect.BUILDER, kind, cause.toString(), args);
+	protected void report(CS kind, String fmt, Object... args) {
+		getDslCore().consoleAppend(Aspect.BUILDER, kind, fmt, args);
+		Log.debug(this, fmt, args);
 	}
 
 	@Override
@@ -228,7 +204,8 @@ public class AntlrBuilder extends DslBuilder {
 		}
 	}
 
-	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived, IProgressMonitor monitor) {
+	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived,
+			IProgressMonitor monitor) {
 		try {
 			if (folder != null) {
 				folder.refreshLocal(IResource.DEPTH_ONE, monitor);
@@ -270,8 +247,8 @@ public class AntlrBuilder extends DslBuilder {
 			for (ICompilationUnit cu : getCompilationUnits(unit.getResource(), folder)) {
 				monitor.worked(1);
 				String content = cu.getSource();
-				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0, content.length(), 0,
-						null);
+				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0,
+						content.length(), 0, null);
 
 				if (textEdit != null) {
 					IDocument document = new Document();
@@ -279,7 +256,8 @@ public class AntlrBuilder extends DslBuilder {
 					textEdit.apply(document);
 					IPackageFragment pack = (IPackageFragment) cu.getParent();
 					String name = cu.getElementName();
-					ICompilationUnit cuFormatted = pack.createCompilationUnit(name, document.get(), true, monitor);
+					ICompilationUnit cuFormatted = pack.createCompilationUnit(name, document.get(), true,
+							monitor);
 					cuFormatted.save(monitor, true);
 				}
 			}
@@ -313,7 +291,7 @@ public class AntlrBuilder extends DslBuilder {
 
 	private List<ICompilationUnit> getCompilationUnits(IResource resource, IContainer folder) {
 		List<ICompilationUnit> units = new ArrayList<>();
-		IResource[] resources = new IResource[0];
+		IResource[] resources = {};
 		try {
 			resources = folder.members();
 		} catch (CoreException e) {}
