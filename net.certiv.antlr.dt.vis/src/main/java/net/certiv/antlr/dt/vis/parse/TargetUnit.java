@@ -482,11 +482,11 @@ class TargetUnit implements ITargetInfo {
 
 	private void reportError(Aspect aspect, Throwable ex, String fmt, Object... args) {
 		if (ex == null) {
-			errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt, args));
+			errors.add(AntlrCore.getDefault().consoleErrorRecord(aspect, ex, fmt, args));
 
 		} else {
 			args = ArrayUtil.append(args, at(ex));
-			errors.add(AntlrCore.getDefault().consoleError(aspect, ex, fmt + "\n\t(at %s)", args));
+			errors.add(AntlrCore.getDefault().consoleErrorRecord(aspect, ex, fmt + "\n\t(at %s)", args));
 
 			Throwable cause = ex.getCause();
 			if (cause != null) { // handle nested errors
