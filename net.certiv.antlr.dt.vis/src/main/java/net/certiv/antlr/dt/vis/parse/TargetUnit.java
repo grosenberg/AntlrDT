@@ -187,13 +187,13 @@ class TargetUnit implements ITargetInfo {
 		String tokenmsg = kind == Trace.ENTRY ? ctx.getStart().toString() : ctx.getStop().toString();
 		String desc = String.format("%sing rule '%s' on token %s", kind.toString(), rulename, tokenmsg);
 		trace.add(new String[] { String.valueOf(trace.size() + 1), desc });
-		Log.info(this, desc);
+		Log.info( desc);
 	}
 
 	public void addTrace(Trace kind, TerminalNode node) {
 		String desc = String.format(" - %s: token %s", kind.toString(), node.getSymbol().toString());
 		trace.add(new String[] { String.valueOf(trace.size() + 1), desc });
-		Log.info(this, desc);
+		Log.info( desc);
 	}
 
 	public boolean isValid() {
@@ -388,7 +388,7 @@ class TargetUnit implements ITargetInfo {
 			parser.addParseListener(new ParseTerminator());
 			if (assembly.getTraceParser()) parser.addParseListener(new TraceListener());
 
-			Log.info(this, "Parser constructed ...");
+			Log.info( "Parser constructed ...");
 
 		} catch (NoSuchMethodException ex) {
 			reportEx(Aspect.PARSER, Aspect.NO_METHOD, ex);
@@ -418,7 +418,7 @@ class TargetUnit implements ITargetInfo {
 				Constructor<?> ctor = errorClass.getConstructor((Class<?>[]) null);
 				ANTLRErrorStrategy strategy = (ANTLRErrorStrategy) ctor.newInstance((Object[]) null);
 				parser.setErrorHandler(strategy);
-				Log.info(this, "Error strategy added ...");
+				Log.info( "Error strategy added ...");
 
 			} catch (NoSuchMethodException ex) {
 				reportEx(Aspect.STRATEGY, Aspect.NO_METHOD, ex);

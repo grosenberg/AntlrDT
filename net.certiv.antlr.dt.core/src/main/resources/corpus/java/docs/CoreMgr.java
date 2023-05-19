@@ -69,7 +69,7 @@ public class CoreMgr {
 	public void execute(Settings settings, List<String> pathnames) {
 		Time.start(Facet.EXECUTE);
 		documents = loadDocuments(pathnames);
-		Log.info(this, documents.size() + " source documents to process.");
+		Log.info( documents.size() + " source documents to process.");
 		for (Document doc : documents.values()) {
 			if (settings.learn) {
 				CorpusDocs.writeDocument(settings.corpusDir, doc);

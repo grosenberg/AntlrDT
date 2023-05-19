@@ -53,7 +53,7 @@ public class CorpusProcessor extends BaseProcessor {
 			} catch (Exception e) {
 				corModel.setConsistent(false);
 				Tool.errMgr.toolError(ErrorType.MODEL_LOAD_FAILURE, e.getMessage());
-				Log.error(this, "Corpus model load failure: ", e);
+				Log.error( "Corpus model load failure: ", e);
 			}
 			if (!corModel.isConsistent()) {
 				buildCorpusModel();
@@ -64,7 +64,7 @@ public class CorpusProcessor extends BaseProcessor {
 
 	public void buildCorpusModel() {
 		Time.start(Facet.BUILD);
-		Log.info(this, "Building corpus model ...");
+		Log.info( "Building corpus model ...");
 
 		CorpusData.removeDataFiles(settings.corpusDir);
 		corModel = new CorpusModel(mgr, settings.corpusDir);

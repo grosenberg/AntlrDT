@@ -189,7 +189,7 @@ public class DiagramXConfigBlock extends AbstractConfigBlock {
 			URI uri = new URI(dir);
 			return new File(uri);
 		} catch (URISyntaxException e) {
-			Log.error(this, "Invalid URI: " + dir);
+			Log.error( "Invalid URI: " + dir);
 			return null;
 		}
 	}

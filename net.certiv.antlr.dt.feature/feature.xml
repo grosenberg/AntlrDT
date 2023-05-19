@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.antlr.dt.feature"
       label="AntlrDT"
-      version="4.2.2.qualifier"
+      version="4.2.5.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -21,19 +21,10 @@
       <update label="Certiv Tools" url="http://www.certiv.net/updates"/>
    </url>
 
-   <includes
-         id="net.certiv.dsl.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="net.certiv.dsl.jdt.feature"
-         version="0.0.0"
-         optional="true"/>
-
    <requires>
-      <import plugin="net.certiv.dsl.core" version="0.21.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.lib" version="0.21.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.ui" version="0.21.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.core" version="0.30.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.lib" version="0.30.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.ui" version="0.30.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.118.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.console" version="3.9.300" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.editors" version="3.13.300" match="greaterOrEqual"/>
@@ -44,21 +35,24 @@
       <import plugin="org.eclipse.jdt.core.manipulation" version="1.14.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.21.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.text" version="3.10.300" match="greaterOrEqual"/>
-      <import plugin="net.certiv.antlr.dt.core" version="4.2.1" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.jdt.plugin" version="0.21.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.antlr.dt.core" version="4.2.5" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.jdt.plugin" version="0.30.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filebuffers" version="3.6.1000" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.16.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services" version="3.9.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.forms" version="3.10.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views" version="3.10.400" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.15.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.antlr.dt.ui" version="4.2.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.16.600" match="greaterOrEqual"/>
+      <import plugin="net.certiv.antlr.dt.ui" version="4.2.5" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.commands" version="3.9.700" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem" version="1.7.700" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface" version="3.21.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.nebula.widgets.tablecombo" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.zest.core" version="1.5.300" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.zest.layouts" version="1.1.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.zest.core" version="1.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.zest.layouts" version="1.2.200" match="greaterOrEqual"/>
+      <import feature="net.certiv.dsl.feature" version="0.30.0.qualifier"/>
+      <import feature="net.certiv.dsl.jdt.feature" version="0.30.0.qualifier"/>
+      <import feature="net.certiv.tools.feature" version="1.2.1.qualifier"/>
    </requires>
 
    <plugin

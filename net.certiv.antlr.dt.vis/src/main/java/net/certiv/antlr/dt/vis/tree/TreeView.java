@@ -576,7 +576,7 @@ public class TreeView extends ViewPart implements IAdjustableViewPart, ISelectio
 	@Override
 	public void select(ICodeUnit unit, IStatement stmt) {
 		if (unit != null) {
-			if (stmt != null) Log.info(this, "Selecting " + stmt.toString());
+			if (stmt != null) Log.info( "Selecting " + stmt.toString());
 			viewer.setInput(unit);
 		}
 	}

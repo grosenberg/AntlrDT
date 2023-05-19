@@ -29,7 +29,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.antlr.dt.vis.tokens.Source;
 import net.certiv.common.log.Log;
-import net.certiv.dsl.ui.util.EditorUtil;
 
 public class VisUtil {
 
@@ -52,7 +51,7 @@ public class VisUtil {
 				return (ITextEditor) IDE.openEditor(page, file);
 			} catch (PartInitException e) {
 				String msg = "Failed to open project editor on: " + file.getName();
-				Log.error(EditorUtil.class, msg, e);
+				Log.error(msg, e);
 			}
 		} else {
 			IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(source.getPathname()));
@@ -61,7 +60,7 @@ public class VisUtil {
 					return (ITextEditor) IDE.openEditorOnFileStore(page, fileStore);
 				} catch (PartInitException e) {
 					String msg = "Failed to open file-delta editor on: " + fileStore.getName();
-					Log.error(VisUtil.class, msg, e);
+					Log.error(msg, e);
 				}
 			}
 		}
@@ -76,7 +75,7 @@ public class VisUtil {
 				editor.selectAndReveal(beg, len * -1);
 			}
 		} catch (BadLocationException e) {
-			Log.error(VisUtil.class, "Reveal failed", e);
+			Log.error("Reveal failed", e);
 		}
 	}
 
@@ -112,7 +111,7 @@ public class VisUtil {
 	// return (ITextEditor) IDE.openEditor(CoreUtil.getActivePage(), file);
 	// } catch (PartInitException e) {
 	// String msg = "Failed to open project editor on: " + file.getName();
-	// Log.error(VisUtil.class, msg, e);
+	// Log.error(msg, e);
 	// }
 	// }
 	// return null;
@@ -127,7 +126,7 @@ public class VisUtil {
 	// int beg = document.getLineOffset(line - 1) + offset + len;
 	// editor.selectAndReveal(beg, len * -1);
 	// } catch (BadLocationException e) {
-	// Log.error(VisUtil.class, "Reveal failed", e);
+	// Log.error("Reveal failed", e);
 	// }
 	// }
 }

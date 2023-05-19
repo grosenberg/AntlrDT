@@ -147,7 +147,7 @@ public class PathModel implements IModel {
 				if (field != null) return addNode(field);
 
 			default:
-				Log.info(this, "Not adding '%s'", data.getSpecializedType());
+				Log.info( "Not adding '%s'", data.getSpecializedType());
 				return null;
 		}
 	}
@@ -263,7 +263,7 @@ public class PathModel implements IModel {
 		List<IStatement> locals = findRule(stmt.getCodeUnit(), stmt);
 		int size = locals.size();
 		if (size > 1) {
-			Log.error(this, "Unexpected refs: %s", locals);
+			Log.error( "Unexpected refs: %s", locals);
 
 		} else if (size == 1) {
 			refs.addAll(ruleRefs(locals.get(0)));
@@ -310,7 +310,7 @@ public class PathModel implements IModel {
 				}
 			});
 		} catch (CoreException e) {
-			Log.error(this, "Error extracting rule refs from %s", stmt);
+			Log.error( "Error extracting rule refs from %s", stmt);
 		}
 
 		return refs;

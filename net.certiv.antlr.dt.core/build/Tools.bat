@@ -18,29 +18,29 @@ rem lib jars directory:
 set jlib=D:\DevFiles\Eclipse\Tools\Dsl\net.certiv.dsl\net.certiv.dsl.lib
 
 rem grammars src directory:
-set src=D:\DevFiles\Eclipse\Tools\Editors\net.certiv.antlr.dt\net.certiv.antlr.dt.core\src\main\java\net\certiv\antlr.dt\core\parser
+set src=D:\DevFiles\Eclipse\Tools\Editors\net.certiv.antlr.dt\net.certiv.antlr.dt.core\src\main\java\net\certiv\antlr\dt\core\parser
 
 rem generated class bin
 set bin=D:\DevFiles\Eclipse\Tools\Editors\net.certiv.antlr.dt\net.certiv.antlr.dt.core\target\classes
 
-set antlrjar=%jlib%\antlr4-4.7.2.jar
-set arntmjar=%jlib%\antlr4-runtime-4.7.2.jar
-set arnt3jar=%jlib%\antlr-runtime-3.5.2.jar
-set sttmpjar=%jlib%\ST4-4.0.8.jar
-set xvisitor=%jlib%\xvisitor-4.7.jar
-set log4japi=%jlib%\log4j-api-2.11.1.jar
-set log4jcor=%jlib%\log4j-core-2.11.1.jar
+set antlrjar=%jlib%\antlr4-4.12.0.jar
+set arntmjar=%jlib%\antlr4-runtime-4.12.0.jar
+set arnt3jar=%jlib%\antlr-runtime-3.5.3.jar
+set sttmpjar=%jlib%\ST4-4.3.4.jar
+set xvisitor=%jlib%\xvisitor-4.8.0.jar
+set log4japi=%jlib%\log4j-api-2.20.0.jar
+set log4jcor=%jlib%\log4j-core-2.20.0.jar
 
 
 set CLASSPATH=%arnt3jar%;%arntmjar%;%sttmpjar%;%antlrjar%;%xvisitor%;%log4japi%;%log4jcor%;%bin%;%CLASSPATH%
 
 echo %src%
-cd /d %src%
+cd %src%
 
 java org.antlr.v4.Tool -visitor -o gen AntlrDT4Lexer.g4 AntlrDT4Parser.g4
 echo Grammars generated
 
-java net.certiv.antlr.xvisitor.Tool -v warn -o gen Path.xv Structure.xv
+java net.certiv.antlr.xvisitor.Tool -v warn -o gen Structure.xv
 echo XVisitors generated
 
 set ENDTIME=%TIME%

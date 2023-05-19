@@ -41,7 +41,7 @@ public class OpenDiagramHandler extends AbstractHandler {
 	private void showError(Exception e) {
 		String title = "Exception while opening Diagram Preview";
 		String message = title + " (" + Preview.ID + ")";
-		Log.error(this, message, e);
+		Log.error( message, e);
 
 		Shell shell = Display.getDefault().getActiveShell();
 		MessageDialog.openError(shell, title, message);

@@ -1,14 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2012, 2020 Certiv Analytics.
- *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *******************************************************************************/
-// Generated from D:/DevFiles/Eclipse/Tools/Editors/net.certiv.antlr.dt/net.certiv.antlr.dt.core/src/main/java/net/certiv/antlr/dt/core/parser/AntlrDT4Parser.g4 by ANTLR 4.8
+// Generated from AntlrDT4Parser.g4 by ANTLR 4.12.0
 
 	package net.certiv.antlr.dt.core.parser.gen;
 

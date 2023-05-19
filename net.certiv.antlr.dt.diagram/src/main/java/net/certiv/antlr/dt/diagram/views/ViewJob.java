@@ -182,7 +182,7 @@ public class ViewJob extends Job {
 				if (browser != null && !browser.isDisposed()) {
 					String script = String.format(Render, StringEscapeUtils.escapeEcmaScript(html));
 					boolean ok = browser.execute(script);
-					if (!ok) Log.error(this, "Script execute failed.");
+					if (!ok) Log.error( "Script execute failed.");
 				}
 			}
 		});
@@ -215,12 +215,12 @@ public class ViewJob extends Job {
 
 	private void result(String msg) {
 		if (timer == 0) {
-			Log.info(this, msg);
+			Log.info( msg);
 		} else {
 			long elapsed = System.nanoTime() - timer;
 			String value = BigDecimal.valueOf(elapsed, 6).setScale(2, RoundingMode.HALF_UP).toString();
 			if (value.indexOf('.') > 3) {
-				Log.info(this, String.format("%s %s (ms): ", msg, value));
+				Log.info( String.format("%s %s (ms): ", msg, value));
 			}
 		}
 		timer = 0;
@@ -235,7 +235,7 @@ public class ViewJob extends Job {
 
 		@Override
 		public Object function(Object[] args) {
-			Log.info(this, String.format("typeset(%s", args));
+			Log.info( String.format("typeset(%s", args));
 			if (args.length > 0 && "End".equals(args[0])) {
 				state = State.READY;
 				done();

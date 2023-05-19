@@ -47,7 +47,7 @@ public class EnhDamagerRepairer extends DefaultDamagerRepairer {
 			try {
 				lRegion = TextUtilities.getPartition(fDocument, Partitions.PARTITIONING, chRegion.getOffset(), false);
 			} catch (BadLocationException e) {
-				Log.error(this, "Region [offset=" + chRegion.getOffset() + ", len=" + chRegion.getLength() + ", type="
+				Log.error( "Region [offset=" + chRegion.getOffset() + ", len=" + chRegion.getLength() + ", type="
 						+ chRegion.getType() + "]", e);
 				super.createPresentation(presentation, chRegion); // bail
 				return;

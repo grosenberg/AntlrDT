@@ -53,11 +53,11 @@ public abstract class BaseProcessor {
 		try {
 			parser.process(builder, doc);
 		} catch (RecognitionException e) {
-			Log.error(this, ErrorType.PARSE_ERROR.msg + ": " + doc.getPathname());
+			Log.error( ErrorType.PARSE_ERROR.msg + ": " + doc.getPathname());
 			Tool.errMgr.toolError(ErrorType.PARSE_ERROR, doc.getPathname());
 			return false;
 		} catch (Exception e) {
-			Log.error(this, ErrorType.PARSE_FAILURE.msg + ": " + doc.getPathname());
+			Log.error( ErrorType.PARSE_FAILURE.msg + ": " + doc.getPathname());
 			Tool.errMgr.toolError(ErrorType.PARSE_FAILURE, e, doc.getPathname());
 			return false;
 		}
@@ -72,7 +72,7 @@ public abstract class BaseProcessor {
 			parser.extractFeatures(builder);
 			builder.extractCommentFeatures();
 		} catch (Exception e) {
-			Log.error(this, ErrorType.VISITOR_FAILURE.msg + ": " + doc.getPathname(), e);
+			Log.error( ErrorType.VISITOR_FAILURE.msg + ": " + doc.getPathname(), e);
 			Tool.errMgr.toolError(ErrorType.VISITOR_FAILURE, e, doc.getPathname());
 			return false;
 		}

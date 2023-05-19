@@ -10,13 +10,13 @@
  *******************************************************************************/
 package net.certiv.antlr.dt.vis;
 
-import org.apache.logging.log4j.Level;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.ui.AntlrUI;
 import net.certiv.antlr.dt.ui.ImageManager;
+import net.certiv.common.log.Level;
 import net.certiv.common.log.Log;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.DslColorRegistry;
@@ -32,13 +32,13 @@ public class VisUI extends AbstractUIPlugin implements IDslUI {
 
 	public VisUI() {
 		super();
-		Log.defLevel(Level.DEBUG);
 	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		Log.defLevel(Level.DEBUG);
 	}
 
 	@Override

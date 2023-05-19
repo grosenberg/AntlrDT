@@ -80,16 +80,16 @@ public class TargetAssembly {
 			boolean ok = unit.tryLock(500, TimeUnit.MILLISECONDS);
 			if (!ok) throw new ModelException(ModelStatus.NO_LOCK, "Failed to obtain unit lock.");
 		} catch (InterruptedException e) {
-			Log.error(this, e.getMessage());
+			Log.error( e.getMessage());
 			throw new ModelException(ModelStatus.NO_LOCK, e);
 		}
 
 		String pkg = null;
 		try {
 			DslParseRecord record = unit.getDefaultParseRecord();
-			Log.info(this, "Target tree: %s", record.check());
+			Log.info( "Target tree: %s", record.check());
 			pkg = BuildUtil.grammarDefinedPackage(record);
-			Log.info(this, "Target pkg:  %s", pkg);
+			Log.info( "Target pkg:  %s", pkg);
 
 		} finally {
 			unit.unlock();
@@ -118,7 +118,7 @@ public class TargetAssembly {
 			pkgnameLexer = pkgname + LEXER;
 
 		} else {
-			Log.error(this, "Unrecognizable grammar name: " + pkgname);
+			Log.error( "Unrecognizable grammar name: " + pkgname);
 		}
 	}
 

@@ -3,13 +3,13 @@ Automatic-Module-Name: net.certiv.antlr.dt.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: AntlrDT UI
 Bundle-SymbolicName: net.certiv.antlr.dt.ui;singleton:=true
-Bundle-Version: 4.2.2.qualifier
+Bundle-Version: 4.2.5.qualifier
 Bundle-Activator: net.certiv.antlr.dt.ui.AntlrUI
-Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.2.2",
- net.certiv.dsl.jdt.plugin;bundle-version="0.21.2",
- net.certiv.dsl.ui;bundle-version="0.21.2",
- net.certiv.dsl.core;bundle-version="0.21.2",
- net.certiv.dsl.lib;bundle-version="0.21.2",
+Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.2.5",
+ net.certiv.dsl.jdt.plugin;bundle-version="0.30.0",
+ net.certiv.dsl.ui;bundle-version="0.30.0",
+ net.certiv.dsl.core;bundle-version="0.30.0",
+ net.certiv.dsl.lib;bundle-version="0.30.0",
  org.eclipse.core.filebuffers;bundle-version="3.6.1000",
  org.eclipse.core.resources;bundle-version="3.13.800",
  org.eclipse.core.runtime;bundle-version="3.19.0",
@@ -22,7 +22,7 @@ Require-Bundle: net.certiv.antlr.dt.core;bundle-version="4.2.2",
  org.eclipse.ui.forms;bundle-version="3.10.0",
  org.eclipse.ui.ide;bundle-version="3.17.200",
  org.eclipse.ui.views;bundle-version="3.10.400",
- org.eclipse.ui.workbench.texteditor;bundle-version="3.15.0"
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.16.600"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Certiv Analytics

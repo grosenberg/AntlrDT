@@ -181,7 +181,7 @@ public class FormatterOps {
 			int from = prior.visCol() + prior.getText().length();
 			if (from > toVisCol) {
 				String msg = String.format("Err: shift %s to %s: %s", from, toVisCol, token.toString());
-				Log.error(this, msg);
+				Log.error( msg);
 				return;
 			}
 			edit.replUpdate(createWs(from, toVisCol));

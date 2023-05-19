@@ -31,7 +31,7 @@ public class RuleSelectionHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart part = HandlerUtil.getActiveEditor(event);
 		if (part == null || !(part instanceof AntlrEditor)) {
-			Log.error(this, "Active editor not found or not an Antlr editor");
+			Log.error( "Active editor not found or not an Antlr editor");
 			return null;
 		}
 

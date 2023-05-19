@@ -109,6 +109,6 @@ public class SpacingProcessor extends AbstractProcessor {
 		String cname = ops.data.getTokenName(present.type);
 		cname += matched != null ? "+" : "-";
 
-		Log.debug(this, "   %s > %s > %s", pname, cname, nname);
+		Log.debug( "   %s > %s > %s", pname, cname, nname);
 	}
 }

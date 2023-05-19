@@ -302,7 +302,7 @@ public class Tool extends ToolBase {
 		try {
 			getDefaultListener().setLevel(Level.valueOf(settings.verbose.trim().toUpperCase()));
 		} catch (IllegalArgumentException e) {
-			Log.error(this, ErrorType.INVALID_VERBOSE_LEVEL.msg + ": " + settings.verbose);
+			Log.error( ErrorType.INVALID_VERBOSE_LEVEL.msg + ": " + settings.verbose);
 			errMgr.toolError(ErrorType.INVALID_VERBOSE_LEVEL, settings.verbose);
 		}
 
@@ -311,7 +311,7 @@ public class Tool extends ToolBase {
 		boolean ok = mgr.loadCorpusModel(settings, corpusFiles);
 		if (ok && mgr.getCorpusModel().isConsistent()) return true;
 
-		Log.error(this, ErrorType.MODEL_VALIDATE_FAILURE.msg);
+		Log.error( ErrorType.MODEL_VALIDATE_FAILURE.msg);
 		errMgr.toolError(ErrorType.MODEL_VALIDATE_FAILURE, "Invalid corpus error.");
 		return false;
 	}

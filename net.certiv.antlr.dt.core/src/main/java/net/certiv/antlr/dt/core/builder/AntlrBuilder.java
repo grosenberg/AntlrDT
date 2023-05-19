@@ -170,7 +170,7 @@ public class AntlrBuilder extends DslBuilder {
 	@Override
 	protected void report(CS kind, String fmt, Object... args) {
 		getDslCore().consoleAppend(Aspect.BUILDER, kind, fmt, args);
-		Log.debug(this, fmt, args);
+		Log.debug( fmt, args);
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class AntlrBuilder extends DslBuilder {
 
 	private void postCompileCleanup(ICodeUnit unit, IPath output, IProgressMonitor monitor) {
 		if (!unit.exists()) {
-			Log.error(this, "Compile produced no file[file=" + unit.getPath() + "]");
+			Log.error( "Compile produced no file[file=" + unit.getPath() + "]");
 			return;
 		}
 		IProject project = unit.getProject();
@@ -232,7 +232,7 @@ public class AntlrBuilder extends DslBuilder {
 				}
 			}
 		} catch (CoreException e) {
-			Log.error(this, "Refresh error: " + e.getMessage());
+			Log.error( "Refresh error: " + e.getMessage());
 		}
 		monitor.worked(1);
 	}
@@ -262,7 +262,7 @@ public class AntlrBuilder extends DslBuilder {
 				}
 			}
 		} catch (Exception e) {
-			Log.error(this, "Failed to Format");
+			Log.error( "Failed to Format");
 		}
 		monitor.worked(1);
 	}
@@ -282,9 +282,9 @@ public class AntlrBuilder extends DslBuilder {
 				op.run(monitor);
 			}
 		} catch (OperationCanceledException e) {
-			Log.debug(this, "Ambiguous imports, organization skipped");
+			Log.debug( "Ambiguous imports, organization skipped");
 		} catch (Exception e) {
-			Log.warn(this, "Failed to Organize imports");
+			Log.warn( "Failed to Organize imports");
 		}
 		monitor.worked(1);
 	}

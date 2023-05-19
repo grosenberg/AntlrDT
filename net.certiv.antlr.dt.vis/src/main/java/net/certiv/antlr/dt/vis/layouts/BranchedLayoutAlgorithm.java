@@ -47,7 +47,7 @@ public class BranchedLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 
-		Log.info(this, "Starting layout . . .");
+		Log.info( "Starting layout . . .");
 		boolean disableAnimation = getPrefs().getInt(PrefsKey.PT_ANIMATION_LIMIT) < entitiesToLayout.length;
 		if (disableAnimation) Animation.run();
 
@@ -65,7 +65,7 @@ public class BranchedLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		// (1) build the association network
 		constructVirtualLayout(entitiesList, relationshipList);
 		if (roots.size() == 0) {
-			Log.error(this, "No roots; has to be a directed graph at least at the root level");
+			Log.error( "No roots; has to be a directed graph at least at the root level");
 			return;
 		}
 
@@ -87,18 +87,18 @@ public class BranchedLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			for (Block srcBlock : blockList) {
 				for (Block tgtBlock : blockList) {
 					if (srcBlock.equals(tgtBlock)) continue; // skip identity
-					// Log.debug(this, "Block: " + str(srcBlock) + ", Examining: " + str(tgtBlock));
+					// Log.debug( "Block: " + str(srcBlock) + ", Examining: " + str(tgtBlock));
 					if (srcBlock.overlaps(tgtBlock)) {
 						// Rectangle overlap = srcBlock.getOverlap(tgtBlock); // debugging
 						// Dimension delta = srcBlock.getOverlapDelta(tgtBlock);
-						// Log.debug(this, "Overlap: " + str(overlap) + ", delta: " + str(delta));
+						// Log.debug( "Overlap: " + str(overlap) + ", delta: " + str(delta));
 						pushOverlapping(srcBlock, tgtBlock);
 						overlaps = true;
 					}
 				}
 			}
 		}
-		Log.debug(this, "Resolved [iterations=" + revs + "]");
+		Log.debug( "Resolved [iterations=" + revs + "]");
 
 		// (4) tidy the distribution of blocks TODO: implement block tidy
 
@@ -325,7 +325,7 @@ public class BranchedLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			} else {
 				bounds.union(nRect);
 			}
-			// Log.debug(this, "BlockAdd: " + blockList.size() + ":" +
+			// Log.debug( "BlockAdd: " + blockList.size() + ":" +
 			// this.size() + "::" + bounds);
 			return super.add(node);
 		}

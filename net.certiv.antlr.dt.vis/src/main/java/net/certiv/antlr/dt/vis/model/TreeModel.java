@@ -55,7 +55,7 @@ public class TreeModel implements IModel {
 
 	private void addConnector(TreeNode parent, TreeNode child) {
 		if (parent != null) {
-			// Log.info(this, String.format("%s -> %s", parent, child));
+			// Log.info( String.format("%s -> %s", parent, child));
 			TreeConnector connector = new TreeConnector(parent, child);
 			addEndpoint(parent, connector);
 			addEndpoint(child, connector);

@@ -56,7 +56,7 @@ public class DotBuilder {
 			return tgt.render();
 
 		} catch (Exception e) {
-			Log.error(this, "Generate failed: %s", e.getMessage());
+			Log.error( "Generate failed: %s", e.getMessage());
 			return Strings.EMPTY;
 		}
 	}

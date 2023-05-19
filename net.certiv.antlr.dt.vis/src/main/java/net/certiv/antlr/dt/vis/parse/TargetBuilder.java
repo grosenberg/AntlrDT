@@ -123,7 +123,7 @@ public class TargetBuilder {
 
 				@Override
 				public void run() {
-					Log.warn(this, "Target parser generation timer expired " + (target != null));
+					Log.warn( "Target parser generation timer expired " + (target != null));
 					if (target != null) target.terminate();
 				}
 			}, timeout);

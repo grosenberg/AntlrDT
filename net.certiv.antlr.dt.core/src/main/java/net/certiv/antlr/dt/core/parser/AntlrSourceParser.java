@@ -17,8 +17,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarRootAST;
-import org.apache.logging.log4j.Level;
-
 import org.eclipse.core.runtime.IPath;
 
 import net.certiv.antlr.dt.core.AntlrCore;
@@ -26,9 +24,10 @@ import net.certiv.antlr.dt.core.builder.BuildUtil;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Lexer;
 import net.certiv.antlr.dt.core.parser.gen.AntlrDT4Parser;
 import net.certiv.antlr.dt.core.parser.gen.StructureVisitor;
+import net.certiv.common.log.Level;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.ToolErrorListener;
-import net.certiv.common.log.Log;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
@@ -42,7 +41,7 @@ public class AntlrSourceParser extends DslSourceParser {
 
 	public AntlrSourceParser(DslParseRecord record) {
 		super(record);
-		Log.setLevel(this, Level.DEBUG);
+		Log.setLevel(Level.DEBUG);
 	}
 
 	@Override
@@ -97,8 +96,8 @@ public class AntlrSourceParser extends DslSourceParser {
 	 * <p>
 	 * Has an indirect Antlr3 dependency.
 	 *
-	 * @param record the parse record instance to receive errors/warnings
-	 * @param name the display/filename of the grammar
+	 * @param record  the parse record instance to receive errors/warnings
+	 * @param name    the display/filename of the grammar
 	 * @param content the grammar source content
 	 * @throws ModelException exception code details cause
 	 */

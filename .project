@@ -3,7 +3,6 @@
 	<name>net.certiv.antlr.dt</name>
 	<comment></comment>
 	<projects>
-		<project>net.certiv.dsl.jdt.plugin</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

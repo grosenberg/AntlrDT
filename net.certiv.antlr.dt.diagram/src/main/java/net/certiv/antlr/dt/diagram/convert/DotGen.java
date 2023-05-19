@@ -92,7 +92,7 @@ public class DotGen {
 			URL url = findStyle(path);
 			return FileUtils.readFromStream(url.openStream());
 		} catch (Exception e) {
-			Log.error(this, "Failed reading stylesheet", e);
+			Log.error( "Failed reading stylesheet", e);
 		}
 		return Strings.EMPTY;
 	}

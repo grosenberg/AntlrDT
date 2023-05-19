@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
@@ -26,6 +25,7 @@ import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import net.certiv.antlr.dt.core.AntlrCore;
 import net.certiv.antlr.dt.core.preferences.PrefsKey;
+import net.certiv.common.log.Level;
 import net.certiv.common.log.Log;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 
@@ -91,21 +91,21 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	public LinWalkersLayoutAlgorithm(int styles, int orientation) {
 		super(styles);
 		m_orientation = orientation;
-		Log.setLevel(this, Level.INFO);
+		Log.setLevel(Level.INFO);
 	}
 
 	/**
 	 * Set the orientation of the tree layout.
 	 *
 	 * @param orientation the orientation value. One of
-	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
-	 *            ,
-	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
-	 *            ,
-	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
-	 *            , or
-	 *            {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
-	 *            .
+	 *                    {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
+	 *                    ,
+	 *                    {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
+	 *                    ,
+	 *                    {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
+	 *                    , or
+	 *                    {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
+	 *                    .
 	 */
 	public void setOrientation(int orientation) {
 		if (orientation < 0 || orientation >= ORIENTATION_COUNT) {
@@ -118,14 +118,14 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	 * Get the orientation of the tree layout.
 	 *
 	 * @return the orientation value. One of
-	 *             {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
-	 *             ,
-	 *             {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
-	 *             ,
-	 *             {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
-	 *             , or
-	 *             {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
-	 *             .
+	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_LEFT_RIGHT}
+	 *         ,
+	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_RIGHT_LEFT}
+	 *         ,
+	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_TOP_BOTTOM}
+	 *         , or
+	 *         {@link net.certiv.callgraph.ui.layouts.NodeLinkTreeLayout#ORIENT_BOTTOM_TOP}
+	 *         .
 	 */
 	public int getOrientation() {
 		return m_orientation;
@@ -138,10 +138,11 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	// ------------------------------------------------------------------------
 
 	@Override
-	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
-			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
+	protected void applyLayoutInternal(InternalNode[] entitiesToLayout,
+			InternalRelationship[] relationshipsToConsider, double boundsX, double boundsY,
+			double boundsWidth, double boundsHeight) {
 
-		Log.debug(this, "Starting layout ...");
+		Log.debug("Starting layout ...");
 
 		m_bspace = getPrefs().getInt(PrefsKey.PT_SIBLING_SPACING); // between sibling
 																	 // nodes
@@ -151,7 +152,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		int eCnt = entitiesToLayout.length;
 		int rCnt = relationshipsToConsider.length;
-		Log.debug(this, "Content [entities=" + eCnt + ", relations=" + rCnt + "]");
+		Log.debug("Content [entities=" + eCnt + ", relations=" + rCnt + "]");
 
 		ArrayList<InternalNode> entitiesList = convert(entitiesToLayout);
 		ArrayList<InternalRelationship> relationshipList = convert(relationshipsToConsider);
@@ -160,7 +161,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		// revRelations = new HashMap<>();
 		InternalNode root = constructVirtualLayout(entitiesList, relationshipList);
 		if (root == null) {
-			Log.error(this, "No root; has to be a directed graph at least at the root level.");
+			Log.error("No root; has to be a directed graph at least at the root level.");
 			return;
 		}
 
@@ -180,7 +181,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 		Params npRoot = getParams(root);
 		secondWalk(root, null, -npRoot.prelim, 0);
 
-		Log.debug(this, "Layout complete.");
+		Log.debug("Layout complete.");
 	}
 
 	private InternalNode constructVirtualLayout(ArrayList<InternalNode> entitiesList,
@@ -207,10 +208,10 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			if (!npChild.hasParent()) {
 				npChild.setParent(source);
 				getParams(source).addChild(target);
-				Log.debug(this, "Parent= " + source.toString() + "; child " + target.toString());
+				Log.debug("Parent= " + source.toString() + "; child " + target.toString());
 			} else {
 				omitted.add(relation);
-				Log.debug(this, "Parent? " + source.toString() + "; child " + target.toString());
+				Log.debug("Parent? " + source.toString() + "; child " + target.toString());
 			}
 
 			roots.remove(target); // target cannot be a root
@@ -220,7 +221,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 		InternalNode virtRoot = null;
 		if (roots.size() > 1) {
-			Log.debug(this, "Adding virtual root for multiple real roots ...");
+			Log.debug("Adding virtual root for multiple real roots ...");
 			virtRoot = new InternalNode(new VirtualRootNode());
 			new Params(virtRoot);
 			for (InternalNode root : roots) {
@@ -245,11 +246,11 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 				Params npChild = getParams(target);
 				InternalNode oldParent = npChild.getParent();
 				getParams(oldParent).removeChild(target);
-				Log.debug(this, "Parent- " + oldParent.toString() + "; child " + target.toString());
+				Log.debug("Parent- " + oldParent.toString() + "; child " + target.toString());
 
 				npChild.setParent(source);
 				getParams(source).addChild(target);
-				Log.debug(this, "Parent+ " + source.toString() + "; child " + target.toString());
+				Log.debug("Parent+ " + source.toString() + "; child " + target.toString());
 			}
 		}
 
@@ -258,7 +259,8 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 	// walk to the root to validate the targets of the omitted
 	// return omitted with unreachable targets
-	private ArrayList<InternalRelationship> analyzeOmitted(InternalNode root, ArrayList<InternalRelationship> omitted) {
+	private ArrayList<InternalRelationship> analyzeOmitted(InternalNode root,
+			ArrayList<InternalRelationship> omitted) {
 		if (omitted.isEmpty()) return omitted;
 
 		ArrayList<InternalRelationship> fixList = new ArrayList<>();
@@ -283,7 +285,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	}
 
 	private void firstWalk(InternalNode entity, int num, int depth) {
-		Log.debug(this, "Walk1 [entity=" + entity.toString() + ", num=" + num + ", depth=" + depth + "]");
+		Log.debug("Walk1 [entity=" + entity.toString() + ", num=" + num + ", depth=" + depth + "]");
 
 		Params np = getParams(entity);
 		np.number = num;
@@ -343,8 +345,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	}
 
 	private void determineDepths() {
-		for (int idx = 1; idx < m_maxDepth; ++idx)
-			m_depths[idx] += m_depths[idx - 1] + m_dspace;
+		for (int idx = 1; idx < m_maxDepth; ++idx) m_depths[idx] += m_depths[idx - 1] + m_dspace;
 	}
 
 	private InternalNode apportion(InternalNode v, InternalNode a) {
@@ -370,7 +371,8 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 				vom = nextLeft(vom);
 				vop = nextRight(vop);
 				getParams(vop).ancestor = v;
-				double shift = (getParams(vim).prelim + sim) - (getParams(vip).prelim + sip) + spacing(vim, vip, false);
+				double shift = (getParams(vim).prelim + sim) - (getParams(vip).prelim + sip)
+						+ spacing(vim, vip, false);
 				if (shift > 0) {
 					moveSubtree(ancestor(vim, v, a), v, shift);
 					sip += shift;
@@ -446,7 +448,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 	}
 
 	private void secondWalk(InternalNode n, InternalNode p, double m, int depth) {
-		Log.debug(this, "Walk2 [entity=" + n.toString() + ", num=" + m + ", depth=" + depth + "]");
+		Log.debug("Walk2 [entity=" + n.toString() + ", num=" + m + ", depth=" + depth + "]");
 
 		Params np = getParams(n);
 		setBreadth(n, p, np.prelim + m);
@@ -544,7 +546,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			self = item;
 			self.setAttributeInLayout(PARAMS, this);
 			number = -1;
-			Log.setLevel(this, Level.INFO);
+			Log.setLevel(Level.INFO);
 		}
 
 		public void clear() {
@@ -620,7 +622,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 				int nextChild = npParent.childList.indexOf(self) + 1;
 				int numChildren = npParent.childCount();
 				if (nextChild < numChildren) {
-					Log.debug(this, "Next [entity=" + nextChild + ":" + npParent.childAt(nextChild) + "]");
+					Log.debug("Next [entity=" + nextChild + ":" + npParent.childAt(nextChild) + "]");
 					return npParent.childAt(nextChild);
 				}
 				return null;
@@ -635,7 +637,7 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 				Params npParent = getParams(parent);
 				int prevChild = npParent.childList.indexOf(self) - 1;
 				if (prevChild < 0) return null;
-				Log.debug(this, "Previous [entity=" + prevChild + ":" + npParent.childAt(prevChild) + "]");
+				Log.debug("Previous [entity=" + prevChild + ":" + npParent.childAt(prevChild) + "]");
 				return npParent.childAt(prevChild);
 			}
 			return null;
@@ -652,10 +654,10 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 
 	private Params getParams(InternalNode entity) {
 		if (entity == null) {
-			Log.debug(this, "entity is null");
+			Log.debug("entity is null");
 		}
 		if (entity.getAttributeInLayout(PARAMS) == null) {
-			Log.debug(this, "params is null");
+			Log.debug("params is null");
 		}
 
 		return (Params) entity.getAttributeInLayout(PARAMS);
@@ -696,8 +698,9 @@ public class LinWalkersLayoutAlgorithm extends AbstractLayoutAlgorithm {
 			InternalRelationship[] relationshipsToConsider) {}
 
 	@Override
-	protected void preLayoutAlgorithm(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
-			double x, double y, double width, double height) {}
+	protected void preLayoutAlgorithm(InternalNode[] entitiesToLayout,
+			InternalRelationship[] relationshipsToConsider, double x, double y, double width,
+			double height) {}
 
 	@Override
 	public void setLayoutArea(double x, double y, double width, double height) {}

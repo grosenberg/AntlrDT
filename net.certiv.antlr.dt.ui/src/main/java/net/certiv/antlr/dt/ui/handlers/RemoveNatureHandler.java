@@ -69,12 +69,12 @@ public class RemoveNatureHandler extends AbstractHandler {
 					System.arraycopy(natures, idx + 1, newNatures, idx, natures.length - idx - 1);
 					description.setNatureIds(newNatures);
 					project.setDescription(description, null);
-					Log.info(this, "Antlr Builder Nature removed [project=" + project.getName() + "]");
+					Log.info( "Antlr Builder Nature removed [project=" + project.getName() + "]");
 					return;
 				}
 			}
 		} catch (CoreException e) {
-			Log.error(this, "Failed in removing nature", e);
+			Log.error( "Failed in removing nature", e);
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class ScanUtil {
 	 * Determines whether the current character stream matches the given character
 	 * sequence followed by 0 or more white space characters and an open brace.
 	 *
-	 * @param scanner the current character steam
+	 * @param scanner  the current character steam
 	 * @param sequence the sequence to match
 	 * @return true if the sequence matches; false otherwise
 	 */
@@ -63,7 +63,7 @@ public class ScanUtil {
 	 * Determines whether the current character stream matches the given sequence. The
 	 * character stream is rewound only on a match failure.
 	 *
-	 * @param scanner the current character steam
+	 * @param scanner  the current character steam
 	 * @param sequence the sequence to match
 	 * @return true if the sequence matches; false otherwise
 	 */
@@ -168,9 +168,9 @@ public class ScanUtil {
 	 * Determines whether the current character stream matches the given sequence. The
 	 * character stream is rewound even on match if rewind is true.
 	 *
-	 * @param scanner the current character steam
+	 * @param scanner  the current character steam
 	 * @param sequence the sequence to match
-	 * @param rewind whether to rewind on match as well as on non-match
+	 * @param rewind   whether to rewind on match as well as on non-match
 	 * @return true if the sequence matches; false otherwise
 	 */
 	public static boolean matchSequence(ICharacterScanner scanner, char[] sequence, boolean rewind) {
@@ -179,11 +179,11 @@ public class ScanUtil {
 		// if (debug2) {
 		// char x = (char) scanner.read();
 		// if (x == '\r' || x == '\n') {
-		// Log.trace(ScanUtil.class, "Examine [scan=" + "" + ", seq=" +
+		// Log.trace("Examine [scan=" + "" + ", seq=" +
 		// String.copyValueOf(sequence)
 		// + "]");
 		// } else {
-		// Log.trace(ScanUtil.class, "Examine [scan=" + x + ", seq=" +
+		// Log.trace("Examine [scan=" + x + ", seq=" +
 		// String.copyValueOf(sequence)
 		// + "]");
 		// }
@@ -193,11 +193,11 @@ public class ScanUtil {
 		int idx = 0;
 		do {
 			int c = scanner.read();
-			Log.trace(ScanUtil.class, "Examine [c=" + (char) c + ", seq=" + sequence[idx] + "]");
+			Log.trace("Examine [c=" + (char) c + ", seq=" + sequence[idx] + "]");
 			if (c == ICharacterScanner.EOF) {
 				return false;
 			} else if (c != sequence[idx]) {
-				Log.trace(ScanUtil.class, "Non-match [c=" + (char) c + ", seq=" + sequence[idx] + "]");
+				Log.trace("Non-match [c=" + (char) c + ", seq=" + sequence[idx] + "]");
 				scanner.unread();
 				for (int jdx = idx; jdx > 0; jdx--) {
 					scanner.unread();
@@ -220,7 +220,7 @@ public class ScanUtil {
 	 * the current document position. The character sequences are considered qualifying,
 	 * so true is returned on first found.
 	 *
-	 * @param scanner the current character steam
+	 * @param scanner   the current character steam
 	 * @param sequences array of strings to match
 	 * @return true if one of the sequences match; false otherwise
 	 */
@@ -244,7 +244,7 @@ public class ScanUtil {
 	 * character sequences are considered disqualifying, so true is returned only if none
 	 * are found.
 	 *
-	 * @param scanner the current character steam
+	 * @param scanner   the current character steam
 	 * @param sequences array of strings to match
 	 * @return true if none of the sequences match; false otherwise
 	 */
@@ -252,14 +252,14 @@ public class ScanUtil {
 		if (matchCloseBrace(scanner)) {
 			for (String sequence : sequences) {
 				if (matchWsSeq(scanner, sequence.toCharArray(), true)) {
-					Log.trace(ScanUtil.class, "Matched predicate sequence");
+					Log.trace("Matched predicate sequence");
 					return false;
 				}
 			}
-			Log.trace(ScanUtil.class, "Matched action sequence [char=" + on(scanner) + "]");
+			Log.trace("Matched action sequence [char=" + on(scanner) + "]");
 			return true;
 		}
-		Log.debug(ScanUtil.class, "Missing close brace");
+		Log.debug("Missing close brace");
 		return false;
 	}
 
@@ -296,7 +296,7 @@ public class ScanUtil {
 			}
 			return false;
 		}
-		Log.trace(ScanUtil.class, "matchCloseBrace [char=" + (char) c + "]");
+		Log.trace("matchCloseBrace [char=" + (char) c + "]");
 		return true;
 	}
 
@@ -305,7 +305,7 @@ public class ScanUtil {
 	 * characters followed by the given character sequence. The character stream is only
 	 * rewound on match failure.
 	 *
-	 * @param scanner the current character stream
+	 * @param scanner  the current character stream
 	 * @param sequence the sequence to match
 	 * @return true if the pattern matches
 	 */
@@ -318,9 +318,9 @@ public class ScanUtil {
 	 * characters followed by the given character sequence. The character stream is
 	 * rewound on match, if rewind is true, and on match failure.
 	 *
-	 * @param scanner the current character stream
+	 * @param scanner  the current character stream
 	 * @param sequence the sequence to match
-	 * @param rewind whether to rewind on match as well as on non-match
+	 * @param rewind   whether to rewind on match as well as on non-match
 	 * @return true if the pattern matches
 	 */
 	public static boolean matchWsSeq(ICharacterScanner scanner, char[] sequence, boolean rewind) {
@@ -336,12 +336,12 @@ public class ScanUtil {
 				for (int jdx = idx - 1; jdx > 0; jdx--) {
 					scanner.unread();
 				}
-				Log.trace(ScanUtil.class, "matchWsSeq0 [on=" + (char) c + "]");
+				Log.trace("matchWsSeq0 [on=" + (char) c + "]");
 				return false;
 			}
 			idx++;
 		}
-		Log.trace(ScanUtil.class, "matchWsSeq1 [count=" + (idx - 1) + ", on=" + (char) c + "]");
+		Log.trace("matchWsSeq1 [count=" + (idx - 1) + ", on=" + (char) c + "]");
 
 		boolean matched = matchSequence(scanner, sequence, rewind);
 		if (!matched || rewind) {
@@ -349,7 +349,7 @@ public class ScanUtil {
 				scanner.unread();
 			}
 		}
-		Log.trace(ScanUtil.class, "matchWsSeq2 [count=" + (idx - 1) + ", on=" + (char) c + "]");
+		Log.trace("matchWsSeq2 [count=" + (idx - 1) + ", on=" + (char) c + "]");
 		if (matched) return true;
 		return false;
 	}
@@ -357,7 +357,7 @@ public class ScanUtil {
 	/**
 	 * Scan forward to end of quoted string, skipping any included braces.
 	 *
-	 * @param scanner the character stream
+	 * @param scanner   the character stream
 	 * @param quoteChar the quote character to match
 	 */
 	public static void matchEndQuote(ICharacterScanner scanner, int quoteChar) {
@@ -419,7 +419,7 @@ public class ScanUtil {
 
 	@SuppressWarnings("unused")
 	private static void log(String msg, ICharacterScanner scanner) {
-		Log.debug(ScanUtil.class, msg + " [col=" + scanner.getColumn() + ", char=" + on(scanner) + "]");
+		Log.debug(msg + " [col=" + scanner.getColumn() + ", char=" + on(scanner) + "]");
 	}
 
 	private static char on(ICharacterScanner scanner) {

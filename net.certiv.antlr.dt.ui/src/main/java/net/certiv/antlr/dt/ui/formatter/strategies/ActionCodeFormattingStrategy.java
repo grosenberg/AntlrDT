@@ -37,7 +37,7 @@ public class ActionCodeFormattingStrategy extends JavaFormattingStrategy {
 			int indentLevel = IndentManipulation.measureIndentUnits(lineText, tabWidth);
 			return indentLevel;
 		} catch (BadLocationException e) {
-			Log.error(this, "Could not determine indent level", e);
+			Log.error( "Could not determine indent level", e);
 		}
 		return 0;
 	}

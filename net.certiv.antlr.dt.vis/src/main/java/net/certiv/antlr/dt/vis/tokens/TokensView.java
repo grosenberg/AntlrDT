@@ -504,7 +504,8 @@ public class TokensView extends ViewPart {
 					@Override
 					public void run() {
 						if (tokens != null) {
-							List<String[]> data = FieldProcessor.extract(tokens, tokenNames, modeNames, showHidden);
+							List<String[]> data = FieldProcessor.extract(tokens, tokenNames, modeNames,
+									showHidden);
 							tokBlock.setTokensInput(data);
 						}
 
@@ -516,7 +517,7 @@ public class TokensView extends ViewPart {
 						if (errors != null) {
 							AntlrConsoleFactory.getFactory().getConsole().append(errors, false);
 							for (ConsoleRecord error : errors) {
-								Log.error(TokensView.class, error.toString());
+								Log.error(error.toString());
 							}
 						}
 
@@ -526,7 +527,7 @@ public class TokensView extends ViewPart {
 								treeView.setInput(source, builder);
 
 							} catch (Exception e) {
-								Log.error(this, "Failed opening TreeView: " + e.getMessage());
+								Log.error("Failed opening TreeView: " + e.getMessage());
 							}
 						}
 					}

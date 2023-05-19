@@ -182,7 +182,7 @@ public class PathView extends ViewPart implements IAdjustableViewPart, ISelectio
 			update(op, sel.resolveUnit(), stmt);
 
 		} catch (ModelException e) {
-			Log.warn(this, "Path update failed: %s", e.getMessage());
+			Log.warn( "Path update failed: %s", e.getMessage());
 		}
 	}
 
@@ -489,7 +489,7 @@ public class PathView extends ViewPart implements IAdjustableViewPart, ISelectio
 			try {
 				IStatement stmt = ((DslSelection) sel).resolveElement();
 				if (stmt != null) {
-					Log.debug(this, "Editor selection: %s", stmt.getElementName());
+					Log.debug( "Editor selection: %s", stmt.getElementName());
 					CodeUnit unit = (CodeUnit) stmt.getCodeUnit();
 					update(PathOp.FULL_BUILD, unit, stmt);
 				}
@@ -500,7 +500,7 @@ public class PathView extends ViewPart implements IAdjustableViewPart, ISelectio
 				TreeSelection selection = (TreeSelection) sel;
 				for (Object elem : selection.toList()) {
 					if (elem instanceof Statement && !(elem instanceof IModuleStmt)) {
-						Log.debug(this, "Outline selection: %s", ((Statement) elem).getElementName());
+						Log.debug( "Outline selection: %s", ((Statement) elem).getElementName());
 						Statement stmt = (Statement) elem;
 						CodeUnit unit = (CodeUnit) stmt.getCodeUnit();
 						update(PathOp.FULL_BUILD, unit, stmt);
