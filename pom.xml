@@ -108,7 +108,6 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<includePackedArtifacts>true</includePackedArtifacts>
 					<dependency-resolution>
 						<optionalDependencies>require</optionalDependencies>
 					</dependency-resolution>

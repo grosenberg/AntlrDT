@@ -32,37 +32,37 @@ import net.certiv.common.util.Strings;
 public enum Layout {
 	HTREE(
 			"Horizontal Tree",
-				"IMG_LAYOUT_TREE_HORIZ",
-				new LinWalkersLayoutAlgorithm(K.NO_RESIZE),
-				Branched.LEFT_RIGHT),
+			"IMG_LAYOUT_TREE_HORIZ",
+			new LinWalkersLayoutAlgorithm(K.NO_RESIZE),
+			Branched.LEFT_RIGHT),
 	VTREE(
 			"Vertical Tree",
-				"IMG_LAYOUT_TREE",
-				new LinWalkersLayoutAlgorithm(K.NO_RESIZE, K.TOP_BOTTOM),
-				Branched.TOP_BOTTOM),
+			"IMG_LAYOUT_TREE",
+			new LinWalkersLayoutAlgorithm(K.NO_RESIZE, K.TOP_BOTTOM),
+			Branched.TOP_BOTTOM),
 	HFLOW(
 			"Horizontal Flow",
-				"IMG_LAYOUT_CALL",
-				new BranchedLayoutAlgorithm(K.NO_RESIZE),
-				Branched.LEFT_RIGHT),
+			"IMG_LAYOUT_CALL",
+			new BranchedLayoutAlgorithm(K.NO_RESIZE),
+			Branched.LEFT_RIGHT),
 
 	CALL(
 			"Call Flow",
-				"IMG_LAYOUT_GRAPHFLOW",
-				new CompositeLayoutAlgorithm(K.NO_RESIZE,
-						new LayoutAlgorithm[] { new TreeLayoutAlgorithm(K.NO_RESIZE),
-								new HorizontalShift(K.NO_RESIZE) }),
-				Branched.LEFT_RIGHT),
+			"IMG_LAYOUT_GRAPHFLOW",
+			new CompositeLayoutAlgorithm(K.NO_RESIZE,
+					new LayoutAlgorithm[] { new TreeLayoutAlgorithm(K.NO_RESIZE),
+							new HorizontalShift(K.NO_RESIZE) }),
+			Branched.LEFT_RIGHT),
 
 	SPRING("Spring", "IMG_LAYOUT_SPRING", new SpringLayoutAlgorithm(K.NO_RESIZE), Branched.MID_POINTS),
 	RADIAL("Radial", "IMG_LAYOUT_RADIAL", new RadialLayoutAlgorithm(K.NO_RESIZE), Branched.MID_POINTS),
 	GRID(
 			"Grid",
-				"IMG_LAYOUT_GRID",
-				new CompositeLayoutAlgorithm(K.NO_RESIZE,
-						new LayoutAlgorithm[] { new GridLayoutAlgorithm(K.NO_RESIZE),
-								new HorizontalShift(K.NO_RESIZE) }),
-				Branched.MID_POINTS),
+			"IMG_LAYOUT_GRID",
+			new CompositeLayoutAlgorithm(K.NO_RESIZE,
+					new LayoutAlgorithm[] { new GridLayoutAlgorithm(K.NO_RESIZE),
+							new HorizontalShift(K.NO_RESIZE) }),
+			Branched.MID_POINTS),
 
 	;
 
@@ -91,14 +91,14 @@ public enum Layout {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Result<String> key = Reflect.get(imgMgr, imageKey);
 		if (!key.valid()) return null;
-		return imgMgr.getDescriptor(key.result);
+		return imgMgr.getDescriptor(key.value);
 	}
 
 	public String getImageUrlname() {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Result<String> value = Reflect.get(imgMgr, imageKey);
 		if (!value.valid()) return Strings.EMPTY;
-		return imgMgr.getUrl(value.result).toExternalForm();
+		return imgMgr.getUrl(value.value).toExternalForm();
 	}
 
 	public Branched getRouterStyle() {

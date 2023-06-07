@@ -21,7 +21,7 @@ public class EnhSWTEventDispatcher extends SWTEventDispatcher {
 	@Override
 	protected ToolTipHelper getToolTipHelper() {
 		Result<ToolTipHelper> helper = Reflect.getSuper(this, TT_HELPER);
-		if (!helper.valid() || !(helper.result instanceof EnhTipHelper)) {
+		if (!helper.valid() || !(helper.value instanceof EnhTipHelper)) {
 			Reflect.setSuper(this, TT_HELPER, new EnhTipHelper(viewer, control));
 		}
 		return super.getToolTipHelper();

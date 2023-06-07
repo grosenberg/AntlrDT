@@ -22,9 +22,9 @@
    </url>
 
    <requires>
-      <import plugin="net.certiv.dsl.core" version="0.30.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.lib" version="0.30.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.ui" version="0.30.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.core" version="0.30.1" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.lib" version="0.30.1" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.ui" version="0.30.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.118.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.console" version="3.9.300" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.editors" version="3.13.300" match="greaterOrEqual"/>
@@ -36,7 +36,7 @@
       <import plugin="org.eclipse.jdt.ui" version="3.21.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.text" version="3.10.300" match="greaterOrEqual"/>
       <import plugin="net.certiv.antlr.dt.core" version="4.2.5" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.jdt.plugin" version="0.30.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.jdt.plugin" version="0.30.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filebuffers" version="3.6.1000" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.16.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi.services" version="3.9.0" match="greaterOrEqual"/>
@@ -50,8 +50,8 @@
       <import plugin="org.eclipse.nebula.widgets.tablecombo" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.zest.core" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.zest.layouts" version="1.2.200" match="greaterOrEqual"/>
-      <import feature="net.certiv.dsl.feature" version="0.30.0.qualifier"/>
-      <import feature="net.certiv.dsl.jdt.feature" version="0.30.0.qualifier"/>
+      <import feature="net.certiv.dsl.feature" version="0.30.1.qualifier"/>
+      <import feature="net.certiv.dsl.jdt.feature" version="0.30.1.qualifier"/>
       <import feature="net.certiv.tools.feature" version="1.2.1.qualifier"/>
    </requires>
 

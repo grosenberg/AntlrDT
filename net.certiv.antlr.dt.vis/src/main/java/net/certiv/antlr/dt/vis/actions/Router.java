@@ -45,14 +45,14 @@ public enum Router {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Result<String> key = Reflect.get(imgMgr, imageKey);
 		if (!key.valid()) return null;
-		return imgMgr.getDescriptor(key.result);
+		return imgMgr.getDescriptor(key.value);
 	}
 
 	public String getImageUrlname() {
 		ImageManager imgMgr = AntlrUI.getDefault().getImageManager();
 		Result<String> key = Reflect.get(imgMgr, imageKey);
 		if (!key.valid()) return null;
-		return imgMgr.getUrl(key.result).toExternalForm();
+		return imgMgr.getUrl(key.value).toExternalForm();
 	}
 
 	public AbstractRouter getRouter() {

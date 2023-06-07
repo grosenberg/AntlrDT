@@ -32,8 +32,8 @@ public class ZoomControlItem extends ZoomContributionViewItem {
 		EnhGraphViewer viewer = (EnhGraphViewer) editor.getZoomableViewer();
 		Result<ZoomManager> res = Reflect.invokeSuperDeclared(viewer, "getZoomManager", null, null);
 		if (res.valid()) {
-			Result<String[]> levels = Reflect.invoke(res.result, "getZoomLevelsAsText", null, null);
-			if (levels.valid()) Reflect.setSuper(this, "zoomLevels", levels.result);
+			Result<String[]> levels = Reflect.invoke(res.value, "getZoomLevelsAsText", null, null);
+			if (levels.valid()) Reflect.setSuper(this, "zoomLevels", levels.value);
 		}
 	}
 
@@ -46,7 +46,7 @@ public class ZoomControlItem extends ZoomContributionViewItem {
 		Result<Combo> res = Reflect.invokeSuperDeclared(this, "createCombo", params, args);
 		if (res.valid()) {
 			ToolItem item = new ToolItem(parent, SWT.SEPARATOR);
-			Combo combo = res.result;
+			Combo combo = res.value;
 			combo.pack();
 			item.setControl(combo);
 			item.setWidth(combo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
