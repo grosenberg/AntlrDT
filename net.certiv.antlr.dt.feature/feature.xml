@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.antlr.dt.feature"
       label="AntlrDT"
-      version="4.2.5.qualifier"
+      version="4.3.0.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -35,7 +35,7 @@
       <import plugin="org.eclipse.jdt.core.manipulation" version="1.14.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.21.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.text" version="3.10.300" match="greaterOrEqual"/>
-      <import plugin="net.certiv.antlr.dt.core" version="4.2.5" match="greaterOrEqual"/>
+      <import plugin="net.certiv.antlr.dt.core" version="4.3.0" match="greaterOrEqual"/>
       <import plugin="net.certiv.dsl.jdt.plugin" version="0.30.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filebuffers" version="3.6.1000" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.16.400" match="greaterOrEqual"/>
@@ -43,7 +43,7 @@
       <import plugin="org.eclipse.ui.forms" version="3.10.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views" version="3.10.400" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.16.600" match="greaterOrEqual"/>
-      <import plugin="net.certiv.antlr.dt.ui" version="4.2.5" match="greaterOrEqual"/>
+      <import plugin="net.certiv.antlr.dt.ui" version="4.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.commands" version="3.9.700" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem" version="1.7.700" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface" version="3.21.0" match="greaterOrEqual"/>
