@@ -1,20 +1,22 @@
-// Generated from AntlrDT4Lexer.g4 by ANTLR 4.12.0
+// Generated from D:/DevFiles/Eclipse/Tools/Editors/net.certiv.antlr.dt/net.certiv.antlr.dt.core/src/main/java/net/certiv/antlr/dt/core/parser/AntlrDT4Lexer.g4 by ANTLR 4.13.1
 
 	package net.certiv.antlr.dt.core.parser.gen;
-	import net.certiv.antlr.dt.core.parser.LexerAdaptor;
-
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
+	import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.RuntimeMetaData;
+import org.antlr.v4.runtime.Vocabulary;
+import org.antlr.v4.runtime.VocabularyImpl;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.*;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+import net.certiv.antlr.dt.core.parser.LexerAdaptor;
+
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class AntlrDT4Lexer extends LexerAdaptor {
-	static { RuntimeMetaData.checkVersion("4.12.0", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -87,10 +89,6 @@ public class AntlrDT4Lexer extends LexerAdaptor {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			"'options'", "'tokens'", "'channels'", "'import'", "'fragment'", "'lexer'", 
-			"'parser'", "'xvisitor'", "'grammar'", "'protected'", "'public'", "'private'", 
-			"'returns'", "'locals'", "'throws'", "'catch'", "'finally'", "'mode'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();

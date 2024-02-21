@@ -20,11 +20,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<tycho.version>3.0.4</tycho.version>
+		<tycho.version>4.0.5</tycho.version>
 
 		<eclipse.latest>http://download.eclipse.org/releases/latest</eclipse.latest>
 
